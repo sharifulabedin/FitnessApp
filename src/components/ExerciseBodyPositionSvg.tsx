@@ -228,7 +228,7 @@ export const SharifAvatarSvg: React.FC<{ name?: string; className?: string }> = 
         fill="#881337"
         fontSize="11"
         fontWeight="700"
-        fontFamily="Outfit, sans-serif"
+        fontFamily="Poppins, sans-serif"
       >
         {initial}
       </text>

@@ -107,7 +107,7 @@ export const WeeklyCompletionChart: React.FC<Props> = ({
               tick={{
                 fill: darkMode ? '#94A3B8' : '#475569',
                 fontSize: 11,
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
+                fontFamily: 'Poppins, sans-serif',
               }}
             />
             <YAxis

@@ -3,9 +3,93 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-display: 'Outfit', sans-serif;
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Poppins', sans-serif;
+  --font-sans: 'Poppins', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Liquid Glass Capsule Navigation Material */
+.liquid-glass-dock {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 20px 48px -8px rgba(15, 23, 42, 0.14),
+    0 6px 16px -2px rgba(15, 23, 42, 0.06),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.04);
+}
+
+html.dark .liquid-glass-dock {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 24px 56px -12px rgba(0, 0, 0, 0.7),
+    0 8px 24px -4px rgba(0, 0, 0, 0.45),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.liquid-glass-active {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.95) 0%, rgba(225, 29, 72, 0.98) 100%);
+  color: #FFFFFF;
+  box-shadow:
+    0 6px 18px -2px rgba(244, 63, 94, 0.48),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.liquid-glass-inactive {
+  background: transparent;
+  color: #475569;
+}
+
+.liquid-glass-inactive:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: #0F172A;
+}
+
+html.dark .liquid-glass-inactive {
+  color: #94A3B8;
+}
+
+html.dark .liquid-glass-inactive:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #F8FAFC;
+}
+
+.liquid-glass-coach-active {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.95) 0%, rgba(225, 29, 72, 0.98) 100%);
+  color: #FFFFFF;
+  box-shadow:
+    0 6px 18px -2px rgba(244, 63, 94, 0.48),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.liquid-glass-coach-idle {
+  background: rgba(15, 23, 42, 0.88);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 4px 14px -2px rgba(15, 23, 42, 0.28),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.liquid-glass-coach-idle:hover {
+  background: rgba(15, 23, 42, 0.98);
+  transform: scale(1.02);
+}
+
+html.dark .liquid-glass-coach-idle {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 4px 14px -2px rgba(0, 0, 0, 0.45),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 @layer base {

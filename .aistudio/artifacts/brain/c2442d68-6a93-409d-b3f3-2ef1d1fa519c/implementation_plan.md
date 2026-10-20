@@ -1,92 +1,84 @@
-# Bottom Navigation Bar & Section Jump Dock
+# Implementation Plan: Comprehensive Morning 20 Documentation (README.md)
 
-Add an ergonomic bottom navigation bar and floating desktop dock to **Morning 20: AI Fitness & Streak Tracker** so athletes can jump directly to any section of the long-scroll dashboard (**Overview**, **Streak**, **Prep**, **Circuit**, **AI Studio**) or open the **Gemini Coach** with a single tap.
+Comprehensive documentation for **Morning 20: AI Fitness & Streak Tracker**, covering both user-facing workout protocols and developer-level technical architecture, scripts, and testing workflows.
 
 ## User Review & Critical Decisions
 
 > [!IMPORTANT]
-> The following design and functional choices have been confirmed from your answers and will guide the implementation:
+> The documentation structure is synthesized from your confirmed preferences:
+> - **Comprehensive Scope ("All")**: Deep coverage of the 20-minute bodyweight hypertrophy protocol, 3-1-1 tempo cadence, 30-day streak tracking, streak shields, milestone badges, and Gemini AI coaching integration.
+> - **Developer Workflows**: Includes complete quick-start commands, NPM scripts (`dev`, `start`, `build`, `lint`, `test`), server proxy architecture, and test suite details.
 
-- **Confirmed Decision 1 (Navigation Destinations)**: Include **Overview**, **Streak**, **Prep** (Pre-Workout Checklist & Smart Reminders), **Circuit** (20-Min Hypertrophy Routine), and **AI Studio** as section-jump anchors.
-- **Confirmed Decision 2 (Integrated Gemini Coach Tab)**: Replace the standalone floating corner button with a dedicated **Coach** tab directly inside the bottom navigation bar to eliminate bottom-right content overlap and unify all primary actions.
-- **Confirmed Decision 3 (All-Viewport Presence)**: Render as an ergonomic edge-to-edge bottom tab bar on mobile viewports and a sleek centered floating dock on desktop viewports.
+- **Confirmed Decision 1**: Structure the document into clear, scannable sections: Product Overview, Biomechanical Protocol, Feature Tour, Architecture & Tech Stack, and Developer Setup.
+- **Confirmed Decision 2**: Document the live liquid glass capsule navigation dock, dark mode theming, and Poppins typography rules.
 
 ---
 
 ## 1. Overview & Core Concept
 
-- **What It Does**: Provides instant, single-tap smooth scrolling to each major section of the Morning 20 dashboard, automatically highlights the currently visible section as the user scrolls, and opens the Gemini AI Fitness Coach drawer directly from the bar.
-- **Target Audience / Persona**: Morning calisthenics athletes navigating between their 30-day streak strip, pre-workout checklist, 20-minute circuit cards, and AI coaching tools on mobile phones or desktop screens.
-- **Key Value**: Eliminates scroll fatigue on long pages while reclaiming screen real estate previously occupied by the floating corner button.
+- **What It Does**: Morning 20 is a daily 20-minute morning bodyweight hypertrophy and habit tracker tailored for home-based progression without gym equipment. It guides users through pre-workout mobility, a structured 3-1-1 tempo circuit (with 4-second negatives for door-ledge towel pull-ups), real-time session stopwatch timing, post-workout recovery decompression, and protein timing windows.
+- **Target Audience**: Athletes, calisthenics practitioners, and busy professionals seeking lean muscle hypertrophy (e.g. baseline 66kg → 72kg) in a strict 20-minute daily window.
+- **Key Value**: Eliminates workout friction with zero equipment, automated streak protection (Streak Shields), interactive biomechanical SVG animations, and a conversational Gemini AI coach.
 
 ---
 
 ## 2. User Experience & Visual Design
 
-- **Key User Flows**:
-  1. **Section Jumping**: Tapping **Overview**, **Streak**, **Prep**, **Circuit**, or **AI Studio** smoothly scrolls the viewport (`scrollIntoView({ behavior: 'smooth', block: 'start' })`) to that section with scroll-margin offset (`scroll-mt-6`) so section headings land cleanly at the top.
-  2. **Scroll-Spy Active State**: As the user scrolls naturally through the page, an intersection/scroll observer updates the active tab indicator in real time.
-  3. **Direct Coach Launch**: Tapping the **Coach** tab in the bottom bar opens the sliding Gemini AI Fitness Coach drawer and highlights the Coach tab while the drawer is open.
-- **Visual Identity & Theme**:
-  - *Aesthetic Direction*: Material Design 3 tactile navigation bar with translucent frosted glass (`backdrop-blur-md bg-white/90`) and crisp hairline borders (`border-slate-200`).
-  - *Color Palette & Mood*: Neutral slate surface (`#FFFFFF` / `#F8FAFC`) with electric rose (`#F43F5E`) active indicator pills and high-contrast slate typography (`#0F172A` active, `#64748B` inactive).
-  - *Typography & Hierarchy*: Compact single-line captions (`10px–11px` `Plus Jakarta Sans` font-semibold) stacked below `20px` Lucide icons, ensuring zero two-line wrapping.
-  - *Component Styling & Layout*:
-    - **Mobile (`< 768px`)**: Fixed full-width bottom bar (`fixed bottom-0 left-0 right-0 z-40 h-16`) with 6 evenly spaced touch targets (`min-h-[44px] min-w-[44px]`), staying well within the 15% mobile sticky height budget.
-    - **Desktop (`>= 768px`)**: Centered floating pill dock (`fixed bottom-5 left-1/2 -translate-x-1/2 z-40 rounded-2xl shadow-xl border border-slate-200/90 px-3 py-1.5`) for effortless cursor access.
-- **Interactive Feedback & Motion**: Smooth `150ms` color and scale transitions (`active:scale-95`), clear `focus-visible` keyboard rings, and `aria-current="location"` accessibility state on the active section tab.
+- **Visual Identity & Design System**:
+  - *Typography*: Poppins (Google Fonts) across headings, body copy, stats metrics, and canvas share cards; JetBrains Mono for timers and monospace stats.
+  - *Theme & Dark Mode*: High-contrast light slate theme paired with a deep Carbon-Slate dark mode (`#0B0F19` background, `#0F172A` cards).
+  - *Liquid Glass Capsule Dock*: Floating pill navigation dock (`rounded-full`) engineered with translucent backdrop blur (`28px`), saturation amplification (`200%`), inner rim specular lighting, and glowing rose accent pills.
+- **Key Workflows Documented in README**:
+  1. **Phase 1: Morning Priming**: 500ml hydration, 2 Medjool dates, and doorway towel setup.
+  2. **Phase 2A: Pre-Workout Dynamic Mobility**: Rotator cuff arm circles, hip leg swings, and thoracic torso twists.
+  3. **Phase 2B: 20-Minute Hypertrophy Circuit**: Push-Ups, Bulgarian Split Squats, Towel Ledge Pull-Ups, and Pike Push-Ups with live 3-1-1 tempo guidance and session stopwatch.
+  4. **Phase 3: Post-Workout Bonus**: Cobra thoracic decompression and +45 minute high-protein refuel window.
+  5. **Gamification & Consistency**: 30-day interactive calendar, streak shield deployment, milestone badge unlocks, and canvas share card export.
+  6. **Interactive Coach**: Gemini Coach drawer providing personalized form modifications and protein meal plans.
 
 ---
 
 ## 3. Key Product Decisions & Trade-Offs
 
-- **Decision 1: Unifying Section Jumps + Coach Trigger in One Bar**
-  - *Chosen Approach*: A 6-item bar (`Overview`, `Streak`, `Prep`, `Circuit`, `Studio`, `Coach`) where the first 5 items smooth-scroll to their respective DOM section IDs and the 6th item toggles the Gemini Coach drawer.
-  - *Why*: Consolidating the floating `Ask Gemini Coach` button into the navigation bar prevents overlapping the right-hand Bento cards on mobile and desktop while keeping the AI Coach 1 tap away at all times.
-  - *Alternatives Considered*: Keeping a separate floating Coach button above the bottom bar, which was passed over because stacked fixed elements consume vertical mobile viewport space.
-- **Decision 2: Scroll-Spy Synchronization**
-  - *Chosen Approach*: Track scroll position against the 5 section anchor offsets (`#overview-section`, `#streak-calendar`, `#prep-section`, `#workout-circuit`, `#visual-studio`) with immediate active state update on click.
-  - *Why*: Gives immediate tactile feedback when clicked and keeps the bottom bar accurate during manual scrolling.
+- **Decision 1: Full-Scope Documentation**:
+  - *Chosen Approach*: Deliver an all-inclusive `README.md` that acts as both a user manual and a technical engineering reference.
+  - *Why*: Enables athletes to understand the science behind 3-1-1 tempos while giving software engineers full transparency into state management and test suites.
+- **Decision 2: Clear Developer Setup Guide**:
+  - *Chosen Approach*: Document exact package manager commands, environment variable setup, dev server invocation (`tsx server.ts`), and unit test runners (`node --test`).
+  - *Why*: Facilitates instant local onboarding and continuous integration verification.
 
 ---
 
-## 4. Technical Architecture & Data Strategy *(Technical Reference)*
-
-- **Architecture & Component Diagram**:
+## 4. Technical Architecture & Data Strategy
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                       Morning 20 Main Viewport                          │
-│                                                                         │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌───────────────────────┐  │
-│  │ #overview-section│  │ #streak-calendar │  │     #prep-section     │  │
-│  │  Athlete KPIs &  │  │  30-Day Streak   │  │ Pre-Workout Checklist │  │
-│  │  Baseline Goals  │  │  Calendar Strip  │  │ & Smart Notifications │  │
-│  └────────▲─────────┘  └────────▲─────────┘  └───────────▲───────────┘  │
-│           │                     │                        │              │
-│  ┌────────┴─────────┐  ┌────────┴─────────┐              │              │
-│  │ #workout-circuit │  │  #visual-studio  │              │              │
-│  │  20-Min 3-1-1    │  │  1K/2K/4K Image  │              │              │
-│  │  Exercise Grid   │  │  Generator Card  │              │              │
-│  └────────▲─────────┘  └────────▲─────────┘              │              │
-└───────────┼─────────────────────┼────────────────────────┼──────────────┘
-            │                     │                        │
-            └──────────────┬──────┴────────────────────────┘
-                           │ Smooth Scroll + Scroll-Spy
-            ┌──────────────┴──────────────────────────────────────────┐
-            │        Bottom Navigation Bar / Desktop Dock             │
-            │  [Overview] [Streak] [Prep] [Circuit] [Studio] [Coach]  │
-            └──────────────────────────────────────────────────┬──────┘
-                                                               │ Toggles
-                                                    ┌──────────▼──────────┐
-                                                    │ Gemini Coach Drawer │
-                                                    └─────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│                   Morning 20 System                    │
+└───────────────────────────┬────────────────────────────┘
+                            │
+       ┌────────────────────┴────────────────────┐
+       ▼                                         ▼
+┌─────────────────────────┐           ┌─────────────────────────┐
+│     Client (React 19)   │           │    Backend (Express)    │
+│  - Poppins Typography   │  /api/*   │  - Vite Middleware      │
+│  - Liquid Glass Capsule │ ────────> │  - Gemini API Gateway   │
+│  - Recharts & Canvas    │           │  - Local Fallback Engine│
+│  - LocalStorage State   │           └─────────────────────────┘
+└─────────────┬───────────┘
+              │
+       ┌──────┴──────┐
+       ▼             ▼
+┌─────────────┐ ┌─────────────┐
+│ 18 Unit     │ │ 30-Day      │
+│ Tests Pass  │ │ Calendar &  │
+│ (node:test) │ │ Streak Hub  │
+└─────────────┘ └─────────────┘
 ```
 
-- **Data Model & State**:
-  - `activeSection`: `'overview' | 'streak' | 'prep' | 'circuit' | 'studio'` — tracks which section is currently in view or was most recently jumped to.
-  - `isCoachOpen`: `boolean` — controls the sliding Gemini AI Fitness Coach drawer and highlights the `Coach` tab when open.
-- **Interactive Component & State Mapping**:
-  - Clicking any of the 5 section tabs updates `activeSection`, closes any open drawer if needed, and invokes `document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })`.
-  - A passive `scroll` listener computes which section heading is closest to the top viewport threshold and updates `activeSection` automatically.
-  - Clicking the `Coach` tab toggles `isCoachOpen` to slide out the multi-turn Gemini Coach drawer.
+- **Data Models**: Documented structures for `UserProfile`, `CalendarDay`, `ExerciseItem`, `TempoState`, and `MilestoneBadge`.
+- **State Persistence**: Browser `localStorage` architecture with atomic key namespacing (`morning20_*`) and full JSON export/import backup capabilities.
+- **Developer Scripts**:
+  - `npm run dev`: Runs Express full-stack proxy on port 3000 with Vite middleware.
+  - `npm test`: Executes the 18-suite unit test engine in `src/utils/fitnessLogic.test.ts`.
+  - `npm run lint`: Validates TypeScript strict typing without emitting files.
+  - `npm run build`: Compiles optimized production bundle via Vite.

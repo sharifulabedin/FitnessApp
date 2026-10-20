@@ -1531,12 +1531,12 @@ export default function App() {
 
       </main>
 
-      {/* Responsive Bottom Navigation Bar (Full-Width Mobile Bar / Centered Floating Desktop Dock) */}
+      {/* Liquid Glass Capsule Bottom Navigation Dock */}
       <nav
         aria-label="Section jump bottom navigation"
-        className="fixed bottom-0 left-0 right-0 z-40 h-16 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:right-auto md:w-auto md:h-auto md:rounded-2xl md:border md:border-slate-200/90 md:shadow-xl md:px-3 md:py-1.5"
+        className="fixed bottom-3.5 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-20px)] sm:w-auto max-w-fit rounded-full p-1.5 sm:p-2 liquid-glass-dock"
       >
-        <div className="grid grid-cols-5 items-center h-full max-w-lg mx-auto md:flex md:items-center md:gap-1.5 md:max-w-none">
+        <div className="flex items-center justify-between sm:justify-center gap-1 sm:gap-2 max-w-lg mx-auto sm:max-w-none">
           {(
             [
               {
@@ -1575,20 +1575,20 @@ export default function App() {
                 data-testid={`bottom-nav-${tab.id}`}
                 aria-current={isActive ? 'location' : undefined}
                 onClick={() => handleJumpToSection(tab.id, tab.domId)}
-                className={`min-h-[44px] min-w-[44px] px-2 md:px-3.5 py-1.5 rounded-xl flex flex-col md:flex-row items-center justify-center md:gap-2 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-95 whitespace-nowrap shrink-0 ${
+                className={`min-h-[42px] min-w-[42px] px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-95 whitespace-nowrap shrink-0 ${
                   isPopping ? 'animate-nav-pop' : ''
                 } ${
                   isActive
-                    ? 'bg-rose-500 text-white scale-[1.04] shadow-md shadow-rose-500/25'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 scale-100'
+                    ? 'liquid-glass-active scale-[1.03]'
+                    : 'liquid-glass-inactive scale-100'
                 }`}
               >
                 <Icon
                   className={`w-4 h-4 shrink-0 transition-transform duration-300 ${
-                    isActive ? 'scale-110' : 'scale-100'
+                    isActive ? 'scale-110 text-white' : 'scale-100'
                   }`}
                 />
-                <span className="text-[10px] md:text-xs font-semibold tracking-tight mt-0.5 md:mt-0">
+                <span className="text-[10px] sm:text-xs font-semibold tracking-tight">
                   {tab.label}
                 </span>
               </button>
@@ -1605,12 +1605,12 @@ export default function App() {
               triggerTabPop('coach');
               setIsCoachOpen((prev) => !prev);
             }}
-            className={`min-h-[44px] min-w-[44px] px-2 md:px-3.5 py-1.5 rounded-xl flex flex-col md:flex-row items-center justify-center md:gap-2 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-95 whitespace-nowrap shrink-0 ${
+            className={`min-h-[42px] min-w-[42px] px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-95 whitespace-nowrap shrink-0 ${
               poppingTab === 'coach' ? 'animate-nav-pop' : ''
             } ${
               isCoachOpen
-                ? 'bg-rose-500 text-white scale-[1.04] shadow-md shadow-rose-500/25'
-                : 'bg-slate-900/95 text-white hover:bg-slate-800 scale-100'
+                ? 'liquid-glass-coach-active scale-[1.03]'
+                : 'liquid-glass-coach-idle scale-100'
             }`}
           >
             <Bot
@@ -1618,7 +1618,7 @@ export default function App() {
                 isCoachOpen ? 'text-white scale-110' : 'text-rose-400 scale-100'
               }`}
             />
-            <span className="text-[10px] md:text-xs font-semibold tracking-tight mt-0.5 md:mt-0">
+            <span className="text-[10px] sm:text-xs font-semibold tracking-tight">
               Coach
             </span>
           </button>

@@ -96,17 +96,17 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
     ctx.strokeRect(60, 60, 960, 1230);
 
     // App Branding Overline
-    ctx.font = '600 28px Plus Jakarta Sans, sans-serif';
+    ctx.font = '600 28px Poppins, sans-serif';
     ctx.fillStyle = '#FB7185';
     ctx.fillText('MORNING 20 · 3-1-1 HYPERTROPHY PROTOCOL', 110, 150);
 
     // Title Headline
-    ctx.font = 'bold 64px Outfit, sans-serif';
+    ctx.font = 'bold 64px Poppins, sans-serif';
     ctx.fillStyle = '#FFFFFF';
     ctx.fillText('WORKOUT CRUSHED', 110, 240);
 
     // Subtitle Athlete & Date
-    ctx.font = '500 32px Plus Jakarta Sans, sans-serif';
+    ctx.font = '500 32px Poppins, sans-serif';
     ctx.fillStyle = '#94A3B8';
     ctx.fillText(`Athlete: ${profile.name} · ${todayDateLabel}, 2026`, 110, 300);
 
@@ -123,7 +123,7 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
 
     // Card 1: Active Streak (Big Fire Hero)
     drawCard(110, 360, 860, 230, 'rgba(30, 41, 59, 0.7)');
-    ctx.font = '600 26px Plus Jakarta Sans, sans-serif';
+    ctx.font = '600 26px Poppins, sans-serif';
     ctx.fillStyle = '#F43F5E';
     ctx.fillText('ACTIVE STREAK CONSISTENCY', 160, 420);
 
@@ -133,7 +133,7 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
 
     // Card 2: Session Time
     drawCard(110, 620, 410, 210, 'rgba(30, 41, 59, 0.7)');
-    ctx.font = '600 24px Plus Jakarta Sans, sans-serif';
+    ctx.font = '600 24px Poppins, sans-serif';
     ctx.fillStyle = '#38BDF8';
     ctx.fillText('SESSION TIME', 150, 680);
     ctx.font = 'bold 72px JetBrains Mono, monospace';
@@ -142,7 +142,7 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
 
     // Card 3: 30-Day Completion
     drawCard(560, 620, 410, 210, 'rgba(30, 41, 59, 0.7)');
-    ctx.font = '600 24px Plus Jakarta Sans, sans-serif';
+    ctx.font = '600 24px Poppins, sans-serif';
     ctx.fillStyle = '#34D399';
     ctx.fillText('CALENDAR PROGRESS', 600, 680);
     ctx.font = 'bold 72px JetBrains Mono, monospace';
@@ -151,15 +151,15 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
 
     // Card 4: Post-Workout Fuel Target
     drawCard(110, 860, 860, 200, 'rgba(30, 41, 59, 0.7)');
-    ctx.font = '600 24px Plus Jakarta Sans, sans-serif';
+    ctx.font = '600 24px Poppins, sans-serif';
     ctx.fillStyle = '#F59E0B';
     ctx.fillText('POST-WORKOUT REFUEL WINDOW (+45 MINS)', 160, 920);
-    ctx.font = 'bold 56px Outfit, sans-serif';
+    ctx.font = 'bold 56px Poppins, sans-serif';
     ctx.fillStyle = '#FFFFFF';
     ctx.fillText(`${postWorkoutProteinGrams}g High-Protein Target · Glycogen Refuel`, 160, 995);
 
     // Bottom Footer Watermark
-    ctx.font = '500 26px Plus Jakarta Sans, sans-serif';
+    ctx.font = '500 26px Poppins, sans-serif';
     ctx.fillStyle = '#64748B';
     ctx.fillText('No Equipment Required · Bed-Edge Pull-Ups & 3-1-1 Tempo Mastery', 110, 1190);
     ctx.fillText('Built with Morning 20 AI Fitness Studio', 110, 1235);
