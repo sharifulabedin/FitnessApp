@@ -1,4 +1,5 @@
 import React from 'react';
+import { Camera } from 'lucide-react';
 import { ExerciseItem } from '../utils/fitnessLogic';
 
 interface Props {
@@ -200,38 +201,112 @@ export const ExerciseBodyPositionSvg: React.FC<Props> = ({
   );
 };
 
-export const SharifAvatarSvg: React.FC<{ name?: string; className?: string }> = ({
+export interface AthleteAvatarProps {
+  name?: string;
+  avatarUrl?: string;
+  className?: string;
+  editable?: boolean;
+  onEdit?: () => void;
+  showBadge?: boolean;
+}
+
+export const SharifAvatarSvg: React.FC<AthleteAvatarProps> = ({
   name = 'Sharif',
+  avatarUrl = '',
   className = 'w-10 h-10',
+  editable = false,
+  onEdit,
+  showBadge = false,
 }) => {
+  const [imageError, setImageError] = React.useState(false);
   const initial = (name || 'S').charAt(0).toUpperCase();
-  return (
-    <svg
-      viewBox="0 0 64 64"
-      className={`${className} rounded-full shrink-0`}
-      role="img"
-      aria-label={`${name} profile avatar`}
-    >
-      <defs>
-        <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#F43F5E" />
-          <stop offset="100%" stopColor="#F59E0B" />
-        </linearGradient>
-      </defs>
-      <circle cx="32" cy="32" r="32" fill="url(#avatarGrad)" />
-      <circle cx="32" cy="24" r="10" fill="#FFF1F2" opacity="0.92" />
-      <path d="M16 54 C16 42 48 42 48 54" fill="#FFF1F2" opacity="0.92" />
-      <text
-        x="32"
-        y="28"
-        textAnchor="middle"
-        fill="#881337"
-        fontSize="11"
-        fontWeight="700"
-        fontFamily="Poppins, sans-serif"
-      >
-        {initial}
-      </text>
-    </svg>
+
+  // Reset error if avatarUrl changes
+  React.useEffect(() => {
+    setImageError(false);
+  }, [avatarUrl]);
+
+  const hasCustomImage = Boolean(avatarUrl && !imageError);
+
+  const avatarContent = (
+    <div className={`relative ${className} rounded-full shrink-0 select-none`}>
+      {hasCustomImage ? (
+        <img
+          src={avatarUrl}
+          alt={`${name} profile avatar`}
+          onError={() => setImageError(true)}
+          className="w-full h-full object-cover rounded-full border-2 border-white/80 dark:border-slate-800 shadow-sm"
+        />
+      ) : (
+        <svg
+          viewBox="0 0 64 64"
+          className="w-full h-full rounded-full shadow-sm"
+          role="img"
+          aria-label={`${name} profile avatar`}
+        >
+          <defs>
+            <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#F43F5E" />
+              <stop offset="100%" stopColor="#F59E0B" />
+            </linearGradient>
+          </defs>
+          <circle cx="32" cy="32" r="32" fill="url(#avatarGrad)" />
+          <circle cx="32" cy="24" r="10" fill="#FFF1F2" opacity="0.92" />
+          <path d="M16 54 C16 42 48 42 48 54" fill="#FFF1F2" opacity="0.92" />
+          <text
+            x="32"
+            y="28"
+            textAnchor="middle"
+            fill="#881337"
+            fontSize="11"
+            fontWeight="700"
+            fontFamily="Poppins, sans-serif"
+          >
+            {initial}
+          </text>
+        </svg>
+      )}
+
+      {(editable || onEdit || showBadge) && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit?.();
+          }}
+          title="Change profile picture"
+          aria-label="Change profile picture"
+          className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-slate-900 text-white hover:bg-rose-600 flex items-center justify-center shadow-md border-2 border-white dark:border-slate-900 transition-colors cursor-pointer group"
+        >
+          <Camera className="w-3 h-3 group-hover:scale-110 transition-transform" />
+        </button>
+      )}
+    </div>
   );
+
+  if (onEdit && !editable) {
+    return (
+      <div
+        onClick={onEdit}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onEdit();
+          }
+        }}
+        title="Click to change profile picture"
+        aria-label="Change profile picture"
+        className="relative group cursor-pointer inline-flex rounded-full focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+      >
+        {avatarContent}
+        <div className="absolute inset-0 rounded-full bg-slate-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-semibold">
+          <Camera className="w-4 h-4 drop-shadow" />
+        </div>
+      </div>
+    );
+  }
+
+  return avatarContent;
 };

@@ -30,6 +30,8 @@ import {
   Shield,
   Trophy,
   Share2,
+  Zap,
+  Camera,
 } from 'lucide-react';
 import {
   UserProfile,
@@ -53,6 +55,12 @@ import {
   toggleDayShield,
   calculateMilestoneBadges,
   MAX_STREAK_SHIELDS,
+  logDayDuration,
+  calculateEfficiencyStats,
+  formatDurationMmSs,
+  formatDurationHuman,
+  formatHeight,
+  formatHeightWithBoth,
 } from './utils/fitnessLogic';
 import { ExerciseBodyPositionSvg, SharifAvatarSvg } from './components/ExerciseBodyPositionSvg';
 import { LiveWorkoutModal } from './components/LiveWorkoutModal';
@@ -61,6 +69,8 @@ import { WeeklyCompletionChart } from './components/WeeklyCompletionChart';
 import { PreWorkoutMobilitySection } from './components/PreWorkoutMobilitySection';
 import { MilestoneBadgesCard } from './components/MilestoneBadgesCard';
 import { WorkoutShareCardModal } from './components/WorkoutShareCardModal';
+import { LogDurationModal } from './components/LogDurationModal';
+import { ChangeProfilePicModal } from './components/ChangeProfilePicModal';
 import {
   GoogleLoginSplash,
   BaselineOnboardingModal,
@@ -117,6 +127,7 @@ export default function App() {
 
   const [showOnboardingModal, setShowOnboardingModal] = useState<boolean>(false);
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
+  const [showChangeAvatarModal, setShowChangeAvatarModal] = useState<boolean>(false);
 
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>(() => {
     try {
@@ -180,6 +191,7 @@ export default function App() {
   const [poppingTab, setPoppingTab] = useState<BottomNavSectionId | 'coach' | null>(null);
   const [celebrationBanner, setCelebrationBanner] = useState<boolean>(false);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
+  const [logDurationDayNumber, setLogDurationDayNumber] = useState<number | null>(null);
   const [shieldNotification, setShieldNotification] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     try {
@@ -431,6 +443,27 @@ export default function App() {
     setShowOnboardingModal(false);
   };
 
+  const handleSaveAvatar = (newAvatarUrl: string) => {
+    setProfile((prev) => ({
+      ...prev,
+      avatarUrl: newAvatarUrl,
+    }));
+  };
+
+  const handleToggleHeightUnit = () => {
+    setProfile((prev) => ({
+      ...prev,
+      heightUnit: prev.heightUnit === 'ft' ? 'cm' : 'ft',
+    }));
+  };
+
+  const handleSetHeightUnit = (unit: 'cm' | 'ft') => {
+    setProfile((prev) => ({
+      ...prev,
+      heightUnit: unit,
+    }));
+  };
+
   const handleToggleDay = (dayNumber: number) => {
     setCalendarDays((prev) => {
       if (didCompleteCalendarDay(prev, dayNumber)) {
@@ -455,6 +488,20 @@ export default function App() {
       handleToggleDay(today.dayNumber);
     }
   };
+
+  const handleSaveDayDuration = (dayNumber: number, durationSeconds: number) => {
+    setCalendarDays((prev) => {
+      if (durationSeconds > 0 && didCompleteCalendarDay(prev, dayNumber)) {
+        triggerCalendarCheckAnim(dayNumber);
+      }
+      return logDayDuration(prev, dayNumber, durationSeconds);
+    });
+  };
+
+  const efficiencyStats = useMemo(
+    () => calculateEfficiencyStats(calendarDays),
+    [calendarDays]
+  );
 
   const fireWorkoutCompletionConfetti = useCallback(() => {
     setCelebrationBanner(true);
@@ -499,7 +546,18 @@ export default function App() {
           if (today) {
             triggerCalendarCheckAnim(today.dayNumber);
           }
-          return days.map((d) => (d.isToday ? { ...d, completed: true } : d));
+          return days.map((d) =>
+            d.isToday
+              ? {
+                  ...d,
+                  completed: true,
+                  durationSeconds:
+                    sessionElapsedSeconds > 0
+                      ? sessionElapsedSeconds
+                      : d.durationSeconds || 1170,
+                }
+              : d
+          );
         });
       } else if (nextMainDone.length < mainIds.length) {
         setCelebrationBanner(false);
@@ -521,7 +579,18 @@ export default function App() {
           if (today) {
             triggerCalendarCheckAnim(today.dayNumber);
           }
-          return days.map((d) => (d.isToday ? { ...d, completed: true } : d));
+          return days.map((d) =>
+            d.isToday
+              ? {
+                  ...d,
+                  completed: true,
+                  durationSeconds:
+                    sessionElapsedSeconds > 0
+                      ? sessionElapsedSeconds
+                      : d.durationSeconds || 1170,
+                }
+              : d
+          );
         });
       }
       return Array.from(new Set([...prev, ...mainIds]));
@@ -655,10 +724,42 @@ export default function App() {
         >
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-6 border-b border-slate-100">
             <div className="flex items-center gap-4">
-              <SharifAvatarSvg name={profile.name} className="w-14 h-14" />
+              <div className="relative">
+                <SharifAvatarSvg
+                  name={profile.name}
+                  avatarUrl={profile.avatarUrl}
+                  className="w-14 h-14 sm:w-16 sm:h-16 shadow-md"
+                  onEdit={() => setShowChangeAvatarModal(true)}
+                  showBadge
+                />
+              </div>
               <div>
-                <div className="text-xs text-slate-500">
-                  Google Authenticated · {profile.email} · {profile.heightCm} cm
+                <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                  <span>Google Authenticated</span>
+                  <span>·</span>
+                  <span className="truncate max-w-[200px]">{profile.email}</span>
+                  <span>·</span>
+                  <span className="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-md font-mono text-slate-700">
+                    Height: <strong className="text-slate-900 font-bold">{formatHeight(profile.heightCm, profile.heightUnit)}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleToggleHeightUnit}
+                    title={`Click to switch height display to ${profile.heightUnit === 'ft' ? 'centimeters (cm)' : 'feet and inches (ft/in)'}`}
+                    aria-label={`Switch height display to ${profile.heightUnit === 'ft' ? 'centimeters' : 'feet and inches'}`}
+                    className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/60 transition-colors cursor-pointer"
+                  >
+                    Show in {profile.heightUnit === 'ft' ? 'cm' : 'ft & in'}
+                  </button>
+                  <span>·</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowChangeAvatarModal(true)}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 hover:text-rose-600 transition-colors cursor-pointer"
+                  >
+                    <Camera className="w-3 h-3" />
+                    <span>Change Photo</span>
+                  </button>
                 </div>
                 <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight text-balance">
                   Morning, {profile.name}. Ready for Day 12?
@@ -776,6 +877,7 @@ export default function App() {
           <WeeklyCompletionChart
             calendarDays={calendarDays}
             onToggleDay={handleToggleDay}
+            onOpenLogDuration={(dayNum) => setLogDurationDayNumber(dayNum)}
             darkMode={darkMode}
           />
         </section>
@@ -799,8 +901,17 @@ export default function App() {
             <div className="flex flex-wrap items-center gap-2.5">
               <button
                 type="button"
+                onClick={() => setLogDurationDayNumber(12)}
+                className="min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs flex items-center gap-1.5 transition-colors whitespace-nowrap"
+              >
+                <Clock className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Log Duration</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setShowShareModal(true)}
-                className="min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-xs flex items-center gap-1.5 transition-colors whitespace-nowrap"
+                className="min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs flex items-center gap-1.5 transition-colors whitespace-nowrap"
               >
                 <Share2 className="w-3.5 h-3.5 text-slate-500" />
                 <span>Share Card</span>
@@ -824,6 +935,61 @@ export default function App() {
                     ? "Today's Session Completed (Streak +1)"
                     : "Tick Off Today's 20-Min Session"}
                 </span>
+              </button>
+            </div>
+          </div>
+
+          {/* 30-Day Efficiency & Pace Improvements Hub */}
+          <div
+            data-testid="efficiency-tracker-hub"
+            className="mb-4 p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-sky-500/10 to-transparent border border-emerald-500/20 dark:border-emerald-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs"
+          >
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs font-semibold text-slate-800 dark:text-slate-200">
+                <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>
+                  Avg Pace:{' '}
+                  <strong className="font-mono tabular-nums text-slate-900 dark:text-white">
+                    {formatDurationHuman(efficiencyStats.averageDurationSeconds)}
+                  </strong>
+                </span>
+              </div>
+
+              {efficiencyStats.fastestDurationSeconds > 0 && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs font-semibold text-slate-800 dark:text-slate-200">
+                  <Zap className="w-4 h-4 text-amber-500" />
+                  <span>
+                    Fastest (Day {efficiencyStats.fastestDayNumber}):{' '}
+                    <strong className="font-mono tabular-nums text-emerald-600 dark:text-emerald-400">
+                      {formatDurationMmSs(efficiencyStats.fastestDurationSeconds)}
+                    </strong>
+                  </span>
+                </div>
+              )}
+
+              {efficiencyStats.improvementSeconds > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100/90 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 font-semibold">
+                  <span className="font-mono tabular-nums">
+                    ↓ {formatDurationHuman(efficiencyStats.improvementSeconds)} faster
+                  </span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-300 font-mono">
+                    (+{efficiencyStats.improvementPercent}% efficiency)
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 hidden xl:inline">
+                Track how much faster you complete the 20-min hypertrophy circuit over 30 days
+              </span>
+              <button
+                type="button"
+                onClick={() => setLogDurationDayNumber(12)}
+                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors whitespace-nowrap shadow-xs"
+              >
+                <Clock className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600" />
+                <span>Log Today&apos;s Time</span>
               </button>
             </div>
           </div>
@@ -1000,6 +1166,42 @@ export default function App() {
                       <Shield className="w-3.5 h-3.5 text-cyan-600 fill-cyan-500/20" />
                     )}
                   </div>
+
+                  {/* Logged Session Duration Pill */}
+                  {day.durationSeconds ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLogDurationDayNumber(day.dayNumber);
+                      }}
+                      title={`Logged Duration: ${formatDurationHuman(day.durationSeconds)}. Click to edit.`}
+                      className="mt-1.5 w-full px-1.5 py-0.5 rounded-md bg-black/10 dark:bg-white/10 hover:bg-black/15 dark:hover:bg-white/20 flex items-center justify-between text-[10px] font-mono tabular-nums font-semibold transition-colors"
+                    >
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-2.5 h-2.5 opacity-70" />
+                        <span>{formatDurationMmSs(day.durationSeconds)}</span>
+                      </span>
+                      {efficiencyStats.fastestDayNumber === day.dayNumber && (
+                        <span className="text-[9px] text-amber-500 font-bold" title="Fastest Personal Record">
+                          ⚡PR
+                        </span>
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLogDurationDayNumber(day.dayNumber);
+                      }}
+                      title="Click to log workout session duration"
+                      className="mt-1.5 w-full px-1.5 py-0.5 rounded-md border border-dashed border-slate-300 dark:border-slate-700 text-[10px] font-medium opacity-60 hover:opacity-100 flex items-center justify-center gap-1 transition-opacity"
+                    >
+                      <Clock className="w-2.5 h-2.5" />
+                      <span>Log Time</span>
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -1662,6 +1864,8 @@ export default function App() {
         completedExercises={completedExercises}
         prepChecklist={prepChecklist}
         onOpenRecalibrate={() => setShowOnboardingModal(true)}
+        onOpenChangeAvatar={() => setShowChangeAvatarModal(true)}
+        onUpdateHeightUnit={handleSetHeightUnit}
         onImportState={(payload) => {
           setProfile(payload.profile);
           setCalendarDays(payload.calendarDays);
@@ -1671,15 +1875,34 @@ export default function App() {
         onResetAllData={handleResetAllData}
       />
 
+      <ChangeProfilePicModal
+        isOpen={showChangeAvatarModal}
+        onClose={() => setShowChangeAvatarModal(false)}
+        currentAvatarUrl={profile.avatarUrl}
+        athleteName={profile.name}
+        onSaveAvatar={handleSaveAvatar}
+      />
+
       <WorkoutShareCardModal
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         profile={profile}
         activeStreak={streakStats.activeStreak}
         totalCompleted={streakStats.totalCompleted}
-        sessionElapsedSeconds={sessionElapsedSeconds}
+        sessionElapsedSeconds={
+          calendarDays.find((d) => d.isToday)?.durationSeconds || sessionElapsedSeconds
+        }
         postWorkoutProteinGrams={proteinTargets.postWorkoutGrams}
         todayDateLabel={calendarDays.find((d) => d.isToday)?.dateLabel || 'Today'}
+      />
+
+      <LogDurationModal
+        isOpen={logDurationDayNumber !== null}
+        onClose={() => setLogDurationDayNumber(null)}
+        calendarDays={calendarDays}
+        initialDayNumber={logDurationDayNumber ?? 12}
+        currentElapsedSeconds={sessionElapsedSeconds}
+        onSaveDuration={handleSaveDayDuration}
       />
     </div>
   );

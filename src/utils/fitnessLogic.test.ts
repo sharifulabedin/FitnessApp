@@ -24,6 +24,14 @@ import {
   calculateMilestoneBadges,
   generateWorkoutShareText,
   DEFAULT_USER_PROFILE,
+  formatDurationMmSs,
+  formatDurationHuman,
+  logDayDuration,
+  calculateEfficiencyStats,
+  formatHeight,
+  formatHeightCompact,
+  formatHeightWithBoth,
+  ATHLETIC_AVATAR_PRESETS,
 } from './fitnessLogic.ts';
 
 test('height conversion between cm and feet/inches is accurate', () => {
@@ -31,6 +39,22 @@ test('height conversion between cm and feet/inches is accurate', () => {
   assert.equal(feet, 5);
   assert.equal(inches, 9);
   assert.equal(feetInchesToCm(5, 9), 175);
+});
+
+test('formatHeight and formatHeightWithBoth format in cm and ft/in correctly', () => {
+  assert.equal(formatHeight(175, 'cm'), '175 cm');
+  assert.equal(formatHeight(175, 'ft'), '5 ft 9 in');
+  assert.equal(formatHeightCompact(175, 'ft'), '5\'9"');
+  assert.equal(formatHeightWithBoth(175, 'ft'), '5 ft 9 in (175 cm)');
+  assert.equal(formatHeightWithBoth(175, 'cm'), '175 cm (5 ft 9 in)');
+});
+
+test('athletic avatar presets generate valid SVG data URIs', () => {
+  assert.ok(ATHLETIC_AVATAR_PRESETS.length >= 8);
+  for (const preset of ATHLETIC_AVATAR_PRESETS) {
+    assert.ok(preset.svgDataUri.startsWith('data:image/svg+xml;utf8,'));
+    assert.ok(preset.name.length > 0);
+  }
 });
 
 test('daily protein target scales with target hypertrophy weight', () => {
@@ -274,4 +298,51 @@ test('generateWorkoutShareText outputs clean, formatted summary with stats', () 
   assert.match(text, /20:15/);
   assert.match(text, /43g Protein/);
 });
+
+test('formatDurationMmSs and formatDurationHuman format duration strings properly', () => {
+  assert.equal(formatDurationMmSs(1185), '19:45');
+  assert.equal(formatDurationMmSs(0), '--:--');
+  assert.equal(formatDurationMmSs(undefined), '--:--');
+
+  assert.equal(formatDurationHuman(1185), '19m 45s');
+  assert.equal(formatDurationHuman(1200), '20m');
+  assert.equal(formatDurationHuman(undefined), '--');
+});
+
+test('logDayDuration records session duration and marks day completed', () => {
+  const initialDays = generateInitial30DayCalendar(12);
+  const targetDay = initialDays.find((d) => d.dayNumber === 12);
+  assert.equal(targetDay?.completed, false);
+  assert.equal(targetDay?.durationSeconds, undefined);
+
+  const updated = logDayDuration(initialDays, 12, 1155); // 19m 15s
+  const updatedDay = updated.find((d) => d.dayNumber === 12);
+  assert.equal(updatedDay?.completed, true);
+  assert.equal(updatedDay?.durationSeconds, 1155);
+});
+
+test('calculateEfficiencyStats tracks baseline, fastest, and efficiency improvement accurately', () => {
+  const initialDays = generateInitial30DayCalendar(12);
+  const stats = calculateEfficiencyStats(initialDays);
+
+  // Initial days 8, 9, 10, 11 have 1395, 1324, 1252, 1180
+  assert.equal(stats.completedWithDurationCount, 4);
+  assert.equal(stats.baselineDurationSeconds, 1395); // 23m 15s (Day 8)
+  assert.equal(stats.latestDurationSeconds, 1180);   // 19m 40s (Day 11)
+  assert.equal(stats.fastestDurationSeconds, 1180);  // Day 11 is fastest
+  assert.equal(stats.fastestDayNumber, 11);
+  assert.equal(stats.improvementSeconds, 215);       // 1395 - 1180 = 215s faster
+  assert.equal(stats.improvementPercent, 15.4);      // (215 / 1395) * 100 = 15.4%
+  assert.equal(stats.paceTrend, 'improving');
+
+  // When logging Day 12 with an even faster time of 1110s (18m 30s)
+  const daysWithDay12 = logDayDuration(initialDays, 12, 1110);
+  const updatedStats = calculateEfficiencyStats(daysWithDay12);
+  assert.equal(updatedStats.completedWithDurationCount, 5);
+  assert.equal(updatedStats.fastestDurationSeconds, 1110);
+  assert.equal(updatedStats.fastestDayNumber, 12);
+  assert.equal(updatedStats.improvementSeconds, 285); // 1395 - 1110 = 285s
+  assert.equal(updatedStats.improvementPercent, 20.4);
+});
+
 

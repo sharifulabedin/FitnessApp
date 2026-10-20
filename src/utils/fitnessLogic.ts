@@ -19,6 +19,7 @@ export interface CalendarDay {
   completed: boolean;
   isToday: boolean;
   isShielded?: boolean;
+  durationSeconds?: number; // total session duration elapsed in seconds
 }
 
 export interface ExerciseItem {
@@ -163,6 +164,127 @@ export function cmToFeetInches(cm: number): { feet: number; inches: number } {
 export function feetInchesToCm(feet: number, inches: number): number {
   return Math.round((feet * 12 + inches) * 2.54);
 }
+
+export function formatHeight(heightCm: number, unit: 'cm' | 'ft'): string {
+  if (unit === 'ft') {
+    const { feet, inches } = cmToFeetInches(heightCm);
+    return `${feet} ft ${inches} in`;
+  }
+  return `${Math.round(heightCm)} cm`;
+}
+
+export function formatHeightCompact(heightCm: number, unit: 'cm' | 'ft'): string {
+  if (unit === 'ft') {
+    const { feet, inches } = cmToFeetInches(heightCm);
+    return `${feet}'${inches}"`;
+  }
+  return `${Math.round(heightCm)} cm`;
+}
+
+export function formatHeightWithBoth(heightCm: number, unit: 'cm' | 'ft'): string {
+  const { feet, inches } = cmToFeetInches(heightCm);
+  const ftIn = `${feet} ft ${inches} in`;
+  const cmStr = `${Math.round(heightCm)} cm`;
+  if (unit === 'ft') {
+    return `${ftIn} (${cmStr})`;
+  }
+  return `${cmStr} (${ftIn})`;
+}
+
+export interface AvatarPreset {
+  id: string;
+  name: string;
+  tagline: string;
+  symbol: string;
+  fromColor: string;
+  toColor: string;
+  svgDataUri: string;
+}
+
+export function generatePresetSvgDataUri(
+  fromColor: string,
+  toColor: string,
+  symbol: string,
+  accent = '#FFFFFF'
+): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128"><defs><linearGradient id="grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${fromColor}"/><stop offset="100%" stop-color="${toColor}"/></linearGradient></defs><rect width="128" height="128" rx="64" fill="url(#grad)"/><circle cx="64" cy="64" r="54" fill="none" stroke="${accent}" stroke-width="2.5" opacity="0.35"/><text x="64" y="77" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="44" fill="${accent}">${symbol}</text></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+export const ATHLETIC_AVATAR_PRESETS: AvatarPreset[] = [
+  {
+    id: 'titan-flame',
+    name: 'Titan Flame',
+    tagline: 'Hypertrophy Power',
+    symbol: '🔥',
+    fromColor: '#F43F5E',
+    toColor: '#FB923C',
+    svgDataUri: generatePresetSvgDataUri('#F43F5E', '#FB923C', '🔥'),
+  },
+  {
+    id: 'volt-athlete',
+    name: 'Volt Athlete',
+    tagline: 'High-Power Calisthenics',
+    symbol: '⚡',
+    fromColor: '#06B6D4',
+    toColor: '#3B82F6',
+    svgDataUri: generatePresetSvgDataUri('#06B6D4', '#3B82F6', '⚡'),
+  },
+  {
+    id: 'iron-will',
+    name: 'Iron Monolith',
+    tagline: 'Titanium Discipline',
+    symbol: '🦾',
+    fromColor: '#475569',
+    toColor: '#0F172A',
+    svgDataUri: generatePresetSvgDataUri('#475569', '#0F172A', '🦾'),
+  },
+  {
+    id: 'emerald-flow',
+    name: 'Emerald Zen',
+    tagline: 'Mobility & Recovery',
+    symbol: '🌿',
+    fromColor: '#10B981',
+    toColor: '#047857',
+    svgDataUri: generatePresetSvgDataUri('#10B981', '#047857', '🌿'),
+  },
+  {
+    id: 'gold-spartan',
+    name: 'Golden Champion',
+    tagline: 'Elite 30-Day Finisher',
+    symbol: '👑',
+    fromColor: '#F59E0B',
+    toColor: '#D97706',
+    svgDataUri: generatePresetSvgDataUri('#F59E0B', '#D97706', '👑'),
+  },
+  {
+    id: 'cosmic-surge',
+    name: 'Cosmic Surge',
+    tagline: 'Explosive Drive',
+    symbol: '✨',
+    fromColor: '#8B5CF6',
+    toColor: '#EC4899',
+    svgDataUri: generatePresetSvgDataUri('#8B5CF6', '#EC4899', '✨'),
+  },
+  {
+    id: 'ocean-power',
+    name: 'Deep Ocean',
+    tagline: 'Calm & Unstoppable',
+    symbol: '🌊',
+    fromColor: '#0284C7',
+    toColor: '#1E40AF',
+    svgDataUri: generatePresetSvgDataUri('#0284C7', '#1E40AF', '🌊'),
+  },
+  {
+    id: 'sunrise-morning',
+    name: 'Morning 20 Sunrise',
+    tagline: 'Early Dawn Calisthenics',
+    symbol: '🌅',
+    fromColor: '#FB7185',
+    toColor: '#FBBF24',
+    svgDataUri: generatePresetSvgDataUri('#FB7185', '#FBBF24', '🌅'),
+  },
+];
 
 export function calculateDailyProteinTarget(currentWeightKg: number, targetWeightKg: number): {
   gramsPerDay: number;
@@ -326,8 +448,18 @@ export function generateInitial30DayCalendar(todayDayNumber = 12): CalendarDay[]
     const monthShort = d.toLocaleString('en-US', { month: 'short' });
     const dayOfMonth = d.getDate();
     const isRecoveryDay = i % 7 === 0;
-    // Pre-mark days 8, 9, 10, 11 as completed so the user starts with a realistic 4-day streak ready to become 5 today
+    // Pre-mark days 8, 9, 10, 11 as completed with logged durations demonstrating progression
     const completed = i >= todayDayNumber - 4 && i < todayDayNumber;
+    let durationSeconds: number | undefined = undefined;
+    if (completed) {
+      const historicalDurations: Record<number, number> = {
+        8: 1395, // Day 8: 23m 15s (initial baseline)
+        9: 1324, // Day 9: 22m 04s (-1m 11s)
+        10: 1252, // Day 10: 20m 52s (-1m 12s)
+        11: 1180, // Day 11: 19m 40s (-1m 12s)
+      };
+      durationSeconds = historicalDurations[i] || 1200;
+    }
 
     days.push({
       dayNumber: i,
@@ -336,6 +468,7 @@ export function generateInitial30DayCalendar(todayDayNumber = 12): CalendarDay[]
       isRecoveryDay,
       completed,
       isToday: i === todayDayNumber,
+      durationSeconds,
     });
   }
   return days;
@@ -446,6 +579,120 @@ export function toggleCalendarDay(days: CalendarDay[], dayNumber: number): Calen
 export function didCompleteCalendarDay(days: CalendarDay[], dayNumber: number): boolean {
   const target = days.find((d) => d.dayNumber === dayNumber);
   return target ? !target.completed : false;
+}
+
+export function logDayDuration(
+  days: CalendarDay[],
+  dayNumber: number,
+  durationSeconds: number
+): CalendarDay[] {
+  const safeDuration = Math.max(0, Math.floor(Number.isFinite(durationSeconds) ? durationSeconds : 0));
+  return days.map((day) =>
+    day.dayNumber === dayNumber
+      ? {
+          ...day,
+          completed: safeDuration > 0 ? true : day.completed,
+          durationSeconds: safeDuration > 0 ? safeDuration : undefined,
+        }
+      : day
+  );
+}
+
+export function formatDurationMmSs(seconds?: number): string {
+  if (typeof seconds !== 'number' || seconds <= 0 || !Number.isFinite(seconds)) {
+    return '--:--';
+  }
+  const safe = Math.floor(seconds);
+  const m = Math.floor(safe / 60);
+  const s = Math.floor(safe % 60);
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+export function formatDurationHuman(seconds?: number): string {
+  if (typeof seconds !== 'number' || seconds <= 0 || !Number.isFinite(seconds)) {
+    return '--';
+  }
+  const safe = Math.floor(seconds);
+  const m = Math.floor(safe / 60);
+  const s = Math.floor(safe % 60);
+  if (s === 0) return `${m}m`;
+  return `${m}m ${String(s).padStart(2, '0')}s`;
+}
+
+export interface EfficiencyStats {
+  completedWithDurationCount: number;
+  averageDurationSeconds: number;
+  fastestDurationSeconds: number;
+  slowestDurationSeconds: number;
+  baselineDurationSeconds: number;
+  latestDurationSeconds: number;
+  improvementSeconds: number; // positive = faster than baseline
+  improvementPercent: number; // positive = percentage time reduction
+  paceTrend: 'improving' | 'steady' | 'slower' | 'insufficient_data';
+  fastestDayNumber: number | null;
+}
+
+export function calculateEfficiencyStats(days: CalendarDay[]): EfficiencyStats {
+  const loggedDays = days
+    .filter((d) => d.completed && typeof d.durationSeconds === 'number' && d.durationSeconds > 0)
+    .sort((a, b) => a.dayNumber - b.dayNumber);
+
+  if (loggedDays.length === 0) {
+    return {
+      completedWithDurationCount: 0,
+      averageDurationSeconds: 0,
+      fastestDurationSeconds: 0,
+      slowestDurationSeconds: 0,
+      baselineDurationSeconds: 0,
+      latestDurationSeconds: 0,
+      improvementSeconds: 0,
+      improvementPercent: 0,
+      paceTrend: 'insufficient_data',
+      fastestDayNumber: null,
+    };
+  }
+
+  const totalSecs = loggedDays.reduce((acc, d) => acc + (d.durationSeconds || 0), 0);
+  const averageDurationSeconds = Math.round(totalSecs / loggedDays.length);
+
+  let fastest = loggedDays[0];
+  let slowest = loggedDays[0];
+  for (const d of loggedDays) {
+    if ((d.durationSeconds || 0) < (fastest.durationSeconds || Infinity)) fastest = d;
+    if ((d.durationSeconds || 0) > (slowest.durationSeconds || 0)) slowest = d;
+  }
+
+  const baselineDurationSeconds = loggedDays[0].durationSeconds || 0;
+  const latestDurationSeconds = loggedDays[loggedDays.length - 1].durationSeconds || 0;
+  const improvementSeconds = baselineDurationSeconds - latestDurationSeconds;
+  const improvementPercent =
+    baselineDurationSeconds > 0
+      ? Math.round(((baselineDurationSeconds - latestDurationSeconds) / baselineDurationSeconds) * 1000) / 10
+      : 0;
+
+  let paceTrend: 'improving' | 'steady' | 'slower' | 'insufficient_data' = 'insufficient_data';
+  if (loggedDays.length >= 2) {
+    if (improvementSeconds > 15) {
+      paceTrend = 'improving';
+    } else if (improvementSeconds < -15) {
+      paceTrend = 'slower';
+    } else {
+      paceTrend = 'steady';
+    }
+  }
+
+  return {
+    completedWithDurationCount: loggedDays.length,
+    averageDurationSeconds,
+    fastestDurationSeconds: fastest.durationSeconds || 0,
+    slowestDurationSeconds: slowest.durationSeconds || 0,
+    baselineDurationSeconds,
+    latestDurationSeconds,
+    improvementSeconds,
+    improvementPercent,
+    paceTrend,
+    fastestDayNumber: fastest.dayNumber,
+  };
 }
 
 /**
@@ -651,6 +898,8 @@ export interface WeeklyProgressPoint {
   isToday: boolean;
   isRecoveryDay: boolean;
   minutesLogged: number;
+  durationSeconds?: number;
+  formattedDuration: string;
   barValue: number; // 100 when completed, 18 when pending/missed for visible Recharts bar track
   statusLabel: string;
 }
@@ -669,12 +918,22 @@ export function getLast7DaysCompletionData(days: CalendarDay[]): {
   const slice = days.slice(startIdx, endIdx + 1);
 
   const points: WeeklyProgressPoint[] = slice.map((d) => {
-    const minutesLogged = d.completed ? 20 : 0;
+    const minutesLogged = d.durationSeconds
+      ? Math.round((d.durationSeconds / 60) * 10) / 10
+      : d.completed
+      ? 20
+      : 0;
+    const formattedDuration = formatDurationHuman(d.durationSeconds);
     const barValue = d.completed ? 100 : 18;
+    const durationLabel = d.durationSeconds
+      ? ` (${formatDurationHuman(d.durationSeconds)})`
+      : d.completed
+      ? ' (20m)'
+      : '';
     const statusLabel = d.completed
       ? d.isRecoveryDay
-        ? 'Recovery Logged (20m)'
-        : 'Session Completed (20m)'
+        ? `Recovery Logged${durationLabel}`
+        : `Session Completed${durationLabel}`
       : d.isToday
       ? 'Today (Ready for 20m)'
       : d.isRecoveryDay
@@ -689,6 +948,8 @@ export function getLast7DaysCompletionData(days: CalendarDay[]): {
       isToday: d.isToday,
       isRecoveryDay: d.isRecoveryDay,
       minutesLogged,
+      durationSeconds: d.durationSeconds,
+      formattedDuration,
       barValue,
       statusLabel,
     };
