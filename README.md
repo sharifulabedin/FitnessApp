@@ -76,6 +76,12 @@ Unlocks strictly after all workout exercises are checked off:
 - **Live Interactive SVG Visualizer:** Animated human stick figure reflecting precise eccentric body depth factors in real time.
 - **Session Stopwatch:** Displays `Total Time: XX:XX` in the circuit header, auto-starting when the first exercise begins, with inline Play/Pause and Reset controls.
 
+### Session Duration Logging & 30-Day Efficiency Tracking
+- **Day-by-Day Duration Badges:** Log exact workout durations (`MM:SS`) for every calendar day to monitor how session speed and work capacity progress over the 30-day program.
+- **Efficiency Improvements Hub:** Real-time metrics tracking **Average Pace**, **Fastest Personal Record (⚡PR)**, and **Time Saved / Improvement Percentage** compared against the program baseline.
+- **Interactive Duration Logger Modal:** Quick dials, preset buttons (`18m 30s` to `22m 15s`), and a one-click button to capture current live stopwatch elapsed time.
+- **Dual-Mode 7-Day Chart:** Toggle between **Consistency (%)** and **Duration & Pace (Min)** with a 20m target benchmark line in the Weekly Completion bar chart.
+
 ### 30-Day Streak Calendar & Streak Shields
 - **30-Day Horizontal Consistency Strip:** Real-time logging with active days, today indicator, and every 7th day designated as Active Recovery.
 - **Rewarding Checkmark Spring Animation:** Custom CSS spring scale animation (`scale(0.35) → scale(1.28) → scale(1)`) providing tactile visual feedback when completing sessions.
