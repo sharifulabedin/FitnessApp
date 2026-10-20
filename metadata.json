@@ -1,0 +1,6 @@
+{
+  "name": "Morning 20: AI Fitness & Streak Tracker",
+  "description": "A 20-minute morning bodyweight hypertrophy tracker with a 30-day streak calendar, live 3-1-1 tempo workout timer, Gemini AI fitness coach, and high-resolution visual generator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
