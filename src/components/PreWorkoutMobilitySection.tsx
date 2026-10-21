@@ -203,7 +203,7 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
       osc.start();
       osc.stop(ctx.currentTime + durationMs / 1000);
     } catch {
-      // Audio not supported in environment
+      // Audio context autoplay restrictions handled
     }
   };
 
@@ -213,16 +213,15 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
       timer = window.setInterval(() => {
         setSecondsLeft((prev) => {
           if (prev <= 1) {
-            // Finished
-            playCueSound(880, 240);
-            if (activeTimerId && !completedMobilityIds.includes(activeTimerId)) {
+            playCueSound(880, 250);
+            if (!completedMobilityIds.includes(activeTimerId)) {
               onToggleMobility(activeTimerId);
             }
             setActiveTimerId(null);
             return 45;
           }
           if (prev <= 4) {
-            playCueSound(520, 80);
+            playCueSound(540, 60);
           }
           return prev - 1;
         });
@@ -254,25 +253,25 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
   return (
     <div
       data-testid="pre-workout-dynamic-mobility-section"
-      className="bg-white border border-slate-200 rounded-3xl p-6 transition-all"
+      className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 transition-all bento-card-tactile"
     >
       {/* Header with Title and Primed Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
         <div>
           <div className="flex items-center gap-2 text-xs font-mono text-rose-500 font-semibold tracking-wider">
             <Activity className="w-3.5 h-3.5" />
             <span>PHASE 2A · PRE-WORKOUT DYNAMIC MOBILITY (2-3 MINS)</span>
           </div>
-          <h3 className="text-xl font-bold text-slate-900 mt-1 flex items-center gap-2">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-1 flex items-center gap-2">
             <span>Pre-Workout Dynamic Mobility</span>
             {isAllPrimed && (
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-medium flex items-center gap-1 font-mono">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300/40 font-medium flex items-center gap-1 font-mono">
                 <Check className="w-3 h-3 stroke-[3]" />
                 Joints Ready
               </span>
             )}
           </h3>
-          <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">
             Perform these 3 light-intensity joint preparation exercises before starting Round 1 of your heavy 3-1-1 circuit. Lubricates the glenohumeral, hip acetabular, and thoracic joints with active synovial fluid to prevent impingement and maximize range of motion.
           </p>
         </div>
@@ -282,10 +281,10 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
             type="button"
             onClick={() => setSoundEnabled((prev) => !prev)}
             aria-label={soundEnabled ? 'Mute timer sound' : 'Enable timer sound'}
-            className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
+            className="min-h-[44px] min-w-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors tactile-button focus-ring-tactile"
           >
             {soundEnabled ? (
-              <Volume2 className="w-4 h-4 text-emerald-600" />
+              <Volume2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             ) : (
               <VolumeX className="w-4 h-4 text-slate-400" />
             )}
@@ -295,10 +294,10 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
             type="button"
             onClick={() => onSetAllMobility(!isAllPrimed)}
             data-testid="toggle-all-mobility-btn"
-            className={`min-h-[40px] px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+            className={`min-h-[44px] px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap tactile-button focus-ring-tactile ${
               isAllPrimed
-                ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
-                : 'bg-slate-900 text-white hover:bg-slate-800'
+                ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800'
+                : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-white shadow-xs'
             }`}
           >
             {isAllPrimed ? (
@@ -308,7 +307,7 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
               </>
             ) : (
               <>
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <Sparkles className="w-3.5 h-3.5 text-amber-300 dark:text-amber-500" />
                 <span>Prime All 3 Drills</span>
               </>
             )}
@@ -318,13 +317,13 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
 
       {/* Progress Track */}
       <div className="mt-3 flex items-center justify-between gap-4 text-xs">
-        <span className="text-slate-500">
+        <span className="text-slate-500 dark:text-slate-400">
           Joint Readiness:{' '}
-          <strong className="text-slate-900 font-mono tabular-nums">
+          <strong className="text-slate-900 dark:text-white font-mono tabular-nums">
             {completedCount} / {totalRequired} Drills Primed ({completionPercent}%)
           </strong>
         </span>
-        <div className="w-32 sm:w-44 h-2 bg-slate-100 rounded-full overflow-hidden">
+        <div className="w-32 sm:w-44 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
           <div
             className="h-full bg-emerald-500 transition-all duration-300 rounded-full"
             style={{ width: `${completionPercent}%` }}
@@ -344,25 +343,25 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
               data-testid={`mobility-card-${drill.id}`}
               className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
                 isDone
-                  ? 'bg-emerald-50/30 border-emerald-300'
+                  ? 'bg-emerald-50/40 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800/80 shadow-2xs'
                   : isTimerActive
-                  ? 'bg-rose-50/20 border-rose-300 shadow-sm'
-                  : 'bg-slate-50/60 border-slate-200 hover:border-slate-300'
+                  ? 'bg-rose-50/30 dark:bg-rose-950/30 border-rose-300 dark:border-rose-900 shadow-sm'
+                  : 'bg-slate-50/70 dark:bg-slate-800/60 border-slate-200/90 dark:border-slate-700/80 hover:border-slate-300 dark:hover:border-slate-600'
               }`}
             >
               <div>
                 {/* Header Metadata */}
-                <div className="flex items-center justify-between text-xs font-mono tabular-nums text-slate-500">
+                <div className="flex items-center justify-between text-xs font-mono tabular-nums text-slate-500 dark:text-slate-400">
                   <span className="font-semibold text-rose-500">{drill.stepNumber}</span>
-                  <span className="text-[11px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60">
+                  <span className="text-[11px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 px-2 py-0.5 rounded-md border border-amber-200/60 dark:border-amber-800/60 font-medium">
                     {drill.intensity}
                   </span>
                 </div>
 
-                <h4 className="text-sm font-bold text-slate-900 mt-1.5 leading-snug">
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-1.5 leading-snug">
                   {drill.name}
                 </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
                   {drill.subtitle}
                 </p>
 
@@ -376,20 +375,20 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
 
                 {/* Prescribed reps and benefit */}
                 <div className="mt-3 space-y-1.5">
-                  <div className="text-xs font-mono tabular-nums text-slate-800">
-                    Target: <strong className="text-slate-900 font-semibold">{drill.repsLabel}</strong>
+                  <div className="text-xs font-mono tabular-nums text-slate-800 dark:text-slate-200">
+                    Target: <strong className="text-slate-900 dark:text-white font-semibold">{drill.repsLabel}</strong>
                   </div>
-                  <div className="text-[11px] text-slate-500 leading-snug">
-                    <span className="font-medium text-slate-700">Joints:</span> {drill.targetJoints}
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+                    <span className="font-medium text-slate-700 dark:text-slate-300">Joints:</span> {drill.targetJoints}
                   </div>
-                  <div className="text-[11px] text-slate-600 bg-white/70 border border-slate-200/80 rounded-xl p-2.5 leading-relaxed">
+                  <div className="text-[11px] text-slate-600 dark:text-slate-300 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-700/80 rounded-xl p-2.5 leading-relaxed shadow-2xs">
                     {drill.jointBenefits}
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons & Timer */}
-              <div className="mt-4 pt-3 border-t border-slate-200/70 flex items-center gap-2">
+              <div className="mt-4 pt-3 border-t border-slate-200/70 dark:border-slate-700/70 flex items-center gap-2">
                 {/* Interactive 45s countdown timer button */}
                 <button
                   type="button"
@@ -399,10 +398,10 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
                       ? `Pause ${drill.name} timer at ${secondsLeft}s`
                       : `Start 45s timer for ${drill.name}`
                   }
-                  className={`flex-1 min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap shrink-0 ${
+                  className={`flex-1 min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap shrink-0 tactile-button focus-ring-tactile ${
                     isTimerActive
                       ? 'bg-rose-500 text-white shadow-xs'
-                      : 'bg-slate-900 text-white hover:bg-slate-800'
+                      : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-white shadow-2xs'
                   }`}
                 >
                   {isTimerActive ? (
@@ -423,7 +422,7 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
                     type="button"
                     onClick={() => handleResetTimer(drill.id)}
                     aria-label={`Reset ${drill.name} timer`}
-                    className="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
+                    className="min-h-[44px] min-w-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors tactile-button focus-ring-tactile"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                   </button>
@@ -434,16 +433,16 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
                   type="button"
                   onClick={() => onToggleMobility(drill.id)}
                   aria-label={isDone ? `Mark ${drill.name} unprimed` : `Mark ${drill.name} primed`}
-                  className={`min-h-[40px] min-w-[40px] px-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center transition-colors shrink-0 ${
+                  className={`min-h-[44px] min-w-[44px] px-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center transition-colors shrink-0 tactile-button focus-ring-tactile ${
                     isDone
-                      ? 'bg-emerald-600 border-emerald-600 text-white'
-                      : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
+                      ? 'bg-emerald-600 border-emerald-600 text-white shadow-xs'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                   }`}
                 >
                   {isDone ? (
                     <CheckCircle2 className="w-4 h-4 text-white" />
                   ) : (
-                    <Check className="w-4 h-4 text-slate-400" />
+                    <Check className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                   )}
                 </button>
               </div>

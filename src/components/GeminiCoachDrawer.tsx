@@ -47,6 +47,18 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
     }
   }, [isOpen, messages.length]);
 
+  // Handle Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const sendMessage = async (promptText: string) => {
@@ -142,24 +154,28 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex justify-end"
+      className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex justify-end animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
       aria-labelledby="gemini-coach-drawer-title"
+      onClick={onClose}
     >
-      <div className="w-full max-w-lg bg-white h-full shadow-2xl border-l border-slate-200 flex flex-col justify-between">
+      <div
+        className="w-full max-w-lg bg-white dark:bg-slate-900 h-full shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col justify-between"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Drawer Header */}
-        <div className="p-5 border-b border-slate-200 bg-slate-50/70">
+        <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/90">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-rose-500 text-white flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm">
                 <Bot className="w-5 h-5" />
               </div>
               <div>
-                <h2 id="gemini-coach-drawer-title" className="text-lg font-bold text-slate-900">
+                <h2 id="gemini-coach-drawer-title" className="text-lg font-bold text-slate-900 dark:text-white">
                   Gemini AI Fitness Coach
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Tailored for {profile.name} · {profile.currentWeightKg}kg → {profile.targetWeightKg}kg · {activeStreak}d Streak
                 </p>
               </div>
@@ -169,7 +185,7 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
                 type="button"
                 onClick={handleClearChat}
                 aria-label="Reset conversation history"
-                className="min-h-[44px] min-w-[44px] rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 flex items-center justify-center transition-colors"
+                className="min-h-[44px] min-w-[44px] rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800 flex items-center justify-center transition-colors tactile-button focus-ring-tactile"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -177,7 +193,7 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
                 type="button"
                 onClick={onClose}
                 aria-label="Close Gemini Coach drawer"
-                className="min-h-[44px] min-w-[44px] rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 flex items-center justify-center transition-colors"
+                className="min-h-[44px] min-w-[44px] rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800 flex items-center justify-center transition-colors tactile-button focus-ring-tactile"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -185,39 +201,39 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
           </div>
 
           {/* Model Tier Selector */}
-          <div className="mt-3 flex items-center justify-between gap-2 bg-slate-200/70 p-1 rounded-xl">
+          <div className="mt-3.5 flex items-center justify-between gap-1.5 bg-slate-200/80 dark:bg-slate-800 p-1 rounded-xl border border-slate-300/40 dark:border-slate-700 shadow-inner">
             <button
               type="button"
               onClick={() => setSelectedModel('gemini-4-argon')}
-              className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
+              className={`flex-1 min-h-[34px] py-1.5 px-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 tactile-button ${
                 selectedModel === 'gemini-4-argon'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-bold'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              Argon 4 (Deep)
+              Argon 4
             </button>
             <button
               type="button"
               onClick={() => setSelectedModel('gemini-3.8-flash')}
-              className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
+              className={`flex-1 min-h-[34px] py-1.5 px-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 tactile-button ${
                 selectedModel === 'gemini-3.8-flash'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-bold'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              3.8 Flash (Balanced)
+              3.8 Flash
             </button>
             <button
               type="button"
               onClick={() => setSelectedModel('gemini-3.1-flash-lite')}
-              className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
+              className={`flex-1 min-h-[34px] py-1.5 px-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 tactile-button ${
                 selectedModel === 'gemini-3.1-flash-lite'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-bold'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              3.1 Lite (Fast)
+              3.1 Lite
             </button>
           </div>
         </div>
@@ -225,7 +241,7 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
         {/* Scrollable Message Thread */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {apiNotice && (
-            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+            <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-900 dark:text-amber-200 shadow-2xs">
               {apiNotice}
             </div>
           )}
@@ -236,15 +252,15 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
               className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
             >
               <div
-                className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line ${
+                className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line shadow-2xs ${
                   msg.role === 'user'
-                    ? 'bg-rose-500 text-white rounded-br-xs'
-                    : 'bg-slate-100 text-slate-800 border border-slate-200/80 rounded-bl-xs'
+                    ? 'bg-rose-500 text-white rounded-br-xs shadow-rose-500/20'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200/80 dark:border-slate-700/80 rounded-bl-xs'
                 }`}
               >
                 {msg.text.split(/(\*\*.*?\*\*)/g).map((part, i) =>
                   part.startsWith('**') && part.endsWith('**') ? (
-                    <strong key={i} className="font-bold text-slate-950">
+                    <strong key={i} className="font-bold text-slate-950 dark:text-white">
                       {part.slice(2, -2)}
                     </strong>
                   ) : (
@@ -252,7 +268,7 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
                   )
                 )}
               </div>
-              <div className="mt-1 text-[11px] text-slate-400 font-mono tabular-nums">
+              <div className="mt-1 text-[11px] text-slate-400 dark:text-slate-500 font-mono tabular-nums">
                 {msg.role === 'user' ? profile.name : `Coach · ${msg.modelUsed || 'gemini-4-argon'}`} · {msg.timestamp}
               </div>
             </div>
@@ -260,7 +276,7 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
 
           {isLoading && (
             <div className="flex items-start">
-              <div className="bg-slate-100 border border-slate-200 rounded-2xl px-4 py-3 text-xs text-slate-600 font-medium">
+              <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-xs text-slate-600 dark:text-slate-300 font-medium animate-pulse">
                 Analyzing {profile.name}&apos;s hypertrophy baselines with {selectedModel}...
               </div>
             </div>
@@ -270,8 +286,8 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
         </div>
 
         {/* Quick Prompts & Input Bar */}
-        <div className="p-4 border-t border-slate-200 bg-white">
-          <div className="text-xs font-medium text-slate-500 mb-2">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">
             Quick Coaching Questions:
           </div>
           <div className="flex gap-2 overflow-x-auto pb-2">
@@ -280,14 +296,14 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
                 key={idx}
                 type="button"
                 onClick={() => sendMessage(q)}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-700 text-xs font-medium transition-colors whitespace-nowrap shrink-0"
+                className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-slate-700 hover:text-rose-700 dark:hover:text-rose-300 text-slate-700 dark:text-slate-300 text-xs font-medium transition-colors whitespace-nowrap shrink-0 border border-slate-200/60 dark:border-slate-700 tactile-button focus-ring-tactile"
               >
                 {q}
               </button>
             ))}
           </div>
 
-          <form onSubmit={handleFormSubmit} className="mt-2 flex items-center gap-2">
+          <form onSubmit={handleFormSubmit} className="mt-2.5 flex items-center gap-2">
             <label htmlFor="coach-chat-input" className="sr-only">
               Ask Gemini Fitness Coach
             </label>
@@ -297,13 +313,13 @@ export const GeminiCoachDrawer: React.FC<Props> = ({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about sore muscles, push-up modifications, or protein meals..."
-              className="flex-1 min-h-[46px] px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white"
+              className="flex-1 min-h-[48px] px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900 shadow-inner"
             />
             <button
               type="submit"
               disabled={!input.trim() || isLoading}
               aria-label="Send message to Gemini Coach"
-              className="min-h-[46px] px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 disabled:opacity-40 text-white font-semibold text-sm flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap shrink-0"
+              className="min-h-[48px] px-5 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 disabled:opacity-40 text-white font-semibold text-sm flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap shrink-0 tactile-button focus-ring-tactile shadow-md shadow-rose-500/20"
             >
               <Send className="w-4 h-4" />
               <span>Ask</span>

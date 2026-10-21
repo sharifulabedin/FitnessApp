@@ -30,7 +30,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, chartMod
   const item = payload[0].payload;
 
   return (
-    <div className="rounded-xl bg-slate-900 text-white px-3.5 py-2.5 shadow-lg border border-slate-700 text-xs">
+    <div className="rounded-2xl bg-slate-900/95 text-white px-4 py-3 shadow-2xl border border-slate-700/80 text-xs backdrop-blur-md">
       <div className="font-semibold flex items-center justify-between gap-3">
         <span>Day {item.dayNumber} · {item.dateLabel} ({item.dayShort})</span>
         {item.durationSeconds ? (
@@ -49,7 +49,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, chartMod
             : `Over 20m target by ${Math.round((item.minutesLogged - 20) * 10) / 10}m`}
         </div>
       )}
-      <div className="text-[10px] text-amber-300 mt-1">
+      <div className="text-[10px] text-amber-300 mt-1 font-medium">
         Click bar to toggle session status / log duration
       </div>
     </div>
@@ -91,14 +91,14 @@ export const WeeklyCompletionChart: React.FC<Props> = ({
               Last 7 Days Progress &amp; Pace
             </h2>
             {/* View Mode Toggle Pill */}
-            <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-[10px] font-semibold">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-semibold border border-slate-200/60 dark:border-slate-700 shadow-inner">
               <button
                 type="button"
                 onClick={() => setChartMode('consistency')}
-                className={`px-2 py-0.5 rounded-md transition-colors ${
+                className={`min-h-[30px] px-2.5 py-1 rounded-lg transition-all tactile-button ${
                   chartMode === 'consistency'
-                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
+                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                 }`}
               >
                 Consistency %
@@ -106,18 +106,18 @@ export const WeeklyCompletionChart: React.FC<Props> = ({
               <button
                 type="button"
                 onClick={() => setChartMode('duration')}
-                className={`px-2 py-0.5 rounded-md transition-colors flex items-center gap-1 ${
+                className={`min-h-[30px] px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 tactile-button ${
                   chartMode === 'duration'
-                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
+                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                 }`}
               >
-                <Clock className="w-2.5 h-2.5" />
+                <Clock className="w-3 h-3" />
                 <span>Duration (Min)</span>
               </button>
             </div>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             {chartMode === 'consistency'
               ? `Weekly hypertrophy consistency (${points[0]?.dateLabel} – ${points[points.length - 1]?.dateLabel}) · Click any bar to toggle`
               : 'Workout session duration tracked in minutes (Target: ≤ 20 min efficiency)'}
@@ -129,7 +129,7 @@ export const WeeklyCompletionChart: React.FC<Props> = ({
             {completedInLast7}/7 Sessions ({weeklyConsistencyPercent}%)
           </span>
           <div
-            className="w-28 sm:w-36 h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden"
+            className="w-28 sm:w-36 h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner"
             role="progressbar"
             aria-valuenow={weeklyConsistencyPercent}
             aria-valuemin={0}
@@ -145,7 +145,7 @@ export const WeeklyCompletionChart: React.FC<Props> = ({
       </div>
 
       {/* Recharts 7-Day Consistency / Duration Bar Chart */}
-      <div className="h-44 w-full bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl p-3 border border-slate-100 dark:border-slate-800">
+      <div className="h-44 w-full bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl p-3 border border-slate-200/80 dark:border-slate-800 bento-tile-tactile">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={points}

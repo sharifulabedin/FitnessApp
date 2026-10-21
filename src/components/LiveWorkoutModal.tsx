@@ -56,6 +56,17 @@ export const LiveWorkoutModal: React.FC<Props> = ({
     lastPhaseRef.current = '';
   }, [exercise.id, exercise.workSeconds]);
 
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   const playBeep = useCallback(
     (freq = 660, durationMs = 90, type: OscillatorType = 'sine') => {
       if (!soundEnabled) return;
@@ -178,11 +189,11 @@ export const LiveWorkoutModal: React.FC<Props> = ({
       aria-modal="true"
       aria-labelledby="live-workout-modal-title"
     >
-      <div className="w-full max-w-3xl bg-slate-900 text-white border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl my-auto">
+      <div className="w-full max-w-3xl bg-slate-900 text-white border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl my-auto bento-card-tactile">
         {/* Modal Header */}
         <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-800">
           <div>
-            <div className="text-xs text-rose-400 font-medium">
+            <div className="text-xs text-rose-400 font-medium tracking-wide">
               Step {exercise.stepNumber} of 06 · {exercise.targetMuscles}
             </div>
             <h2 id="live-workout-modal-title" className="text-xl sm:text-2xl font-bold tracking-tight mt-0.5">
@@ -194,7 +205,7 @@ export const LiveWorkoutModal: React.FC<Props> = ({
               type="button"
               onClick={() => setSoundEnabled((s) => !s)}
               aria-label={soundEnabled ? 'Mute tempo audio cues' : 'Unmute tempo audio cues'}
-              className="min-h-[44px] min-w-[44px] rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 transition-colors"
+              className="min-h-[44px] min-w-[44px] rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 transition-colors tactile-button focus-ring-tactile"
             >
               {soundEnabled ? <Volume2 className="w-5 h-5 text-amber-400" /> : <VolumeX className="w-5 h-5 text-slate-400" />}
             </button>
@@ -202,7 +213,7 @@ export const LiveWorkoutModal: React.FC<Props> = ({
               type="button"
               onClick={onClose}
               aria-label="Close live workout mode"
-              className="min-h-[44px] min-w-[44px] rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 transition-colors"
+              className="min-h-[44px] min-w-[44px] rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 transition-colors tactile-button focus-ring-tactile"
             >
               <X className="w-5 h-5" />
             </button>
@@ -212,10 +223,10 @@ export const LiveWorkoutModal: React.FC<Props> = ({
         {/* Main 2-Column Live Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-5 items-stretch">
           {/* Left Column: Live Body Position & Tempo Guide */}
-          <div className="md:col-span-7 flex flex-col justify-between bg-slate-950/70 border border-slate-800/80 rounded-2xl p-4">
+          <div className="md:col-span-7 flex flex-col justify-between bg-slate-950/70 border border-slate-800/80 rounded-2xl p-4 shadow-inner">
             <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-              <span>Live Biomechanical Position</span>
-              <span className="font-mono tabular-nums text-amber-400">
+              <span className="font-medium">Live Biomechanical Position</span>
+              <span className="font-mono tabular-nums text-amber-400 font-semibold">
                 Rep #{tempoState.repNumber} · {exercise.prescribedReps}
               </span>
             </div>
@@ -238,8 +249,15 @@ export const LiveWorkoutModal: React.FC<Props> = ({
               </div>
 
               {/* 3-segment visual bar: 3s Lower (60%) | 1s Hold (20%) | 1s Drive (20%) */}
-              <div className="grid grid-cols-5 gap-1.5 h-3 w-full rounded-lg overflow-hidden bg-slate-800 p-0.5">
-                <div className="col-span-3 bg-slate-900 rounded overflow-hidden relative">
+              <div
+                role="progressbar"
+                aria-label="3-1-1 tempo phase progress"
+                aria-valuenow={Math.round(tempoState.phaseProgressPercent)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                className="grid grid-cols-5 gap-1.5 h-3.5 w-full rounded-lg overflow-hidden bg-slate-800 p-0.5 border border-slate-700/60"
+              >
+                <div className="col-span-3 bg-slate-900 rounded overflow-hidden relative shadow-inner">
                   <div
                     className="h-full bg-rose-500 transition-all duration-100"
                     style={{
@@ -252,7 +270,7 @@ export const LiveWorkoutModal: React.FC<Props> = ({
                     }}
                   />
                 </div>
-                <div className="col-span-1 bg-slate-900 rounded overflow-hidden relative">
+                <div className="col-span-1 bg-slate-900 rounded overflow-hidden relative shadow-inner">
                   <div
                     className="h-full bg-amber-400 transition-all duration-100"
                     style={{
@@ -267,7 +285,7 @@ export const LiveWorkoutModal: React.FC<Props> = ({
                     }}
                   />
                 </div>
-                <div className="col-span-1 bg-slate-900 rounded overflow-hidden relative">
+                <div className="col-span-1 bg-slate-900 rounded overflow-hidden relative shadow-inner">
                   <div
                     className="h-full bg-emerald-400 transition-all duration-100"
                     style={{
@@ -281,18 +299,18 @@ export const LiveWorkoutModal: React.FC<Props> = ({
               </div>
 
               <div className="grid grid-cols-5 text-[11px] text-slate-400 mt-1.5 font-mono tabular-nums">
-                <span className="col-span-3 text-rose-300">3s Eccentric Lower</span>
-                <span className="col-span-1 text-amber-300 text-center">1s Hold</span>
-                <span className="col-span-1 text-emerald-300 text-right">1s Drive</span>
+                <span className="col-span-3 text-rose-300 font-medium">3s Eccentric Lower</span>
+                <span className="col-span-1 text-amber-300 text-center font-medium">1s Hold</span>
+                <span className="col-span-1 text-emerald-300 text-right font-medium">1s Drive</span>
               </div>
             </div>
           </div>
 
           {/* Right Column: 45s / 15s Countdown Timer & Coaching Cues */}
-          <div className="md:col-span-5 flex flex-col justify-between bg-slate-950/70 border border-slate-800/80 rounded-2xl p-5">
+          <div className="md:col-span-5 flex flex-col justify-between bg-slate-950/70 border border-slate-800/80 rounded-2xl p-5 shadow-inner">
             <div>
               <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>
+                <span className="font-medium">
                   Round {currentRound} of {exercise.rounds}
                 </span>
                 <span className={mode === 'work' ? 'text-rose-400 font-semibold' : 'text-emerald-400 font-semibold'}>
@@ -300,8 +318,8 @@ export const LiveWorkoutModal: React.FC<Props> = ({
                 </span>
               </div>
 
-              {/* Large Tabular Countdown */}
-              <div className="my-4 text-center py-4 rounded-2xl bg-slate-900 border border-slate-800">
+              {/* Large Tabular Countdown with Neomorphic Depth */}
+              <div className="my-4 text-center py-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-md">
                 <div className="font-mono tabular-nums text-5xl sm:text-6xl font-bold tracking-tight text-white">
                   00:{String(secondsLeft).padStart(2, '0')}
                 </div>
@@ -323,7 +341,7 @@ export const LiveWorkoutModal: React.FC<Props> = ({
                       return false;
                     });
                   }}
-                  className="flex-1 min-h-[48px] px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold text-sm flex items-center justify-center gap-2 transition-colors whitespace-nowrap shrink-0"
+                  className="flex-1 min-h-[48px] px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold text-sm flex items-center justify-center gap-2 transition-colors whitespace-nowrap shrink-0 tactile-button focus-ring-tactile shadow-md"
                 >
                   {isRunning ? (
                     <>
@@ -341,7 +359,7 @@ export const LiveWorkoutModal: React.FC<Props> = ({
                   type="button"
                   onClick={handleReset}
                   aria-label="Reset set timer"
-                  className="min-h-[48px] min-w-[48px] rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-colors shrink-0"
+                  className="min-h-[48px] min-w-[48px] rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-colors shrink-0 tactile-button focus-ring-tactile"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
@@ -373,7 +391,7 @@ export const LiveWorkoutModal: React.FC<Props> = ({
               type="button"
               disabled={activeIndex === 0}
               onClick={() => onSelectExercise(Math.max(0, activeIndex - 1))}
-              className="min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0"
+              className="min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 tactile-button focus-ring-tactile"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Previous Exercise</span>
@@ -382,7 +400,7 @@ export const LiveWorkoutModal: React.FC<Props> = ({
               type="button"
               disabled={activeIndex === exercises.length - 1}
               onClick={() => onSelectExercise(Math.min(exercises.length - 1, activeIndex + 1))}
-              className="min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0"
+              className="min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 tactile-button focus-ring-tactile"
             >
               <span>Next Exercise</span>
               <ChevronRight className="w-4 h-4" />
@@ -392,7 +410,7 @@ export const LiveWorkoutModal: React.FC<Props> = ({
           <button
             type="button"
             onClick={() => onToggleComplete(exercise.id)}
-            className={`min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-2 transition-colors whitespace-nowrap shrink-0 ${
+            className={`min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-2 transition-colors whitespace-nowrap shrink-0 tactile-button focus-ring-tactile shadow-md ${
               isCompleted
                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                 : 'bg-emerald-500 hover:bg-emerald-600 text-slate-950'

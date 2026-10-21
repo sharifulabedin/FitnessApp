@@ -10,19 +10,19 @@
 
 /* Liquid Glass Capsule Navigation Material */
 .liquid-glass-dock {
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(28px) saturate(200%);
   -webkit-backdrop-filter: blur(28px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   box-shadow:
-    0 20px 48px -8px rgba(15, 23, 42, 0.14),
-    0 6px 16px -2px rgba(15, 23, 42, 0.06),
+    0 20px 48px -8px rgba(15, 23, 42, 0.16),
+    0 6px 16px -2px rgba(15, 23, 42, 0.08),
     inset 0 1px 2px 0 rgba(255, 255, 255, 0.95),
     inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.04);
 }
 
 html.dark .liquid-glass-dock {
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -93,6 +93,11 @@ html.dark .liquid-glass-coach-idle {
 }
 
 @layer base {
+  html {
+    scroll-padding-bottom: 6.5rem;
+    scroll-behavior: smooth;
+  }
+
   body {
     font-family: var(--font-sans);
     background-color: #F8FAFC;
@@ -112,6 +117,109 @@ html.dark .liquid-glass-coach-idle {
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* Tactile Bento & Neomorphic Depth System */
+.bento-card-tactile {
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow:
+    0 2px 4px 0 rgba(15, 23, 42, 0.03),
+    0 12px 32px -4px rgba(15, 23, 42, 0.06),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
+  transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 220ms ease;
+}
+
+html.dark .bento-card-tactile {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    0 4px 24px -2px rgba(0, 0, 0, 0.65),
+    0 1px 3px 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.bento-tile-tactile {
+  background: #F8FAFC;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow:
+    0 2px 6px 0 rgba(15, 23, 42, 0.03),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.9);
+  transition: all 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html.dark .bento-tile-tactile {
+  background: #1E293B;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 2px 8px 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.tactile-button {
+  transition: transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.tactile-button:active {
+  transform: translateY(1.5px) scale(0.985);
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.15) !important;
+}
+
+.tactile-stepper-btn {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  box-shadow:
+    0 3px 8px -1px rgba(15, 23, 42, 0.12),
+    0 1px 2px 0 rgba(15, 23, 42, 0.06),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 1);
+  transition: all 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tactile-stepper-btn:hover {
+  background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 100%);
+  transform: translateY(-1px);
+}
+
+.tactile-stepper-btn:active {
+  transform: translateY(1.5px) scale(0.97);
+  box-shadow: inset 0 2px 5px 0 rgba(15, 23, 42, 0.2);
+}
+
+html.dark .tactile-stepper-btn {
+  background: linear-gradient(180deg, #334155 0%, #1E293B 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 4px 10px -1px rgba(0, 0, 0, 0.45),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+html.dark .tactile-stepper-btn:hover {
+  background: linear-gradient(180deg, #3B4E68 0%, #243247 100%);
+}
+
+html.dark .tactile-stepper-btn:active {
+  transform: translateY(1.5px) scale(0.97);
+  box-shadow: inset 0 2px 6px 0 rgba(0, 0, 0, 0.6);
+}
+
+.focus-ring-tactile {
+  outline: none;
+}
+
+.focus-ring-tactile:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #FFFFFF,
+    0 0 0 4px #F43F5E,
+    0 2px 10px 0 rgba(244, 63, 94, 0.35);
+}
+
+html.dark .focus-ring-tactile:focus-visible {
+  box-shadow:
+    0 0 0 2px #0B0F19,
+    0 0 0 4px #F43F5E,
+    0 2px 12px 0 rgba(244, 63, 94, 0.5);
 }
 
 @keyframes navTabPop {
@@ -251,4 +359,11 @@ html.dark .border-cyan-300 {
   border-color: rgba(6, 182, 212, 0.4) !important;
 }
 
-
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   X,
   Share2,
@@ -8,8 +8,6 @@ import {
   Flame,
   Clock,
   Sparkles,
-  Dumbbell,
-  Shield,
   Trophy,
 } from 'lucide-react';
 import { UserProfile, formatElapsedMmSs, generateWorkoutShareText } from '../utils/fitnessLogic';
@@ -37,6 +35,18 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
 }) => {
   const [copied, setCopied] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
+
+  // Handle Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -98,99 +108,125 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
     // App Branding Overline
     ctx.font = '600 28px Poppins, sans-serif';
     ctx.fillStyle = '#FB7185';
-    ctx.fillText('MORNING 20 · 3-1-1 HYPERTROPHY PROTOCOL', 110, 150);
+    ctx.fillText('MORNING 20 · 3-1-1 TEMPO PROTOCOL', 110, 140);
 
-    // Title Headline
-    ctx.font = 'bold 64px Poppins, sans-serif';
+    // Main Trophy Title
+    ctx.font = '800 68px Poppins, sans-serif';
     ctx.fillStyle = '#FFFFFF';
-    ctx.fillText('WORKOUT CRUSHED', 110, 240);
+    ctx.fillText('Workout Crushed.', 110, 220);
 
     // Subtitle Athlete & Date
-    ctx.font = '500 32px Poppins, sans-serif';
+    ctx.font = '400 32px Poppins, sans-serif';
     ctx.fillStyle = '#94A3B8';
-    ctx.fillText(`Athlete: ${profile.name} · ${todayDateLabel}, 2026`, 110, 300);
+    ctx.fillText(`Athlete: ${profile.name} · ${todayDateLabel}`, 110, 275);
 
-    // Draw Stats Bento Cards
-    const drawCard = (x: number, y: number, w: number, h: number, fill: string) => {
-      ctx.fillStyle = fill;
-      ctx.beginPath();
-      ctx.roundRect(x, y, w, h, 28);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    };
+    // Streak Highlight Box (Tactile Pill)
+    ctx.fillStyle = 'rgba(244, 63, 94, 0.18)';
+    ctx.strokeStyle = '#F43F5E';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.roundRect(110, 330, 860, 220, 32);
+    ctx.fill();
+    ctx.stroke();
 
-    // Card 1: Active Streak (Big Fire Hero)
-    drawCard(110, 360, 860, 230, 'rgba(30, 41, 59, 0.7)');
-    ctx.font = '600 26px Poppins, sans-serif';
+    ctx.font = '800 108px Poppins, sans-serif';
     ctx.fillStyle = '#F43F5E';
-    ctx.fillText('ACTIVE STREAK CONSISTENCY', 160, 420);
+    ctx.fillText(`${activeStreak}`, 160, 475);
 
-    ctx.font = 'bold 96px JetBrains Mono, monospace';
+    ctx.font = '700 36px Poppins, sans-serif';
     ctx.fillStyle = '#FFFFFF';
-    ctx.fillText(`${activeStreak} DAYS 🔥`, 160, 525);
+    ctx.fillText('DAYS UNBROKEN STREAK', 350, 420);
 
-    // Card 2: Session Time
-    drawCard(110, 620, 410, 210, 'rgba(30, 41, 59, 0.7)');
-    ctx.font = '600 24px Poppins, sans-serif';
+    ctx.font = '400 28px Poppins, sans-serif';
+    ctx.fillStyle = '#FDA4AF';
+    ctx.fillText('30-Day Hypertrophy Consistency', 350, 470);
+
+    // Two-Column Metrics Row
+    // Left Box: Session Elapsed Time
+    ctx.fillStyle = 'rgba(30, 41, 59, 0.85)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(110, 580, 415, 220, 28);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = '600 26px Poppins, sans-serif';
     ctx.fillStyle = '#38BDF8';
-    ctx.fillText('SESSION TIME', 150, 680);
-    ctx.font = 'bold 72px JetBrains Mono, monospace';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillText(mmSs, 150, 770);
+    ctx.fillText('SESSION TIME', 150, 640);
 
-    // Card 3: 30-Day Completion
-    drawCard(560, 620, 410, 210, 'rgba(30, 41, 59, 0.7)');
-    ctx.font = '600 24px Poppins, sans-serif';
+    ctx.font = '700 64px JetBrains Mono, monospace';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText(mmSs, 150, 735);
+
+    // Right Box: 30-Day Total Logged
+    ctx.beginPath();
+    ctx.roundRect(555, 580, 415, 220, 28);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = '600 26px Poppins, sans-serif';
     ctx.fillStyle = '#34D399';
-    ctx.fillText('CALENDAR PROGRESS', 600, 680);
-    ctx.font = 'bold 72px JetBrains Mono, monospace';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillText(`${totalCompleted} / 30`, 600, 770);
+    ctx.fillText('30-DAY PROGRESS', 595, 640);
 
-    // Card 4: Post-Workout Fuel Target
-    drawCard(110, 860, 860, 200, 'rgba(30, 41, 59, 0.7)');
-    ctx.font = '600 24px Poppins, sans-serif';
-    ctx.fillStyle = '#F59E0B';
-    ctx.fillText('POST-WORKOUT REFUEL WINDOW (+45 MINS)', 160, 920);
-    ctx.font = 'bold 56px Poppins, sans-serif';
+    ctx.font = '700 64px JetBrains Mono, monospace';
     ctx.fillStyle = '#FFFFFF';
-    ctx.fillText(`${postWorkoutProteinGrams}g High-Protein Target · Glycogen Refuel`, 160, 995);
+    ctx.fillText(`${totalCompleted} / 30`, 595, 735);
 
-    // Bottom Footer Watermark
+    // Post-Workout Protein Window Box
+    ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+    ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(110, 830, 860, 160, 28);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = '700 32px Poppins, sans-serif';
+    ctx.fillStyle = '#FBBF24';
+    ctx.fillText('POST-WORKOUT PROTEIN WINDOW', 150, 895);
+
+    ctx.font = '400 26px Poppins, sans-serif';
+    ctx.fillStyle = '#E2E8F0';
+    ctx.fillText(`Target: ${postWorkoutProteinGrams}g high-quality protein within 45 minutes`, 150, 945);
+
+    // Footer Watermark Branding
     ctx.font = '500 26px Poppins, sans-serif';
     ctx.fillStyle = '#64748B';
-    ctx.fillText('No Equipment Required · Bed-Edge Pull-Ups & 3-1-1 Tempo Mastery', 110, 1190);
-    ctx.fillText('Built with Morning 20 AI Fitness Studio', 110, 1235);
+    ctx.fillText('Morning 20 · 20-Min Daily Bodyweight Hypertrophy', 110, 1220);
 
-    // Trigger download
+    // Download Trigger
+    const dataUrl = canvas.toDataURL('image/png');
     const link = document.createElement('a');
-    link.download = `morning20-${profile.name.toLowerCase().replace(/\s+/g, '-')}-streak-${activeStreak}.png`;
-    link.href = canvas.toDataURL('image/png');
+    link.download = `morning20-streak-day${activeStreak}-${profile.name.toLowerCase()}.png`;
+    link.href = dataUrl;
     link.click();
   };
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="share-card-modal-title"
+      aria-labelledby="share-card-title"
+      onClick={onClose}
     >
-      <div className="w-full max-w-xl bg-slate-900 border border-slate-800 text-white rounded-3xl p-6 sm:p-8 shadow-2xl my-auto">
+      <div
+        className="w-full max-w-lg bg-slate-900 text-white border border-slate-800 rounded-3xl p-6 shadow-2xl my-auto bento-card-tactile"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-800">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center">
-              <Share2 className="w-4 h-4" />
+        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-rose-500/20 border border-rose-500/30 text-rose-400 flex items-center justify-center shadow-xs">
+              <Share2 className="w-5 h-5" />
             </div>
             <div>
-              <h2 id="share-card-modal-title" className="text-lg font-bold text-white">
-                Share Workout Achievement
+              <h2 id="share-card-title" className="text-lg font-bold tracking-tight">
+                Share Workout Progress
               </h2>
               <p className="text-xs text-slate-400">
-                Story-ready visual card &amp; quick summary for social or accountability partners
+                Generate high-res 1080x1350 story cards or copy summary text
               </p>
             </div>
           </div>
@@ -198,16 +234,16 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
             type="button"
             onClick={onClose}
             aria-label="Close share modal"
-            className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+            className="min-h-[44px] min-w-[44px] rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors tactile-button focus-ring-tactile"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Visual Preview Graphic Card */}
         <div
           ref={cardRef}
-          className="mt-5 p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-slate-800 shadow-xl relative overflow-hidden"
+          className="mt-5 p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-slate-800 shadow-xl relative overflow-hidden bento-card-tactile"
         >
           {/* Ambient Glows */}
           <div className="absolute -top-16 -left-16 w-44 h-44 bg-rose-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -229,7 +265,7 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
                 </p>
               </div>
 
-              <div className="px-3.5 py-1.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 font-bold font-mono text-lg flex items-center gap-1.5">
+              <div className="px-3.5 py-1.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 font-bold font-mono text-lg flex items-center gap-1.5 shadow-xs">
                 <Flame className="w-5 h-5 text-rose-500 animate-pulse" />
                 <span>{activeStreak} Days</span>
               </div>
@@ -237,7 +273,7 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
 
             {/* Metrics Bento Row */}
             <div className="grid grid-cols-2 gap-3 mt-5">
-              <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/60">
+              <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/60 shadow-inner">
                 <div className="flex items-center gap-1.5 text-xs text-sky-400 font-medium">
                   <Clock className="w-3.5 h-3.5" />
                   <span>Session Time</span>
@@ -247,7 +283,7 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/60">
+              <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/60 shadow-inner">
                 <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
                   <Trophy className="w-3.5 h-3.5" />
                   <span>30-Day Total</span>
@@ -258,7 +294,7 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
               </div>
             </div>
 
-            <div className="mt-3.5 p-3.5 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-center justify-between text-xs">
+            <div className="mt-3.5 p-3.5 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-center justify-between text-xs shadow-2xs">
               <span className="text-amber-300 font-medium flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 Post-Workout Refuel
@@ -275,7 +311,7 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
           <button
             type="button"
             onClick={handleCopyText}
-            className="min-h-[46px] px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-colors border border-slate-700"
+            className="min-h-[46px] px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-colors border border-slate-700 tactile-button focus-ring-tactile"
           >
             {copied ? (
               <>
@@ -293,7 +329,7 @@ export const WorkoutShareCardModal: React.FC<Props> = ({
           <button
             type="button"
             onClick={handleDownloadCanvasImage}
-            className="min-h-[46px] px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-colors shadow-md shadow-rose-500/20"
+            className="min-h-[46px] px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-colors shadow-md shadow-rose-500/20 tactile-button focus-ring-tactile"
           >
             <Download className="w-4 h-4" />
             <span>Download PNG Story Card</span>
