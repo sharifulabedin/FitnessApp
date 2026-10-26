@@ -202,12 +202,11 @@ export interface AvatarPreset {
 }
 
 export function generatePresetSvgDataUri(
-  fromColor: string,
-  toColor: string,
+  color: string,
   symbol: string,
   accent = '#FFFFFF'
 ): string {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128"><defs><linearGradient id="grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${fromColor}"/><stop offset="100%" stop-color="${toColor}"/></linearGradient></defs><rect width="128" height="128" rx="64" fill="url(#grad)"/><circle cx="64" cy="64" r="54" fill="none" stroke="${accent}" stroke-width="2.5" opacity="0.35"/><text x="64" y="77" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="44" fill="${accent}">${symbol}</text></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128"><rect width="128" height="128" rx="64" fill="${color}"/><circle cx="64" cy="64" r="54" fill="none" stroke="${accent}" stroke-width="2.5" opacity="0.35"/><text x="64" y="77" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="44" fill="${accent}">${symbol}</text></svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
@@ -216,73 +215,73 @@ export const ATHLETIC_AVATAR_PRESETS: AvatarPreset[] = [
     id: 'titan-flame',
     name: 'Titan Flame',
     tagline: 'Hypertrophy Power',
-    symbol: '🔥',
-    fromColor: '#F43F5E',
-    toColor: '#FB923C',
-    svgDataUri: generatePresetSvgDataUri('#F43F5E', '#FB923C', '🔥'),
+    symbol: 'M',
+    fromColor: '#E11D48',
+    toColor: '#BE123C',
+    svgDataUri: generatePresetSvgDataUri('#E11D48', 'M'),
   },
   {
     id: 'volt-athlete',
     name: 'Volt Athlete',
     tagline: 'High-Power Calisthenics',
-    symbol: '⚡',
-    fromColor: '#06B6D4',
-    toColor: '#3B82F6',
-    svgDataUri: generatePresetSvgDataUri('#06B6D4', '#3B82F6', '⚡'),
+    symbol: 'V',
+    fromColor: '#0284C7',
+    toColor: '#0369A1',
+    svgDataUri: generatePresetSvgDataUri('#0284C7', 'V'),
   },
   {
     id: 'iron-will',
     name: 'Iron Monolith',
     tagline: 'Titanium Discipline',
-    symbol: '🦾',
-    fromColor: '#475569',
+    symbol: 'I',
+    fromColor: '#334155',
     toColor: '#0F172A',
-    svgDataUri: generatePresetSvgDataUri('#475569', '#0F172A', '🦾'),
+    svgDataUri: generatePresetSvgDataUri('#0F172A', 'I'),
   },
   {
     id: 'emerald-flow',
     name: 'Emerald Zen',
     tagline: 'Mobility & Recovery',
-    symbol: '🌿',
-    fromColor: '#10B981',
+    symbol: 'E',
+    fromColor: '#059669',
     toColor: '#047857',
-    svgDataUri: generatePresetSvgDataUri('#10B981', '#047857', '🌿'),
+    svgDataUri: generatePresetSvgDataUri('#059669', 'E'),
   },
   {
     id: 'gold-spartan',
     name: 'Golden Champion',
     tagline: 'Elite 30-Day Finisher',
-    symbol: '👑',
-    fromColor: '#F59E0B',
-    toColor: '#D97706',
-    svgDataUri: generatePresetSvgDataUri('#F59E0B', '#D97706', '👑'),
+    symbol: 'G',
+    fromColor: '#D97706',
+    toColor: '#B45309',
+    svgDataUri: generatePresetSvgDataUri('#D97706', 'G'),
   },
   {
     id: 'cosmic-surge',
     name: 'Cosmic Surge',
     tagline: 'Explosive Drive',
-    symbol: '✨',
-    fromColor: '#8B5CF6',
-    toColor: '#EC4899',
-    svgDataUri: generatePresetSvgDataUri('#8B5CF6', '#EC4899', '✨'),
+    symbol: 'C',
+    fromColor: '#0D9488',
+    toColor: '#0F766E',
+    svgDataUri: generatePresetSvgDataUri('#0D9488', 'C'),
   },
   {
     id: 'ocean-power',
     name: 'Deep Ocean',
     tagline: 'Calm & Unstoppable',
-    symbol: '🌊',
+    symbol: 'O',
     fromColor: '#0284C7',
     toColor: '#1E40AF',
-    svgDataUri: generatePresetSvgDataUri('#0284C7', '#1E40AF', '🌊'),
+    svgDataUri: generatePresetSvgDataUri('#1E40AF', 'O'),
   },
   {
     id: 'sunrise-morning',
     name: 'Morning 20 Sunrise',
     tagline: 'Early Dawn Calisthenics',
-    symbol: '🌅',
-    fromColor: '#FB7185',
-    toColor: '#FBBF24',
-    svgDataUri: generatePresetSvgDataUri('#FB7185', '#FBBF24', '🌅'),
+    symbol: 'S',
+    fromColor: '#E11D48',
+    toColor: '#9F1239',
+    svgDataUri: generatePresetSvgDataUri('#E11D48', 'S'),
   },
 ];
 
@@ -315,7 +314,7 @@ export function buildPersonalizedWorkout(profile: Pick<UserProfile, 'maxPushUps'
   return [
     {
       id: 'warmup-mobility',
-      stepNumber: '01',
+      stepNumber: '1',
       name: 'Warm-Up: Lunge Twists & Scapular Push-Ups',
       subtitle: '2 mins thoracic rotation, hip flexor opening & scapular protraction',
       category: 'warmup',
@@ -335,7 +334,7 @@ export function buildPersonalizedWorkout(profile: Pick<UserProfile, 'maxPushUps'
     },
     {
       id: 'pushups-dropset',
-      stepNumber: '02',
+      stepNumber: '2',
       name: 'Push-Ups (Drop-Set with 3-1-1 Tempo)',
       subtitle: 'Mechanical tension chest & triceps overload with immediate knee drop-set',
       category: 'circuit',
@@ -355,7 +354,7 @@ export function buildPersonalizedWorkout(profile: Pick<UserProfile, 'maxPushUps'
     },
     {
       id: 'bulgarian-split-squats',
-      stepNumber: '03',
+      stepNumber: '3',
       name: 'Bulgarian Split Squats (Bed Edge)',
       subtitle: 'Single-leg quad & glute hypertrophy using your bed frame for rear foot elevation',
       category: 'circuit',
@@ -375,7 +374,7 @@ export function buildPersonalizedWorkout(profile: Pick<UserProfile, 'maxPushUps'
     },
     {
       id: 'ledge-pullups',
-      stepNumber: '04',
+      stepNumber: '4',
       name: 'Ledge Pull-Ups (Towel Grip + 4s Negatives)',
       subtitle: 'Upper-back width & forearm grip builder with padded overhead ledge + eccentric overload',
       category: 'circuit',
@@ -395,7 +394,7 @@ export function buildPersonalizedWorkout(profile: Pick<UserProfile, 'maxPushUps'
     },
     {
       id: 'bed-pike-pushups',
-      stepNumber: '05',
+      stepNumber: '5',
       name: 'Bed Pike Push-Ups',
       subtitle: 'Vertical pressing overload for boulder deltoids and upper clavicular chest',
       category: 'circuit',
@@ -415,7 +414,7 @@ export function buildPersonalizedWorkout(profile: Pick<UserProfile, 'maxPushUps'
     },
     {
       id: 'cobra-stretch-cooldown',
-      stepNumber: '06',
+      stepNumber: '6',
       name: 'Post-Workout Cobra Stretch & Decompression',
       subtitle: 'Abdominal fascia stretch, lumbar extension & parasympathetic heart-rate recovery',
       category: 'cooldown',
@@ -802,7 +801,7 @@ export function generateCoachFallbackResponse(
   const workout = buildPersonalizedWorkout(profile);
 
   if (q.includes('sore') || q.includes('modify') || q.includes('pain') || q.includes('tired')) {
-    return `Hey ${profile.name}, since you're on a **${activeStreak}-day streak**, listening to joint vs. muscle soreness is key:\n\n1. **Push-Up Modification**: Instead of ${workout[1].prescribedReps} on the floor, elevate your hands on the edge of your bed and keep the **3-1-1 tempo** (3s lower, 1s pause, 1s drive). This reduces shoulder load by ~25% while preserving chest hypertrophy tension.\n2. **Ledge Pull-Ups**: Skip the concentric pull today and perform **4 slow 4-second towel-grip negatives** with 20s rest between reps.\n3. **Active Recovery**: Spend an extra 60 seconds on Lunge Twists and the Post-Workout Cobra Stretch.`;
+    return `Hey ${profile.name}, since you're on a **${activeStreak}-day streak**, listening to joint vs. muscle soreness is key:\n\n1. **Push-Up Modification**: Instead of ${workout[1].prescribedReps} on the floor, raise your hands on the edge of your bed and keep the **3-1-1 tempo** (3s lower, 1s pause, 1s drive). This reduces shoulder load by ~25% while preserving chest hypertrophy tension.\n2. **Ledge Pull-Ups**: Skip the concentric pull today and perform **4 slow 4-second towel-grip negatives** with 20s rest between reps.\n3. **Active Recovery**: Spend an extra 60 seconds on Lunge Twists and the Post-Workout Cobra Stretch.`;
   }
 
   if (q.includes('breakfast') || q.includes('protein') || q.includes('meal') || q.includes('eat') || q.includes('food')) {
@@ -810,7 +809,7 @@ export function generateCoachFallbackResponse(
   }
 
   if (q.includes('pull') || q.includes('ledge') || q.includes('towel') || q.includes('grip')) {
-    return `For your **${profile.maxPullUps}-rep Ledge Pull-Up baseline**, the folded towel is a game-changer:\n\n- **Why the Towel Works**: Wrapping a thick folded hand towel over the door frame or overhead beam increases friction and shifts load from the distal fingertips into your **brachioradialis and latissimus dorsi**.\n- **Your Target Today**: Aim for **${workout[3].prescribedReps}**. Even if you only hit ${Math.max(1, profile.maxPullUps - 1)} strict pulls, stepping onto a chair and fighting gravity for a **4-second eccentric negative** recruits the highest-threshold fast-twitch motor units.`;
+    return `For your **${profile.maxPullUps}-rep Ledge Pull-Up baseline**, the folded towel is essential:\n\n- **Why the Towel Works**: Wrapping a thick folded hand towel over the door frame or overhead beam increases friction and shifts load from the distal fingertips into your **brachioradialis and latissimus dorsi**.\n- **Your Target Today**: Aim for **${workout[3].prescribedReps}**. Even if you only hit ${Math.max(1, profile.maxPullUps - 1)} strict pulls, stepping onto a chair and fighting gravity for a **4-second eccentric negative** recruits the highest-threshold fast-twitch motor units.`;
   }
 
   if (q.includes('tempo') || q.includes('3-1-1') || q.includes('grow') || q.includes('muscle')) {
@@ -1121,12 +1120,12 @@ export function generateWorkoutShareText(params: {
   proteinGrams: number;
 }): string {
   const mmSs = formatElapsedMmSs(params.sessionElapsedSeconds);
-  return `⚡ Morning 20 Workout Crushed!\n` +
-    `👤 Athlete: ${params.athleteName}\n` +
-    `🔥 Active Streak: ${params.activeStreak} Days\n` +
-    `⏱️ Session Time: ${mmSs}\n` +
-    `📅 Calendar: ${params.totalCompleted}/30 Sessions Logged (${params.dateLabel})\n` +
-    `🥩 Refuel Target: ${params.proteinGrams}g Protein\n` +
-    `💪 3-1-1 Hypertrophy Tempo · No Gear Required\n` +
+  return `Morning 20 Workout Crushed!\n` +
+    `• Athlete: ${params.athleteName}\n` +
+    `• Active Streak: ${params.activeStreak} Days\n` +
+    `• Session Time: ${mmSs}\n` +
+    `• Calendar: ${params.totalCompleted}/30 Sessions Logged (${params.dateLabel})\n` +
+    `• Refuel Target: ${params.proteinGrams}g Protein\n` +
+    `• 3-1-1 Hypertrophy Tempo · No Gear Required\n` +
     `#Morning20 #Hypertrophy #Streak`;
 }

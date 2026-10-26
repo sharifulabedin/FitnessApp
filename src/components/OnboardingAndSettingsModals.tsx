@@ -8,6 +8,7 @@ import {
   Dumbbell,
   Sliders,
   Camera,
+  LogOut,
 } from 'lucide-react';
 import {
   UserProfile,
@@ -52,7 +53,7 @@ export const GoogleLoginSplash: React.FC<SplashProps> = ({ onGoogleLogin }) => {
       {/* Top Brand Header */}
       <header className="relative z-10 flex items-center justify-between max-w-6xl w-full mx-auto">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center font-display font-bold text-lg shadow-sm">
+          <div className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center font-display font-bold text-lg">
             20
           </div>
           <span className="font-display font-bold text-lg tracking-tight text-white">
@@ -78,15 +79,15 @@ export const GoogleLoginSplash: React.FC<SplashProps> = ({ onGoogleLogin }) => {
           </p>
 
           <div className="grid grid-cols-3 gap-4 pt-2 max-w-lg">
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 shadow-md">
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5">
               <div className="font-mono tabular-nums text-2xl font-bold text-rose-400">20m</div>
               <div className="text-xs text-slate-400 mt-0.5">3 Rounds + Mobility</div>
             </div>
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 shadow-md">
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5">
               <div className="font-mono tabular-nums text-2xl font-bold text-amber-400">3-1-1</div>
               <div className="text-xs text-slate-400 mt-0.5">Live Tempo Audio</div>
             </div>
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 shadow-md">
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5">
               <div className="font-mono tabular-nums text-2xl font-bold text-emerald-400">30d</div>
               <div className="text-xs text-slate-400 mt-0.5">Streak + Recovery</div>
             </div>
@@ -94,7 +95,7 @@ export const GoogleLoginSplash: React.FC<SplashProps> = ({ onGoogleLogin }) => {
         </div>
 
         {/* Right Auth Card */}
-        <div className="lg:col-span-5 bg-slate-900/95 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl bento-card-tactile">
+        <div className="lg:col-span-5 bg-slate-900/95 border border-slate-800 rounded-3xl p-6 sm:p-8 bento-card-tactile">
           <div className="flex items-center gap-3.5 pb-5 border-b border-slate-800">
             <SharifAvatarSvg name={customName || 'Sharif'} className="w-12 h-12" />
             <div>
@@ -114,7 +115,7 @@ export const GoogleLoginSplash: React.FC<SplashProps> = ({ onGoogleLogin }) => {
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
                 placeholder="Sharif"
-                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all shadow-inner"
+                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-rose-500 transition-colors"
               />
             </div>
 
@@ -122,7 +123,7 @@ export const GoogleLoginSplash: React.FC<SplashProps> = ({ onGoogleLogin }) => {
               type="button"
               disabled={isAuthenticating}
               onClick={handleLoginClick}
-              className="w-full min-h-[48px] py-3 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-950 text-sm font-semibold flex items-center justify-center gap-2.5 transition-all tactile-button shadow-md cursor-pointer disabled:opacity-50"
+              className="w-full min-h-[48px] py-3 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-950 text-sm font-semibold flex items-center justify-center gap-2.5 transition-colors tactile-button cursor-pointer disabled:opacity-50"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                 <path
@@ -257,15 +258,15 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-slate-950/80 flex items-center justify-center p-4 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="onboarding-wizard-title"
     >
-      <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 shadow-2xl my-auto bento-card-tactile">
+      <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 my-auto bento-card-tactile">
         <div className="flex items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center shrink-0">
               <Dumbbell className="w-5 h-5" />
             </div>
             <div>
@@ -308,7 +309,7 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
                   onClick={() => handleUnitSwitch('cm')}
                   className={`min-h-[32px] px-3 py-1 rounded-md text-xs font-semibold transition-colors ${
                     unit === 'cm'
-                      ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                      ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white'
                       : 'text-slate-600 dark:text-slate-400'
                   }`}
                 >
@@ -319,7 +320,7 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
                   onClick={() => handleUnitSwitch('ft')}
                   className={`min-h-[32px] px-3 py-1 rounded-md text-xs font-semibold transition-colors ${
                     unit === 'ft'
-                      ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                      ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white'
                       : 'text-slate-600 dark:text-slate-400'
                   }`}
                 >
@@ -334,7 +335,7 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
                 type="number"
                 value={heightCm}
                 onChange={(e) => setHeightCm(e.target.value)}
-                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900 shadow-inner"
+                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900"
                 placeholder="175"
               />
             ) : (
@@ -347,7 +348,7 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
                     value={feet}
                     onChange={(e) => setFeet(e.target.value)}
                     placeholder="5 ft"
-                    className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 shadow-inner"
+                    className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500"
                   />
                 </div>
                 <div>
@@ -358,7 +359,7 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
                     value={inches}
                     onChange={(e) => setInches(e.target.value)}
                     placeholder="9 in"
-                    className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 shadow-inner"
+                    className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500"
                   />
                 </div>
               </div>
@@ -377,7 +378,7 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
                 step="0.5"
                 value={currentWeightKg}
                 onChange={(e) => setCurrentWeightKg(e.target.value)}
-                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900 shadow-inner"
+                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900"
               />
             </div>
             <div>
@@ -390,7 +391,7 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
                 step="0.5"
                 value={targetWeightKg}
                 onChange={(e) => setTargetWeightKg(e.target.value)}
-                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900 shadow-inner"
+                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900"
               />
             </div>
           </div>
@@ -406,7 +407,7 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
                 type="number"
                 value={maxPushUps}
                 onChange={(e) => setMaxPushUps(e.target.value)}
-                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900 shadow-inner"
+                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900"
               />
             </div>
             <div>
@@ -418,13 +419,13 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
                 type="number"
                 value={maxPullUps}
                 onChange={(e) => setMaxPullUps(e.target.value)}
-                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900 shadow-inner"
+                className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-slate-900"
               />
             </div>
           </div>
 
           {/* Calculated Prescription Summary */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 flex flex-wrap items-center justify-between gap-2 shadow-2xs">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 flex flex-wrap items-center justify-between gap-2">
             <span>
               Daily Protein Goal: <strong className="font-mono text-slate-900 dark:text-white">{previewProtein.gramsPerDay}g/day</strong>
             </span>
@@ -436,7 +437,7 @@ export const BaselineOnboardingModal: React.FC<OnboardingProps> = ({
 
           <button
             type="submit"
-            className="w-full min-h-[48px] px-5 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md shadow-rose-500/25 transition-colors tactile-button focus-ring-tactile"
+            className="w-full min-h-[48px] px-5 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm flex items-center justify-center gap-2 transition-colors tactile-button focus-ring-tactile"
           >
             <Check className="w-4 h-4" />
             <span>Save Baselines &amp; Build My 20-Min Routine</span>
@@ -464,6 +465,7 @@ interface SettingsBackupProps {
     prepChecklist?: Record<string, boolean>;
   }) => void;
   onResetAllData: () => void;
+  onLogout?: () => void;
 }
 
 export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
@@ -478,6 +480,7 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
   onUpdateHeightUnit,
   onImportState,
   onResetAllData,
+  onLogout,
 }) => {
   const [importJsonText, setImportJsonText] = useState('');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(
@@ -560,12 +563,12 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-slate-950/80 flex items-center justify-center p-4 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="settings-backup-title"
     >
-      <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 shadow-2xl my-auto space-y-5 bento-card-tactile">
+      <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 my-auto space-y-5 bento-card-tactile">
         <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h2 id="settings-backup-title" className="text-xl font-bold text-slate-900 dark:text-white">
@@ -598,7 +601,7 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
         )}
 
         {/* Profile Picture & Display */}
-        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700 flex items-center justify-between gap-4 shadow-2xs">
+        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <SharifAvatarSvg
               name={profile.name}
@@ -632,7 +635,7 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
         </div>
 
         {/* Height Display Format (cm vs ft/in) */}
-        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="text-sm font-semibold text-slate-900 dark:text-white">Height Display Unit</div>
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -645,7 +648,7 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
               onClick={() => onUpdateHeightUnit?.('cm')}
               className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors tactile-button ${
                 profile.heightUnit === 'cm'
-                  ? 'bg-rose-500 text-white shadow-xs'
+                  ? 'bg-rose-600 text-white'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -656,7 +659,7 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
               onClick={() => onUpdateHeightUnit?.('ft')}
               className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors tactile-button ${
                 profile.heightUnit === 'ft'
-                  ? 'bg-rose-500 text-white shadow-xs'
+                  ? 'bg-rose-600 text-white'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -666,7 +669,7 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
         </div>
 
         {/* Recalibrate Baselines */}
-        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700 flex items-center justify-between gap-4 shadow-2xs">
+        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700 flex items-center justify-between gap-4">
           <div>
             <div className="text-sm font-semibold text-slate-900 dark:text-white">
               Height, Weight &amp; Rep Baselines
@@ -698,7 +701,7 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
               <button
                 type="button"
                 onClick={handleExportDownload}
-                className="min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0 tactile-button focus-ring-tactile shadow-xs"
+                className="min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0 tactile-button focus-ring-tactile"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Export Backup</span>
@@ -726,7 +729,7 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
               value={importJsonText}
               onChange={(e) => setImportJsonText(e.target.value)}
               placeholder='{"profile": {...}, "calendarDays": [...]}'
-              className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500 shadow-inner"
+              className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
             />
             {importJsonText.trim() && (
               <button
@@ -737,6 +740,26 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
               </button>
             )}
           </form>
+        </div>
+
+        {/* Account & Session */}
+        <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+          <div>
+            <div className="text-sm font-semibold text-slate-900 dark:text-white">Active Session</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">
+              Signed in as {profile.name} ({profile.email})
+            </div>
+          </div>
+          {onLogout && (
+            <button
+              type="button"
+              onClick={onLogout}
+              className="min-h-[44px] px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-400 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0 border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-900/60 transition-colors tactile-button focus-ring-tactile cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Log Out</span>
+            </button>
+          )}
         </div>
 
         {/* Reset Data */}

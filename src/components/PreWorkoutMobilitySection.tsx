@@ -31,27 +31,12 @@ const MobilityBiomechanicalSvg: React.FC<{
   return (
     <svg
       viewBox="0 0 280 140"
-      className="w-full h-32 rounded-2xl overflow-hidden transition-all duration-300"
+      className="w-full h-32 rounded-xl overflow-hidden"
       role="img"
       aria-label={`Biomechanical guide for ${poseType}`}
     >
-      <defs>
-        <linearGradient id={`grad-${poseType}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#0F172A" />
-          <stop offset="100%" stopColor="#1E293B" />
-        </linearGradient>
-        <linearGradient id="roseAccent" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#F43F5E" />
-          <stop offset="100%" stopColor="#FB7185" />
-        </linearGradient>
-        <linearGradient id="amberAccent" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#F59E0B" />
-          <stop offset="100%" stopColor="#FBBF24" />
-        </linearGradient>
-      </defs>
-
       {/* Dark Studio Base */}
-      <rect width="280" height="140" fill={`url(#grad-${poseType})`} />
+      <rect width="280" height="140" fill="#0F172A" />
 
       {/* Grid Lines */}
       <line x1="20" y1="120" x2="260" y2="120" stroke="#334155" strokeWidth="1.5" />
@@ -66,17 +51,17 @@ const MobilityBiomechanicalSvg: React.FC<{
           <line x1="140" y1="92" x2="124" y2="120" stroke="#94A3B8" strokeWidth="6" strokeLinecap="round" />
           <line x1="140" y1="92" x2="156" y2="120" stroke="#94A3B8" strokeWidth="6" strokeLinecap="round" />
           {/* Horizontal Arms Extended */}
-          <line x1="90" y1="52" x2="190" y2="52" stroke="url(#roseAccent)" strokeWidth="6" strokeLinecap="round" />
+          <line x1="90" y1="52" x2="190" y2="52" stroke="#F43F5E" strokeWidth="6" strokeLinecap="round" />
           {/* Shoulder Joint Pivot Dots */}
-          <circle cx="118" cy="52" r="5" fill="#F59E0B" />
-          <circle cx="162" cy="52" r="5" fill="#F59E0B" />
+          <circle cx="118" cy="52" r="5" fill="#F43F5E" />
+          <circle cx="162" cy="52" r="5" fill="#F43F5E" />
           {/* Rotation Guides with Dash Array */}
           <circle
             cx="80"
             cy="52"
             r="20"
             fill="none"
-            stroke="#38BDF8"
+            stroke="#94A3B8"
             strokeWidth="2"
             strokeDasharray="4 3"
             className={isActiveTimer ? 'animate-spin origin-[80px_52px]' : ''}
@@ -86,12 +71,12 @@ const MobilityBiomechanicalSvg: React.FC<{
             cy="52"
             r="20"
             fill="none"
-            stroke="#38BDF8"
+            stroke="#94A3B8"
             strokeWidth="2"
             strokeDasharray="4 3"
             className={isActiveTimer ? 'animate-spin origin-[200px_52px]' : ''}
           />
-          <text x="14" y="24" fill="#38BDF8" fontSize="9" fontFamily="JetBrains Mono, monospace">
+          <text x="14" y="24" fill="#E2E8F0" fontSize="12" fontFamily="Poppins, sans-serif">
             CIRCULAR ROTATION · 360° CAPSULE GLIDE
           </text>
         </g>
@@ -105,7 +90,7 @@ const MobilityBiomechanicalSvg: React.FC<{
           <line x1="60" y1="50" x2="115" y2="50" stroke="#94A3B8" strokeWidth="5" strokeLinecap="round" />
           {/* Torso & Head */}
           <line x1="115" y1="46" x2="118" y2="88" stroke="#E2E8F0" strokeWidth="7" strokeLinecap="round" />
-          <circle cx="114" cy="28" r="10" fill="#F8FAFC" stroke="#F59E0B" strokeWidth="2.5" />
+          <circle cx="114" cy="28" r="10" fill="#F8FAFC" stroke="#94A3B8" strokeWidth="2.5" />
           {/* Standing Leg */}
           <line x1="118" y1="88" x2="118" y2="120" stroke="#64748B" strokeWidth="6" strokeLinecap="round" />
           {/* Hip Joint Center */}
@@ -116,7 +101,7 @@ const MobilityBiomechanicalSvg: React.FC<{
             y1="88"
             x2={isActiveTimer ? 172 : 162}
             y2={isActiveTimer ? 104 : 110}
-            stroke="url(#roseAccent)"
+            stroke="#F43F5E"
             strokeWidth="7"
             strokeLinecap="round"
           />
@@ -124,11 +109,11 @@ const MobilityBiomechanicalSvg: React.FC<{
           <path
             d="M 80 114 Q 120 128 175 106"
             fill="none"
-            stroke="#F59E0B"
+            stroke="#94A3B8"
             strokeWidth="2"
             strokeDasharray="4 3"
           />
-          <text x="14" y="24" fill="#FBBF24" fontSize="9" fontFamily="JetBrains Mono, monospace">
+          <text x="14" y="24" fill="#E2E8F0" fontSize="12" fontFamily="Poppins, sans-serif">
             HIP ACETABULAR OPENING · HAMSTRING ARC
           </text>
         </g>
@@ -137,27 +122,27 @@ const MobilityBiomechanicalSvg: React.FC<{
       {poseType === 'torsotwists' && (
         <g>
           {/* Head & Spine Axis */}
-          <circle cx="140" cy="28" r="10" fill="#F8FAFC" stroke="#10B981" strokeWidth="2.5" />
+          <circle cx="140" cy="28" r="10" fill="#F8FAFC" stroke="#94A3B8" strokeWidth="2.5" />
           <line x1="140" y1="42" x2="140" y2="88" stroke="#E2E8F0" strokeWidth="7" strokeLinecap="round" />
           {/* Standing Legs with pivoted trailing foot */}
           <line x1="140" y1="88" x2="118" y2="120" stroke="#94A3B8" strokeWidth="6" strokeLinecap="round" />
           <line x1="140" y1="88" x2="162" y2="120" stroke="#94A3B8" strokeWidth="6" strokeLinecap="round" />
           {/* Rotated Shoulders and Arms at 90 deg */}
-          <line x1="105" y1="44" x2="175" y2="56" stroke="url(#roseAccent)" strokeWidth="8" strokeLinecap="round" />
-          <line x1="105" y1="44" x2="96" y2="66" stroke="#FBBF24" strokeWidth="5" strokeLinecap="round" />
-          <line x1="175" y1="56" x2="184" y2="78" stroke="#FBBF24" strokeWidth="5" strokeLinecap="round" />
+          <line x1="105" y1="44" x2="175" y2="56" stroke="#F43F5E" strokeWidth="8" strokeLinecap="round" />
+          <line x1="105" y1="44" x2="96" y2="66" stroke="#94A3B8" strokeWidth="5" strokeLinecap="round" />
+          <line x1="175" y1="56" x2="184" y2="78" stroke="#94A3B8" strokeWidth="5" strokeLinecap="round" />
           {/* Spine Pivot Joint Markers */}
-          <circle cx="140" cy="50" r="4" fill="#38BDF8" />
-          <circle cx="140" cy="72" r="4" fill="#38BDF8" />
+          <circle cx="140" cy="50" r="4" fill="#94A3B8" />
+          <circle cx="140" cy="72" r="4" fill="#94A3B8" />
           {/* Transverse Rotational Torque Arrows */}
           <path
             d="M 90 78 Q 140 94 190 78"
             fill="none"
-            stroke="#10B981"
+            stroke="#F43F5E"
             strokeWidth="2.5"
             strokeDasharray="4 3"
           />
-          <text x="14" y="24" fill="#34D399" fontSize="9" fontFamily="JetBrains Mono, monospace">
+          <text x="14" y="24" fill="#E2E8F0" fontSize="12" fontFamily="Poppins, sans-serif">
             THORACIC ROTATION · TRANSVERSE PLANE
           </text>
         </g>
@@ -253,25 +238,25 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
   return (
     <div
       data-testid="pre-workout-dynamic-mobility-section"
-      className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 transition-all bento-card-tactile"
+      className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-xl p-6"
     >
       {/* Header with Title and Primed Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-rose-500 font-semibold tracking-wider">
+          <div className="flex items-center gap-2 text-xs text-rose-700 dark:text-rose-400 font-semibold tracking-wide">
             <Activity className="w-3.5 h-3.5" />
             <span>PHASE 2A · PRE-WORKOUT DYNAMIC MOBILITY (2-3 MINS)</span>
           </div>
           <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-1 flex items-center gap-2">
             <span>Pre-Workout Dynamic Mobility</span>
             {isAllPrimed && (
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300/40 font-medium flex items-center gap-1 font-mono">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300/40 font-medium flex items-center gap-1">
                 <Check className="w-3 h-3 stroke-[3]" />
                 Joints Ready
               </span>
             )}
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">
             Perform these 3 light-intensity joint preparation exercises before starting Round 1 of your heavy 3-1-1 circuit. Lubricates the glenohumeral, hip acetabular, and thoracic joints with active synovial fluid to prevent impingement and maximize range of motion.
           </p>
         </div>
@@ -281,23 +266,24 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
             type="button"
             onClick={() => setSoundEnabled((prev) => !prev)}
             aria-label={soundEnabled ? 'Mute timer sound' : 'Enable timer sound'}
-            className="min-h-[44px] min-w-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors tactile-button focus-ring-tactile"
+            className="h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
             {soundEnabled ? (
-              <Volume2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <Volume2 className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
             ) : (
-              <VolumeX className="w-4 h-4 text-slate-400" />
+              <VolumeX className="w-3.5 h-3.5 text-slate-400" />
             )}
+            <span>{soundEnabled ? 'Audio On' : 'Muted'}</span>
           </button>
 
           <button
             type="button"
             onClick={() => onSetAllMobility(!isAllPrimed)}
             data-testid="toggle-all-mobility-btn"
-            className={`min-h-[44px] px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap tactile-button focus-ring-tactile ${
+            className={`h-9 px-3.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
               isAllPrimed
                 ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800'
-                : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-white shadow-xs'
+                : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-white'
             }`}
           >
             {isAllPrimed ? (
@@ -319,19 +305,19 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
       <div className="mt-3 flex items-center justify-between gap-4 text-xs">
         <span className="text-slate-500 dark:text-slate-400">
           Joint Readiness:{' '}
-          <strong className="text-slate-900 dark:text-white font-mono tabular-nums">
+          <strong className="text-slate-900 dark:text-white tabular-nums">
             {completedCount} / {totalRequired} Drills Primed ({completionPercent}%)
           </strong>
         </span>
-        <div className="w-32 sm:w-44 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
+        <div className="w-32 sm:w-44 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
           <div
-            className="h-full bg-emerald-500 transition-all duration-300 rounded-full"
+            className="h-full bg-emerald-500 rounded-full"
             style={{ width: `${completionPercent}%` }}
           />
         </div>
       </div>
 
-      {/* 3 Mobility Exercise Bento Cards */}
+      {/* 3 Mobility Exercise Cards */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
         {DYNAMIC_MOBILITY_EXERCISES.map((drill) => {
           const isDone = completedMobilityIds.includes(drill.id);
@@ -341,32 +327,32 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
             <article
               key={drill.id}
               data-testid={`mobility-card-${drill.id}`}
-              className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
+              className={`p-4 rounded-xl border flex flex-col justify-between ${
                 isDone
-                  ? 'bg-emerald-50/40 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800/80 shadow-2xs'
+                  ? 'bg-emerald-50/40 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800/80'
                   : isTimerActive
-                  ? 'bg-rose-50/30 dark:bg-rose-950/30 border-rose-300 dark:border-rose-900 shadow-sm'
+                  ? 'bg-rose-50/30 dark:bg-rose-950/30 border-rose-300 dark:border-rose-900'
                   : 'bg-slate-50/70 dark:bg-slate-800/60 border-slate-200/90 dark:border-slate-700/80 hover:border-slate-300 dark:hover:border-slate-600'
               }`}
             >
               <div>
                 {/* Header Metadata */}
-                <div className="flex items-center justify-between text-xs font-mono tabular-nums text-slate-500 dark:text-slate-400">
+                <div className="flex items-center justify-between text-xs tabular-nums text-slate-500 dark:text-slate-400">
                   <span className="font-semibold text-rose-500">{drill.stepNumber}</span>
-                  <span className="text-[11px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 px-2 py-0.5 rounded-md border border-amber-200/60 dark:border-amber-800/60 font-medium">
+                  <span className="text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 px-2 py-0.5 rounded-md border border-amber-200/60 dark:border-amber-800/60 font-medium">
                     {drill.intensity}
                   </span>
                 </div>
 
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-1.5 leading-snug">
+                <h4 className="text-base font-bold text-slate-900 dark:text-white mt-1.5 leading-snug">
                   {drill.name}
                 </h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
                   {drill.subtitle}
                 </p>
 
                 {/* Biomechanical Illustrated SVG */}
-                <div className="mt-2.5 rounded-xl overflow-hidden shadow-xs">
+                <div className="mt-2.5 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800">
                   <MobilityBiomechanicalSvg
                     poseType={drill.poseType}
                     isActiveTimer={isTimerActive}
@@ -375,13 +361,13 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
 
                 {/* Prescribed reps and benefit */}
                 <div className="mt-3 space-y-1.5">
-                  <div className="text-xs font-mono tabular-nums text-slate-800 dark:text-slate-200">
+                  <div className="text-sm tabular-nums text-slate-800 dark:text-slate-200">
                     Target: <strong className="text-slate-900 dark:text-white font-semibold">{drill.repsLabel}</strong>
                   </div>
-                  <div className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+                  <div className="text-sm text-slate-600 dark:text-slate-400 leading-snug">
                     <span className="font-medium text-slate-700 dark:text-slate-300">Joints:</span> {drill.targetJoints}
                   </div>
-                  <div className="text-[11px] text-slate-600 dark:text-slate-300 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-700/80 rounded-xl p-2.5 leading-relaxed shadow-2xs">
+                  <div className="text-sm text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80 rounded-lg p-2.5 leading-relaxed">
                     {drill.jointBenefits}
                   </div>
                 </div>
@@ -398,16 +384,16 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
                       ? `Pause ${drill.name} timer at ${secondsLeft}s`
                       : `Start 45s timer for ${drill.name}`
                   }
-                  className={`flex-1 min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap shrink-0 tactile-button focus-ring-tactile ${
+                  className={`flex-1 h-9 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap shrink-0 ${
                     isTimerActive
-                      ? 'bg-rose-500 text-white shadow-xs'
-                      : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-white shadow-2xs'
+                      ? 'bg-rose-500 text-white'
+                      : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-white'
                   }`}
                 >
                   {isTimerActive ? (
                     <>
                       <Pause className="w-3.5 h-3.5" />
-                      <span className="font-mono tabular-nums">{secondsLeft}s (Pause)</span>
+                      <span className="tabular-nums">{secondsLeft}s (Pause)</span>
                     </>
                   ) : (
                     <>
@@ -422,9 +408,10 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
                     type="button"
                     onClick={() => handleResetTimer(drill.id)}
                     aria-label={`Reset ${drill.name} timer`}
-                    className="min-h-[44px] min-w-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors tactile-button focus-ring-tactile"
+                    className="h-9 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center gap-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reset</span>
                   </button>
                 )}
 
@@ -433,17 +420,18 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
                   type="button"
                   onClick={() => onToggleMobility(drill.id)}
                   aria-label={isDone ? `Mark ${drill.name} unprimed` : `Mark ${drill.name} primed`}
-                  className={`min-h-[44px] min-w-[44px] px-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center transition-colors shrink-0 tactile-button focus-ring-tactile ${
+                  className={`h-9 px-3 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition-colors shrink-0 ${
                     isDone
-                      ? 'bg-emerald-600 border-emerald-600 text-white shadow-xs'
+                      ? 'bg-emerald-600 border-emerald-600 text-white'
                       : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                   }`}
                 >
                   {isDone ? (
-                    <CheckCircle2 className="w-4 h-4 text-white" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                   ) : (
-                    <Check className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                    <Check className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                   )}
+                  <span>{isDone ? 'Primed' : 'Prime'}</span>
                 </button>
               </div>
             </article>

@@ -1,0 +1,3145 @@
+{
+ "url": "http://localhost:4173/?autostart=1",
+ "at": "2026-10-21T19:31:22.775Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 5,
+   "filled": [
+    0.88,
+    0.99,
+    0.99,
+    0.99,
+    1
+   ],
+   "motion": {
+    "elements": 13,
+    "css": 5,
+    "transitions": 8,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 4417,
+     "screens": 4.9,
+     "words": 1311,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 139,
+     "sections": 6,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 1,
+     "brokenImages": [],
+     "emoji": [
+      "⚡"
+     ],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "words": 6,
+     "chars": 34,
+     "lines": 1,
+     "size": 30,
+     "vw": 2.1,
+     "font": "Poppins",
+     "weight": 800,
+     "tracking": -0.02,
+     "leading": 1.2,
+     "top": 178,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "words": 6,
+     "lines": 1,
+     "size": 30,
+     "font": "Poppins"
+    },
+    "headings": [
+     {
+      "text": "Morning, Sharif. Ready for Day 12?",
+      "words": 6,
+      "chars": 34,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "Poppins",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.4,
+      "top": 178,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "4",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.01,
+      "top": 306,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "66",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.03,
+      "top": 306,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "72",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.03,
+      "top": 306,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "144g",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.17,
+      "top": 306,
+      "tag": "div",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 5,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": 1,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Poppins",
+       "share": 0.8,
+       "mono": false
+      },
+      {
+       "family": "JetBrains Mono",
+       "share": 0.2,
+       "mono": true
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      9,
+      10,
+      11,
+      12,
+      14,
+      16,
+      18,
+      20,
+      24,
+      30
+     ],
+     "sizeCount": 10,
+     "notLoaded": [],
+     "body": {
+      "font": "Poppins",
+      "size": 12,
+      "leading": 1.33,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 4.8
+     },
+     "measureChars": 112,
+     "max": {
+      "size": 30,
+      "vw": 2.1,
+      "font": "Poppins",
+      "text": "Morning, Sharif. Ready for Day 12?"
+     },
+     "monoShare": 0.2,
+     "monoProseShare": 0.2,
+     "monoFamilies": [
+      "JetBrains Mono"
+     ],
+     "monoSamples": [
+      "Height:",
+      "175 cm",
+      "4",
+      "66",
+      "72",
+      "5 Push · 3 Pull"
+     ],
+     "microLabels": 10,
+     "microLabelShare": 0.018,
+     "microSamples": [
+      "GAMIFICATION & STREAK MOTIVATION",
+      "Bronze",
+      "Bronze",
+      "Silver",
+      "Silver",
+      "Bronze"
+     ],
+     "upperShare": 0.02,
+     "centerShare": 0.11,
+     "smallText": 136
+    },
+    "eyebrows": [
+     {
+      "text": "Height:",
+      "above": "Morning, Sharif. Ready for Day 12?",
+      "upper": false,
+      "tracked": false,
+      "mono": true,
+      "pill": false,
+      "size": 12,
+      "top": 137
+     },
+     {
+      "text": "Active Morning Streak",
+      "above": "4",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 286
+     },
+     {
+      "text": "Hypertrophy Weight Goal",
+      "above": "66",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 286
+     },
+     {
+      "text": "Hypertrophy Weight Goal",
+      "above": "72",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 286
+     },
+     {
+      "text": "Daily Protein Target",
+      "above": "144g",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 286
+     }
+    ],
+    "numbered": [
+     {
+      "text": "01. 500ml Warm Water + 2 Medjo",
+      "size": 14,
+      "top": 2027
+     },
+     {
+      "text": "02. Folded Towel Grip on Overh",
+      "size": 14,
+      "top": 2093
+     },
+     {
+      "text": "01. Post-Workout Cobra Stretch",
+      "size": 14,
+      "top": 4173
+     },
+     {
+      "text": "02. High-Protein Breakfast Bon",
+      "size": 14,
+      "top": 4181
+     }
+    ],
+    "color": {
+     "bodyBg": "#f8fafc",
+     "bodyBgHsl": {
+      "h": 210,
+      "s": 0.4,
+      "l": 0.98
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#f8fafc",
+       "top": 0,
+       "hsl": {
+        "h": 210,
+        "s": 0.4,
+        "l": 0.98
+       }
+      },
+      {
+       "color": "#ffffff",
+       "top": 97,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#62748e",
+       "share": 0.46
+      },
+      {
+       "color": "#0f172b",
+       "share": 0.17
+      },
+      {
+       "color": "#314158",
+       "share": 0.12
+      },
+      {
+       "color": "#45556c",
+       "share": 0.08
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.06
+      }
+     ],
+     "button": {
+      "bg": "#0f172b",
+      "hsl": {
+       "h": 223,
+       "s": 0.48,
+       "l": 0.11
+      },
+      "fg": "#ffffff"
+     },
+     "lowContrast": [
+      {
+       "text": "GAMIFICATION & STREAK MOTIVATION",
+       "ratio": 2.1,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#fe9a00",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Shield Today",
+       "ratio": 3.6,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#ffffff",
+       "bg": "#0092b8"
+      },
+      {
+       "text": "19:40",
+       "ratio": 3.7,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#009966",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Start 20-Min Session",
+       "ratio": 3.8,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#ffffff",
+       "bg": "#ff2056"
+      },
+      {
+       "text": "Tick Off Today's 20-Min Session",
+       "ratio": 3.8,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#ffffff",
+       "bg": "#ff2056"
+      },
+      {
+       "text": "Oct 19",
+       "ratio": 3.8,
+       "need": 4.5,
+       "size": 14,
+       "fg": "#ffffff",
+       "bg": "#ff2056"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 31,
+     "inHero": 11,
+     "radius": 12,
+     "height": 44,
+     "withShadow": 2,
+     "withGradient": 1,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Start 20-Min Session",
+      "Dark Mode",
+      "Calibrate Baselines",
+      "Backup & Settings",
+      "Consistency %"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 55,
+     "shadowOverlay": 4,
+     "shadowSamples": [
+      "section#overview-section.scroll-mt-6.bento-card-tactile → rgba(15, 23, 42, 0.03) 0px 2px 4px 0px, rgba(15, 23, 42, 0.06) 0px 12px 32px -4p",
+      "div.relative.w-14 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "svg → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "div.bento-tile-tactile.p-4 → rgba(15, 23, 42, 0.03) 0px 2px 6px 0px, rgba(255, 255, 255, 0.9) 0px 1px 1.5px 0"
+     ],
+     "gradients": 2,
+     "scrims": 0,
+     "gradientSamples": [
+      "div.p-4.rounded-2xl → linear-gradient(oklab(0.987 -0.00202336 0.0219068 / 0.6) 0%, rgb(255, 255, 255) 50%, oklab(0.987 -0.00202336 0",
+      "div.p-4.rounded-2xl → linear-gradient(oklab(0.987 -0.00202336 0.0219068 / 0.6) 0%, rgb(255, 255, 255) 50%, oklab(0.987 -0.00202336 0"
+     ],
+     "gradientText": 0,
+     "hairlines": 16,
+     "hairlineSamples": [
+      "header.sticky.top-0 1440px",
+      "div.flex.flex-col 1158px",
+      "div.mt-5.pt-5 1158px",
+      "div.flex.flex-col 1108px",
+      "div.mt-4.pt-3 649px"
+     ],
+     "outlinedBoxes": 36,
+     "dashed": 26,
+     "blurred": 6,
+     "roundedBoxes": 21,
+     "boxRadius": 16,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 3,
+       "iconTopped": true,
+       "rounded": false,
+       "top": 97
+      },
+      {
+       "count": 4,
+       "iconTopped": false,
+       "rounded": false,
+       "top": 269
+      },
+      {
+       "count": 8,
+       "iconTopped": true,
+       "rounded": true,
+       "top": 1414
+      },
+      {
+       "count": 3,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 2489
+      },
+      {
+       "count": 5,
+       "iconTopped": false,
+       "rounded": false,
+       "top": 3061
+      }
+     ]
+    },
+    "heroMedia": [
+     {
+      "type": "svg",
+      "ratio": 0.13
+     }
+    ],
+    "nav": {
+     "links": 4,
+     "fixed": true,
+     "height": 73,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "jetbrains mono",
+     "poppins"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 4417,
+    "margins": {
+     "left": 133,
+     "right": 94
+    },
+    "sections": [
+     {
+      "sel": "section#overview-section.scroll-mt-6.bento-card-tactile",
+      "tag": "section",
+      "top": 97,
+      "height": 627,
+      "words": 114,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Morning,",
+       "size": 30,
+       "tag": "h1"
+      },
+      "left": 141,
+      "right": 141,
+      "textLeft": 141,
+      "textRight": 141,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#streak-calendar.scroll-mt-6.bento-card-tactile",
+      "tag": "section",
+      "top": 748,
+      "height": 1153,
+      "words": 477,
+      "media": 0,
+      "middle": 1894,
+      "heading": {
+       "text": "30-Day Calendar & Active Streak Strip",
+       "size": 20,
+       "tag": "h2"
+      },
+      "left": 141,
+      "right": 0,
+      "textLeft": 141,
+      "textRight": -1915,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "div#prep-section.scroll-mt-6.grid",
+      "tag": "div",
+      "top": 1925,
+      "height": 343,
+      "words": 102,
+      "media": 0,
+      "middle": 74,
+      "heading": {
+       "text": "Pre-Workout Prep Checklist",
+       "size": 20,
+       "tag": "h2"
+      },
+      "left": 137,
+      "right": 137,
+      "textLeft": 137,
+      "textRight": 154,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "div.bg-white.dark:bg-slate-900",
+      "tag": "div",
+      "top": 2292,
+      "height": 663,
+      "words": 215,
+      "media": 3,
+      "middle": 50,
+      "heading": {
+       "text": "Pre-Workout Dynamic Mobility",
+       "size": 20,
+       "tag": "h3"
+      },
+      "left": 137,
+      "right": 137,
+      "textLeft": 137,
+      "textRight": 153,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.grid.grid-cols-1",
+      "tag": "div",
+      "top": 3061,
+      "height": 901,
+      "words": 233,
+      "media": 5,
+      "middle": 62,
+      "heading": {
+       "text": "Warm-Up: Lunge Twists & Scapular Push-Ups",
+       "size": 16,
+       "tag": "h3"
+      },
+      "left": 133,
+      "right": 133,
+      "textLeft": 133,
+      "textRight": 133,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "section#post-workout-section.scroll-mt-6.bento-card-tactile",
+      "tag": "section",
+      "top": 3986,
+      "height": 287,
+      "words": 92,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Post-Workout Cobra Stretch & High-Protein Fuel Bon",
+       "size": 20,
+       "tag": "h2"
+      },
+      "left": 141,
+      "right": 141,
+      "textLeft": 141,
+      "textRight": 156,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Morning, Sharif. Ready for Day 12?",
+      "size": 30,
+      "top": 178,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 133,
+      "n": 5
+     },
+     {
+      "x": 166,
+      "n": 3
+     },
+     {
+      "x": 545,
+      "n": 2
+     },
+     {
+      "x": 144,
+      "n": 1
+     },
+     {
+      "x": 221,
+      "n": 1
+     },
+     {
+      "x": 361,
+      "n": 1
+     },
+     {
+      "x": 450,
+      "n": 1
+     },
+     {
+      "x": 888,
+      "n": 1
+     },
+     {
+      "x": 957,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 16,
+    "bodySize": 12,
+    "stage": false,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0.07,
+    "voidBox": {
+     "x": 0,
+     "y": 120,
+     "w": 120,
+     "h": 780
+    }
+   },
+   "app": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "dark": false,
+    "ground": "#f8fafc",
+    "sidebar": null,
+    "topbar": {
+     "h": 73
+    },
+    "canvas": {
+     "left": 133,
+     "right": -1806
+    },
+    "hero": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "words": 6,
+     "chars": 34,
+     "lines": 1,
+     "size": 30,
+     "vw": 2.1,
+     "font": "Poppins",
+     "weight": 800,
+     "tracking": -0.02,
+     "leading": 1.2,
+     "top": 178,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 9,
+    "layout": {
+     "panels": 11,
+     "firstScreen": 2,
+     "ragged": [],
+     "voids": [
+      {
+       "gap": 70,
+       "at": 2144,
+       "panel": "Pre-Workout Prep Checklist"
+      },
+      {
+       "gap": 57,
+       "at": 3375,
+       "panel": "Push-Ups (Drop-Set with 3-1-1 Tempo)"
+      },
+      {
+       "gap": 57,
+       "at": 3375,
+       "panel": "Bulgarian Split Squats (Bed Edge)"
+      },
+      {
+       "gap": 41,
+       "at": 3844,
+       "panel": "Bed Pike Push-Ups"
+      }
+     ]
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 41,
+     "radii": [
+      [
+       16,
+       19
+      ],
+      [
+       0,
+       17
+      ],
+      [
+       12,
+       3
+      ],
+      [
+       24,
+       2
+      ]
+     ],
+     "heavyBorders": 2,
+     "borderSamples": [
+      "#ffd22f on #ffffff (1.45:1)",
+      "#ffd22f on #ffffff (1.45:1)"
+     ],
+     "heavyShadows": 12,
+     "softShadows": 22,
+     "shadowSamples": [
+      "rgba(15, 23, 42, 0.06) 0px 12px 32px -4px",
+      "rgba(15, 23, 42, 0.06) 0px 12px 32px -4px",
+      "rgba(15, 23, 42, 0.06) 0px 12px 32px -4px"
+     ],
+     "glass": 0
+    },
+    "chips": {
+     "count": 16,
+     "hues": 3,
+     "samples": [
+      {
+       "hue": 223,
+       "size": 24,
+       "radius": "3.35544e+07px"
+      },
+      {
+       "hue": 232,
+       "size": 64,
+       "radius": "3.35544e+07px"
+      },
+      {
+       "hue": 48,
+       "size": 44,
+       "radius": "16px"
+      },
+      {
+       "hue": 48,
+       "size": 44,
+       "radius": "16px"
+      }
+     ]
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 31,
+     "tabularShare": 0.06,
+     "kpiMax": 30
+    },
+    "rows": null,
+    "chartHues": 5,
+    "placeholders": [],
+    "type": {
+     "under13": 0.85,
+     "tiny": 113,
+     "tinySamples": [
+      "50% 10px",
+      "100% 10px",
+      "15.4 10px",
+      "% efficiency) 10px"
+     ],
+     "sizes": [
+      9,
+      10,
+      11,
+      12,
+      14,
+      16,
+      18,
+      20,
+      24,
+      30
+     ]
+    },
+    "title": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "size": 30,
+     "top": 178
+    },
+    "colourShare": 0.038
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 7,
+   "filled": [
+    0.83,
+    0.91,
+    1,
+    0.96,
+    0.97,
+    0.94,
+    0.94
+   ],
+   "motion": {
+    "elements": 13,
+    "css": 5,
+    "transitions": 8,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 6281,
+     "screens": 6.1,
+     "words": 1287,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 139,
+     "sections": 6,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 1,
+     "brokenImages": [],
+     "emoji": [
+      "⚡"
+     ],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "words": 6,
+     "chars": 34,
+     "lines": 1,
+     "size": 30,
+     "vw": 3.9,
+     "font": "Poppins",
+     "weight": 800,
+     "tracking": -0.02,
+     "leading": 1.2,
+     "top": 167,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "words": 6,
+     "lines": 1,
+     "size": 30,
+     "font": "Poppins"
+    },
+    "headings": [
+     {
+      "text": "Morning, Sharif. Ready for Day 12?",
+      "words": 6,
+      "chars": 34,
+      "lines": 1,
+      "size": 30,
+      "vw": 3.9,
+      "font": "Poppins",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.76,
+      "top": 167,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "4",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 30,
+      "vw": 3.9,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.02,
+      "top": 345,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "66",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 30,
+      "vw": 3.9,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.05,
+      "top": 345,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "72",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 30,
+      "vw": 3.9,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.05,
+      "top": 345,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "144g",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 30,
+      "vw": 3.9,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.38,
+      "top": 472,
+      "tag": "div",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 5,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": 1,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Poppins",
+       "share": 0.8,
+       "mono": false
+      },
+      {
+       "family": "JetBrains Mono",
+       "share": 0.2,
+       "mono": true
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      9,
+      10,
+      11,
+      12,
+      14,
+      16,
+      18,
+      20,
+      24,
+      30
+     ],
+     "sizeCount": 10,
+     "notLoaded": [],
+     "body": {
+      "font": "Poppins",
+      "size": 12,
+      "leading": 1.33,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 4.8
+     },
+     "measureChars": 75,
+     "max": {
+      "size": 30,
+      "vw": 3.9,
+      "font": "Poppins",
+      "text": "Morning, Sharif. Ready for Day 12?"
+     },
+     "monoShare": 0.2,
+     "monoProseShare": 0.2,
+     "monoFamilies": [
+      "JetBrains Mono"
+     ],
+     "monoSamples": [
+      "Height:",
+      "175 cm",
+      "4",
+      "66",
+      "72",
+      "5 Push · 3 Pull"
+     ],
+     "microLabels": 10,
+     "microLabelShare": 0.018,
+     "microSamples": [
+      "GAMIFICATION & STREAK MOTIVATION",
+      "Bronze",
+      "Bronze",
+      "Silver",
+      "Silver",
+      "Bronze"
+     ],
+     "upperShare": 0.02,
+     "centerShare": 0.11,
+     "smallText": 134
+    },
+    "eyebrows": [
+     {
+      "text": "Height:",
+      "above": "Morning, Sharif. Ready for Day 12?",
+      "upper": false,
+      "tracked": false,
+      "mono": true,
+      "pill": false,
+      "size": 12,
+      "top": 126
+     },
+     {
+      "text": "Active Morning Streak",
+      "above": "4",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 325
+     },
+     {
+      "text": "Hypertrophy Weight Goal",
+      "above": "66",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 325
+     },
+     {
+      "text": "Hypertrophy Weight Goal",
+      "above": "72",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 325
+     },
+     {
+      "text": "Daily Protein Target",
+      "above": "144g",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 452
+     }
+    ],
+    "numbered": [
+     {
+      "text": "01. 500ml Warm Water + 2 Medjo",
+      "size": 14,
+      "top": 2832
+     },
+     {
+      "text": "02. Folded Towel Grip on Overh",
+      "size": 14,
+      "top": 2898
+     },
+     {
+      "text": "01. Post-Workout Cobra Stretch",
+      "size": 14,
+      "top": 6001
+     },
+     {
+      "text": "02. High-Protein Breakfast Bon",
+      "size": 14,
+      "top": 6009
+     }
+    ],
+    "color": {
+     "bodyBg": "#f8fafc",
+     "bodyBgHsl": {
+      "h": 210,
+      "s": 0.4,
+      "l": 0.98
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#f8fafc",
+       "top": 0,
+       "hsl": {
+        "h": 210,
+        "s": 0.4,
+        "l": 0.98
+       }
+      },
+      {
+       "color": "#ffffff",
+       "top": 97,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#62748e",
+       "share": 0.45
+      },
+      {
+       "color": "#0f172b",
+       "share": 0.18
+      },
+      {
+       "color": "#314158",
+       "share": 0.12
+      },
+      {
+       "color": "#45556c",
+       "share": 0.08
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.06
+      }
+     ],
+     "button": {
+      "bg": "#0f172b",
+      "hsl": {
+       "h": 223,
+       "s": 0.48,
+       "l": 0.11
+      },
+      "fg": "#ffffff"
+     },
+     "lowContrast": [
+      {
+       "text": "GAMIFICATION & STREAK MOTIVATION",
+       "ratio": 2.1,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#fe9a00",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Shield Today",
+       "ratio": 3.6,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#ffffff",
+       "bg": "#0092b8"
+      },
+      {
+       "text": "19:40",
+       "ratio": 3.7,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#009966",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Start 20-Min Session",
+       "ratio": 3.8,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#ffffff",
+       "bg": "#ff2056"
+      },
+      {
+       "text": "Tick Off Today's 20-Min Session",
+       "ratio": 3.8,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#ffffff",
+       "bg": "#ff2056"
+      },
+      {
+       "text": "Oct 19",
+       "ratio": 3.8,
+       "need": 4.5,
+       "size": 14,
+       "fg": "#ffffff",
+       "bg": "#ff2056"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 31,
+     "inHero": 9,
+     "radius": 12,
+     "height": 44,
+     "withShadow": 2,
+     "withGradient": 1,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Start 20-Min Session",
+      "Dark Mode",
+      "Calibrate Baselines",
+      "Backup & Settings",
+      "Consistency %"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 55,
+     "shadowOverlay": 4,
+     "shadowSamples": [
+      "section#overview-section.scroll-mt-6.bento-card-tactile → rgba(15, 23, 42, 0.03) 0px 2px 4px 0px, rgba(15, 23, 42, 0.06) 0px 12px 32px -4p",
+      "div.relative.w-14 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "svg → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "div.bento-tile-tactile.p-4 → rgba(15, 23, 42, 0.03) 0px 2px 6px 0px, rgba(255, 255, 255, 0.9) 0px 1px 1.5px 0"
+     ],
+     "gradients": 2,
+     "scrims": 0,
+     "gradientSamples": [
+      "div.p-4.rounded-2xl → linear-gradient(oklab(0.987 -0.00202336 0.0219068 / 0.6) 0%, rgb(255, 255, 255) 50%, oklab(0.987 -0.00202336 0",
+      "div.p-4.rounded-2xl → linear-gradient(oklab(0.987 -0.00202336 0.0219068 / 0.6) 0%, rgb(255, 255, 255) 50%, oklab(0.987 -0.00202336 0"
+     ],
+     "gradientText": 0,
+     "hairlines": 21,
+     "hairlineSamples": [
+      "header.sticky.top-0 768px",
+      "div.flex.flex-col 662px",
+      "div.mt-5.pt-5 662px",
+      "div.flex.flex-col 612px",
+      "div.mt-4.pt-3 264px"
+     ],
+     "outlinedBoxes": 39,
+     "dashed": 26,
+     "blurred": 6,
+     "roundedBoxes": 24,
+     "boxRadius": 16,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 4,
+       "iconTopped": false,
+       "rounded": false,
+       "top": 308
+      },
+      {
+       "count": 8,
+       "iconTopped": true,
+       "rounded": true,
+       "top": 1770
+      },
+      {
+       "count": 3,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 3626
+      },
+      {
+       "count": 5,
+       "iconTopped": false,
+       "rounded": false,
+       "top": 4369
+      }
+     ]
+    },
+    "heroMedia": [
+     {
+      "type": "svg",
+      "ratio": 0.12
+     }
+    ],
+    "nav": {
+     "links": 4,
+     "fixed": true,
+     "height": 73,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "jetbrains mono",
+     "poppins"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "pageH": 6281,
+    "margins": {
+     "left": 45,
+     "right": 45
+    },
+    "sections": [
+     {
+      "sel": "section#overview-section.scroll-mt-6.bento-card-tactile",
+      "tag": "section",
+      "top": 97,
+      "height": 843,
+      "words": 114,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Morning,",
+       "size": 30,
+       "tag": "h1"
+      },
+      "left": 53,
+      "right": 66,
+      "textLeft": 53,
+      "textRight": 89,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "div.flex.items-stretch",
+      "tag": "div",
+      "top": 1313,
+      "height": 163,
+      "words": 207,
+      "media": 0,
+      "middle": 2478,
+      "heading": null,
+      "left": 66,
+      "right": 0,
+      "textLeft": 66,
+      "textRight": -2499,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.mt-6",
+      "tag": "div",
+      "top": 1500,
+      "height": 1177,
+      "words": 191,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Milestone Achievements & Trophies",
+       "size": 20,
+       "tag": "h3"
+      },
+      "left": 78,
+      "right": 78,
+      "textLeft": 78,
+      "textRight": 94,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div#prep-section.scroll-mt-6.grid",
+      "tag": "div",
+      "top": 2730,
+      "height": 656,
+      "words": 102,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Pre-Workout Prep Checklist",
+       "size": 20,
+       "tag": "h2"
+      },
+      "left": 49,
+      "right": 49,
+      "textLeft": 49,
+      "textRight": 53,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "div.bg-white.dark:bg-slate-900",
+      "tag": "div",
+      "top": 3410,
+      "height": 804,
+      "words": 215,
+      "media": 3,
+      "middle": 31,
+      "heading": {
+       "text": "Pre-Workout Dynamic Mobility",
+       "size": 20,
+       "tag": "h3"
+      },
+      "left": 49,
+      "right": 49,
+      "textLeft": 49,
+      "textRight": 65,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.grid.grid-cols-1",
+      "tag": "div",
+      "top": 4369,
+      "height": 1362,
+      "words": 233,
+      "media": 5,
+      "middle": 62,
+      "heading": {
+       "text": "Warm-Up: Lunge Twists & Scapular Push-Ups",
+       "size": 16,
+       "tag": "h3"
+      },
+      "left": 45,
+      "right": 45,
+      "textLeft": 45,
+      "textRight": 45,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "section#post-workout-section.scroll-mt-6.bento-card-tactile",
+      "tag": "section",
+      "top": 5754,
+      "height": 383,
+      "words": 92,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Post-Workout Cobra Stretch & High-Protein Fuel Bon",
+       "size": 20,
+       "tag": "h2"
+      },
+      "left": 53,
+      "right": 53,
+      "textLeft": 53,
+      "textRight": 68,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Morning, Sharif. Ready for Day 12?",
+      "size": 30,
+      "top": 167,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [
+     {
+      "text": "Recovery",
+      "side": "right",
+      "px": 2
+     },
+     {
+      "text": "Mobility",
+      "side": "right",
+      "px": 7
+     }
+    ],
+    "edges": [
+     {
+      "x": 45,
+      "n": 7
+     },
+     {
+      "x": 75,
+      "n": 4
+     },
+     {
+      "x": 415,
+      "n": 2
+     },
+     {
+      "x": 133,
+      "n": 1
+     },
+     {
+      "x": 273,
+      "n": 1
+     },
+     {
+      "x": 362,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 16,
+    "bodySize": 12,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "dark": false,
+    "ground": "#f8fafc",
+    "sidebar": null,
+    "topbar": {
+     "h": 73
+    },
+    "canvas": {
+     "left": 45,
+     "right": -2390
+    },
+    "hero": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "words": 6,
+     "chars": 34,
+     "lines": 1,
+     "size": 30,
+     "vw": 3.9,
+     "font": "Poppins",
+     "weight": 800,
+     "tracking": -0.02,
+     "leading": 1.2,
+     "top": 167,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 6,
+    "layout": {
+     "panels": 11,
+     "firstScreen": 2,
+     "ragged": [],
+     "voids": [
+      {
+       "gap": 73,
+       "at": 5151,
+       "panel": "Bulgarian Split Squats (Bed Edge)"
+      }
+     ]
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 44,
+     "radii": [
+      [
+       16,
+       19
+      ],
+      [
+       0,
+       17
+      ],
+      [
+       12,
+       6
+      ],
+      [
+       24,
+       2
+      ]
+     ],
+     "heavyBorders": 2,
+     "borderSamples": [
+      "#ffd22f on #ffffff (1.45:1)",
+      "#ffd22f on #ffffff (1.45:1)"
+     ],
+     "heavyShadows": 12,
+     "softShadows": 25,
+     "shadowSamples": [
+      "rgba(15, 23, 42, 0.06) 0px 12px 32px -4px",
+      "rgba(15, 23, 42, 0.06) 0px 12px 32px -4px",
+      "rgba(15, 23, 42, 0.06) 0px 12px 32px -4px"
+     ],
+     "glass": 0
+    },
+    "chips": {
+     "count": 16,
+     "hues": 3,
+     "samples": [
+      {
+       "hue": 223,
+       "size": 24,
+       "radius": "3.35544e+07px"
+      },
+      {
+       "hue": 232,
+       "size": 64,
+       "radius": "3.35544e+07px"
+      },
+      {
+       "hue": 48,
+       "size": 44,
+       "radius": "16px"
+      },
+      {
+       "hue": 48,
+       "size": 44,
+       "radius": "16px"
+      }
+     ]
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 31,
+     "tabularShare": 0.06,
+     "kpiMax": 30
+    },
+    "rows": null,
+    "chartHues": 5,
+    "placeholders": [],
+    "type": {
+     "under13": 0.85,
+     "tiny": 113,
+     "tinySamples": [
+      "50% 10px",
+      "100% 10px",
+      "15.4 10px",
+      "% efficiency) 10px"
+     ],
+     "sizes": [
+      9,
+      10,
+      11,
+      12,
+      14,
+      16,
+      18,
+      20,
+      24,
+      30
+     ]
+    },
+    "title": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "size": 30,
+     "top": 167
+    },
+    "colourShare": 0.047
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 12,
+   "filled": [
+    0.82,
+    0.94,
+    0.93,
+    1,
+    1,
+    0.89,
+    1,
+    1,
+    0.98,
+    1,
+    1,
+    0.95
+   ],
+   "motion": {
+    "elements": 13,
+    "css": 5,
+    "transitions": 8,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 10299,
+     "screens": 12.2,
+     "words": 1284,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 139,
+     "sections": 6,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 2,
+     "brokenImages": [],
+     "emoji": [
+      "⚡"
+     ],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "words": 6,
+     "chars": 34,
+     "lines": 2,
+     "size": 24,
+     "vw": 6.2,
+     "font": "Poppins",
+     "weight": 800,
+     "tracking": -0.02,
+     "leading": 1.33,
+     "top": 207,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "words": 6,
+     "lines": 2,
+     "size": 24,
+     "font": "Poppins"
+    },
+    "headings": [
+     {
+      "text": "Morning, Sharif. Ready for Day 12?",
+      "words": 6,
+      "chars": 34,
+      "lines": 2,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Poppins",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.33,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.61,
+      "top": 207,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "4",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 30,
+      "vw": 7.7,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.05,
+      "top": 483,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "66",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.33,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.07,
+      "top": 483,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "72",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.33,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.07,
+      "top": 483,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "5 Push · 3 Pull",
+      "words": 5,
+      "chars": 15,
+      "lines": 3,
+      "size": 24,
+      "vw": 6.2,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.33,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.29,
+      "top": 642,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "144g",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "JetBrains Mono",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.33,
+      "upper": false,
+      "italic": false,
+      "mono": true,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.29,
+      "top": 642,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "20-Minute Full-Body Hypertrophy Circuit",
+      "words": 4,
+      "chars": 39,
+      "lines": 2,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Poppins",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.33,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 7065,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 7,
+     "maxLines": 3,
+     "over2Lines": 1,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": 5,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Poppins",
+       "share": 0.79,
+       "mono": false
+      },
+      {
+       "family": "JetBrains Mono",
+       "share": 0.21,
+       "mono": true
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      9,
+      10,
+      11,
+      12,
+      14,
+      16,
+      18,
+      20,
+      24,
+      30
+     ],
+     "sizeCount": 10,
+     "notLoaded": [],
+     "body": {
+      "font": "Poppins",
+      "size": 12,
+      "leading": 1.33,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 4.8
+     },
+     "measureChars": 51,
+     "max": {
+      "size": 30,
+      "vw": 7.7,
+      "font": "JetBrains Mono",
+      "text": "4"
+     },
+     "monoShare": 0.21,
+     "monoProseShare": 0.21,
+     "monoFamilies": [
+      "JetBrains Mono"
+     ],
+     "monoSamples": [
+      "Height:",
+      "175 cm",
+      "4",
+      "66",
+      "72",
+      "5 Push · 3 Pull"
+     ],
+     "microLabels": 10,
+     "microLabelShare": 0.018,
+     "microSamples": [
+      "GAMIFICATION & STREAK MOTIVATION",
+      "Bronze",
+      "Bronze",
+      "Silver",
+      "Silver",
+      "Bronze"
+     ],
+     "upperShare": 0.02,
+     "centerShare": 0.11,
+     "smallText": 134
+    },
+    "eyebrows": [
+     {
+      "text": "Height:",
+      "above": "Morning, Sharif. Ready for Day 12?",
+      "upper": false,
+      "tracked": false,
+      "mono": true,
+      "pill": false,
+      "size": 12,
+      "top": 166
+     },
+     {
+      "text": "Active Morning Streak",
+      "above": "4",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 447
+     },
+     {
+      "text": "Hypertrophy Weight Goal",
+      "above": "66",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 447
+     },
+     {
+      "text": "Hypertrophy Weight Goal",
+      "above": "72",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 447
+     },
+     {
+      "text": "Calibrated Rep Baselines",
+      "above": "5 Push · 3 Pull",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 606
+     },
+     {
+      "text": "Daily Protein Target",
+      "above": "144g",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 12,
+      "top": 606
+     }
+    ],
+    "numbered": [
+     {
+      "text": "01. 500ml Warm Water + 2 Medjo",
+      "size": 14,
+      "top": 4430
+     },
+     {
+      "text": "02. Folded Towel Grip on Overh",
+      "size": 14,
+      "top": 4548
+     },
+     {
+      "text": "01. Post-Workout Cobra Stretch",
+      "size": 14,
+      "top": 9899
+     },
+     {
+      "text": "02. High-Protein Breakfast Bon",
+      "size": 14,
+      "top": 10039
+     }
+    ],
+    "color": {
+     "bodyBg": "#f8fafc",
+     "bodyBgHsl": {
+      "h": 210,
+      "s": 0.4,
+      "l": 0.98
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#f8fafc",
+       "top": 0,
+       "hsl": {
+        "h": 210,
+        "s": 0.4,
+        "l": 0.98
+       }
+      },
+      {
+       "color": "#ffffff",
+       "top": 97,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#62748e",
+       "share": 0.45
+      },
+      {
+       "color": "#0f172b",
+       "share": 0.18
+      },
+      {
+       "color": "#314158",
+       "share": 0.12
+      },
+      {
+       "color": "#45556c",
+       "share": 0.08
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.06
+      }
+     ],
+     "button": {
+      "bg": "#0f172b",
+      "hsl": {
+       "h": 223,
+       "s": 0.48,
+       "l": 0.11
+      },
+      "fg": "#ffffff"
+     },
+     "lowContrast": [
+      {
+       "text": "GAMIFICATION & STREAK MOTIVATION",
+       "ratio": 2.1,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#fe9a00",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Shield Today",
+       "ratio": 3.6,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#ffffff",
+       "bg": "#0092b8"
+      },
+      {
+       "text": "19:40",
+       "ratio": 3.7,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#009966",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Start 20-Min Session",
+       "ratio": 3.8,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#ffffff",
+       "bg": "#ff2056"
+      },
+      {
+       "text": "Tick Off Today's 20-Min Session",
+       "ratio": 3.8,
+       "need": 4.5,
+       "size": 12,
+       "fg": "#ffffff",
+       "bg": "#ff2056"
+      },
+      {
+       "text": "Oct 19",
+       "ratio": 3.8,
+       "need": 4.5,
+       "size": 14,
+       "fg": "#ffffff",
+       "bg": "#ff2056"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 27,
+     "inHero": 6,
+     "radius": 12,
+     "height": 44,
+     "withShadow": 1,
+     "withGradient": 1,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Start 20-Min Session",
+      "Dark Mode",
+      "Calibrate Baselines",
+      "Backup & Settings",
+      "Consistency %"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 55,
+     "shadowOverlay": 4,
+     "shadowSamples": [
+      "section#overview-section.scroll-mt-6.bento-card-tactile → rgba(15, 23, 42, 0.03) 0px 2px 4px 0px, rgba(15, 23, 42, 0.06) 0px 12px 32px -4p",
+      "div.relative.w-14 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "svg → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "div.bento-tile-tactile.p-4 → rgba(15, 23, 42, 0.03) 0px 2px 6px 0px, rgba(255, 255, 255, 0.9) 0px 1px 1.5px 0"
+     ],
+     "gradients": 2,
+     "scrims": 0,
+     "gradientSamples": [
+      "div.p-4.rounded-2xl → linear-gradient(oklab(0.987 -0.00202336 0.0219068 / 0.6) 0%, rgb(255, 255, 255) 50%, oklab(0.987 -0.00202336 0",
+      "div.p-4.rounded-2xl → linear-gradient(oklab(0.987 -0.00202336 0.0219068 / 0.6) 0%, rgb(255, 255, 255) 50%, oklab(0.987 -0.00202336 0"
+     ],
+     "gradientText": 0,
+     "hairlines": 16,
+     "hairlineSamples": [
+      "header.sticky.top-0 390px",
+      "div.flex.flex-col 308px",
+      "div.mt-5.pt-5 308px",
+      "div.flex.flex-col 258px",
+      "div.mt-4.pt-3 308px"
+     ],
+     "outlinedBoxes": 34,
+     "dashed": 26,
+     "blurred": 6,
+     "roundedBoxes": 23,
+     "boxRadius": 16,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 8,
+       "iconTopped": true,
+       "rounded": true,
+       "top": 2458
+      },
+      {
+       "count": 3,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 5487
+      }
+     ]
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 1,
+     "fixed": true,
+     "height": 73,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "jetbrains mono",
+     "poppins"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 10299,
+    "margins": {
+     "left": 37,
+     "right": 37
+    },
+    "sections": [
+     {
+      "sel": "section#overview-section.scroll-mt-6.bento-card-tactile",
+      "tag": "section",
+      "top": 97,
+      "height": 1157,
+      "words": 114,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Morning,",
+       "size": 24,
+       "tag": "h1"
+      },
+      "left": 41,
+      "right": 46,
+      "textLeft": 41,
+      "textRight": 50,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "div.flex.flex-col",
+      "tag": "div",
+      "top": 1303,
+      "height": 204,
+      "words": 27,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "30-Day Calendar & Active Streak Strip",
+       "size": 20,
+       "tag": "h2"
+      },
+      "left": 41,
+      "right": 49,
+      "textLeft": 41,
+      "textRight": 49,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.bento-tile-tactile.mb-4",
+      "tag": "div",
+      "top": 1523,
+      "height": 192,
+      "words": 19,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 58,
+      "right": 91,
+      "textLeft": 85,
+      "textRight": 91,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.bento-tile-tactile.mb-4",
+      "tag": "div",
+      "top": 1731,
+      "height": 154,
+      "words": 8,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 58,
+      "right": 123,
+      "textLeft": 90,
+      "textRight": 123,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.flex.items-stretch",
+      "tag": "div",
+      "top": 1901,
+      "height": 163,
+      "words": 207,
+      "media": 0,
+      "middle": 2844,
+      "heading": null,
+      "left": 54,
+      "right": 0,
+      "textLeft": 54,
+      "textRight": -2865,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.mt-6",
+      "tag": "div",
+      "top": 2088,
+      "height": 2175,
+      "words": 191,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Milestone Achievements & Trophies",
+       "size": 20,
+       "tag": "h3"
+      },
+      "left": 66,
+      "right": 16,
+      "textLeft": 66,
+      "textRight": 31,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div#prep-section.scroll-mt-6.grid",
+      "tag": "div",
+      "top": 4312,
+      "height": 776,
+      "words": 102,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Pre-Workout Prep Checklist",
+       "size": 20,
+       "tag": "h2"
+      },
+      "left": 41,
+      "right": 41,
+      "textLeft": 41,
+      "textRight": 44,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "div.flex.flex-col",
+      "tag": "div",
+      "top": 5137,
+      "height": 290,
+      "words": 57,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Pre-Workout Dynamic Mobility",
+       "size": 20,
+       "tag": "h3"
+      },
+      "left": 41,
+      "right": 41,
+      "textLeft": 41,
+      "textRight": 41,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.mt-4.grid",
+      "tag": "div",
+      "top": 5487,
+      "height": 1488,
+      "words": 152,
+      "media": 3,
+      "middle": 0,
+      "heading": {
+       "text": "Arm Circles & Shoulder Dislocates",
+       "size": 14,
+       "tag": "h4"
+      },
+      "left": 58,
+      "right": 58,
+      "textLeft": 58,
+      "textRight": 65,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "div.flex.flex-col",
+      "tag": "div",
+      "top": 7023,
+      "height": 194,
+      "words": 32,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "20-Minute Full-Body Hypertrophy Circuit",
+       "size": 24,
+       "tag": "h2"
+      },
+      "left": 16,
+      "right": 20,
+      "textLeft": 16,
+      "textRight": 20,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "article.bento-card-tactile.transition-all",
+      "tag": "article",
+      "top": 7241,
+      "height": 449,
+      "words": 48,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Warm-Up: Lunge Twists & Scapular Push-Ups",
+       "size": 16,
+       "tag": "h3"
+      },
+      "left": 37,
+      "right": 37,
+      "textLeft": 37,
+      "textRight": 37,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "article.bento-card-tactile.transition-all",
+      "tag": "article",
+      "top": 7710,
+      "height": 449,
+      "words": 46,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Push-Ups (Drop-Set with 3-1-1 Tempo)",
+       "size": 16,
+       "tag": "h3"
+      },
+      "left": 37,
+      "right": 37,
+      "textLeft": 37,
+      "textRight": 37,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "article.bento-card-tactile.transition-all",
+      "tag": "article",
+      "top": 8178,
+      "height": 409,
+      "words": 43,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Bulgarian Split Squats (Bed Edge)",
+       "size": 16,
+       "tag": "h3"
+      },
+      "left": 37,
+      "right": 37,
+      "textLeft": 37,
+      "textRight": 37,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "article.bento-card-tactile.transition-all",
+      "tag": "article",
+      "top": 8607,
+      "height": 449,
+      "words": 54,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Ledge Pull-Ups (Towel Grip + 4s Negatives)",
+       "size": 16,
+       "tag": "h3"
+      },
+      "left": 37,
+      "right": 37,
+      "textLeft": 37,
+      "textRight": 37,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "article.bento-card-tactile.transition-all",
+      "tag": "article",
+      "top": 9075,
+      "height": 409,
+      "words": 42,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Bed Pike Push-Ups",
+       "size": 16,
+       "tag": "h3"
+      },
+      "left": 37,
+      "right": 37,
+      "textLeft": 37,
+      "textRight": 37,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": true,
+      "pinned": false
+     },
+     {
+      "sel": "section#post-workout-section.scroll-mt-6.bento-card-tactile",
+      "tag": "section",
+      "top": 9508,
+      "height": 647,
+      "words": 92,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Post-Workout Cobra Stretch & High-Protein Fuel Bon",
+       "size": 20,
+       "tag": "h2"
+      },
+      "left": 41,
+      "right": 41,
+      "textLeft": 41,
+      "textRight": 42,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Morning, Sharif. Ready for Day 12?",
+      "size": 24,
+      "top": 207,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 37,
+      "n": 9
+     },
+     {
+      "x": 64,
+      "n": 4
+     },
+     {
+      "x": 113,
+      "n": 2
+     },
+     {
+      "x": 225,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 16,
+    "bodySize": 12,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "dark": false,
+    "ground": "#f8fafc",
+    "sidebar": null,
+    "topbar": {
+     "h": 73
+    },
+    "canvas": {
+     "left": 37,
+     "right": -2756
+    },
+    "hero": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "words": 6,
+     "chars": 34,
+     "lines": 2,
+     "size": 24,
+     "vw": 6.2,
+     "font": "Poppins",
+     "weight": 800,
+     "tracking": -0.02,
+     "leading": 1.33,
+     "top": 207,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 9,
+    "layout": {
+     "panels": 11,
+     "firstScreen": 1,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 46,
+     "radii": [
+      [
+       0,
+       19
+      ],
+      [
+       16,
+       19
+      ],
+      [
+       12,
+       6
+      ],
+      [
+       24,
+       2
+      ]
+     ],
+     "heavyBorders": 2,
+     "borderSamples": [
+      "#ffd22f on #ffffff (1.45:1)",
+      "#ffd22f on #ffffff (1.45:1)"
+     ],
+     "heavyShadows": 12,
+     "softShadows": 27,
+     "shadowSamples": [
+      "rgba(15, 23, 42, 0.06) 0px 12px 32px -4px",
+      "rgba(15, 23, 42, 0.06) 0px 12px 32px -4px",
+      "rgba(15, 23, 42, 0.06) 0px 12px 32px -4px"
+     ],
+     "glass": 0
+    },
+    "chips": {
+     "count": 16,
+     "hues": 3,
+     "samples": [
+      {
+       "hue": 223,
+       "size": 24,
+       "radius": "3.35544e+07px"
+      },
+      {
+       "hue": 232,
+       "size": 56,
+       "radius": "3.35544e+07px"
+      },
+      {
+       "hue": 48,
+       "size": 44,
+       "radius": "16px"
+      },
+      {
+       "hue": 48,
+       "size": 44,
+       "radius": "16px"
+      }
+     ]
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 31,
+     "tabularShare": 0.06,
+     "kpiMax": 24
+    },
+    "rows": null,
+    "chartHues": 5,
+    "placeholders": [],
+    "type": {
+     "under13": 0.85,
+     "tiny": 118,
+     "tinySamples": [
+      "50% 10px",
+      "100% 10px",
+      "15.4 10px",
+      "% efficiency) 10px"
+     ],
+     "sizes": [
+      9,
+      10,
+      11,
+      12,
+      14,
+      16,
+      18,
+      20,
+      24
+     ]
+    },
+    "title": {
+     "text": "Morning, Sharif. Ready for Day 12?",
+     "size": 24,
+     "top": 207
+    },
+    "colourShare": 0.037
+   },
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "FAIL",
+   "id": "micro-label",
+   "width": 1440,
+   "message": "10 tiny uppercase letter-spaced labels (e.g. \"GAMIFICATION & STREAK MOTIVATION\", \"Bronze\", \"Bronze\", \"Silver\").",
+   "fix": "Use sentence-case text at a readable size, or delete the label.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "emoji",
+   "width": 1440,
+   "message": "Emoji in the page: ⚡",
+   "fix": "Remove. Use words or real imagery.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "gradient",
+   "width": 1440,
+   "message": "2 gradient fill(s): div.p-4.rounded-2xl → linear-gradient(oklab(0.987 -0.00202336 0.0219068 / 0.6) 0%, rgb(255, 255, 255) 50%, oklab(0.987 -0.00202336 0 | div.p-4.rounded-2xl → linear-gradient(oklab(0.987 -0.00202336 0.0219068 / 0.6) 0%, rgb(255, 255, 255) 50%, oklab(0.987 -0.00202336 0",
+   "fix": "Use a flat colour or a real image. The only gradient allowed by default is a neutral scrim over a photo for legibility.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "button-fx",
+   "width": 1440,
+   "message": "Buttons with gradient fill and shadow/glow.",
+   "fix": "Flat fill, one colour.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "contrast",
+   "width": 1440,
+   "message": "Unreadable text: \"GAMIFICATION & STREAK MOTIVATION\" 2.1:1 (#fe9a00 on #ffffff)",
+   "fix": "Raise contrast to at least 4.5:1 for text, 3:1 for large display.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "heavy-shadow",
+   "width": 1440,
+   "message": "12 panel shadow(s) heavy enough to read as floating: rgba(15, 23, 42, 0.06) 0px 12px 32px -4px | rgba(15, 23, 42, 0.06) 0px 12px 32px -4px | rgba(15, 23, 42, 0.06) 0px 12px 32px -4px",
+   "fix": "Panels sit on the ground: separate them with a fill one step from the ground or a quiet 1px border. A shadow, if any, is under 8% black with a small blur. Real overlays (menus, dialogs, popovers) may float.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "radius-mix",
+   "width": 1440,
+   "message": "Panels use 4 corner radii (16, 0, 12, 24px).",
+   "fix": "One radius for panels, one for controls, full round only for pills and avatars.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "icon-chips",
+   "width": 1440,
+   "message": "16 icons sit in tinted squares or circles in 3 different colours.",
+   "fix": "This is the commonest tell of a generated dashboard. Drop the tinted square: a KPI is a label and a number; an icon, if it helps, is plain and in the text colour.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "tabular",
+   "width": 1440,
+   "message": "Only 6% of the figures use tabular numerals.",
+   "fix": "Set font-variant-numeric: tabular-nums on tables, KPIs and anything that updates, so digits keep their width.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "rainbow-chart",
+   "width": 1440,
+   "message": "The charts use 5 different hues.",
+   "fix": "Four series colours at most; prefer one accent and neutrals.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "tiny-text",
+   "width": 1440,
+   "message": "113 text blocks under 11px: 50% 10px, 100% 10px, 15.4 10px, % efficiency) 10px.",
+   "fix": "Nothing below 11px; secondary text 12px, data 13–14px.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "below-fold",
+   "width": 1440,
+   "message": "Only 2 of 11 blocks start on the first 1440px screen.",
+   "fix": "Every block the brief names shows its header and first rows on the first desktop screen: size the headline block to its question, cap long lists with \"View all\", and put time-sensitive blocks before long tables."
+  },
+  {
+   "level": "WARN",
+   "id": "panel-void",
+   "width": 1440,
+   "message": "4 card(s) hold a blank band inside: 70px in \"Pre-Workout Prep Checklist\", 57px in \"Push-Ups (Drop-Set with 3-1-1 Tempo)\", 57px in \"Bulgarian Split Squats (Bed Edge)\".",
+   "fix": "A card stretches to its neighbour only when it has content to fill. Keep a legend or a note directly under its chart (only an action or a total may sit at a stretched card's foot), let a short card keep its own height (align-items: start), and let a filtered block shrink to its rows."
+  },
+  {
+   "level": "FAIL",
+   "id": "edge-text",
+   "width": 768,
+   "message": "2 text block(s) sit within 16px of the screen edge: \"Recovery\" (2px from the right); \"Mobility\" (7px from the right)",
+   "fix": "Keep text inside the page margin (16–32px or more). Only display type deliberately bled past the edge may touch it."
+  },
+  {
+   "level": "FAIL",
+   "id": "headline-lines",
+   "width": 390,
+   "message": "1 headline(s) wrap past two lines at 390px: \"5 Push · 3 Pull\" → 3 lines (5 words, 24px)",
+   "fix": "Cut words first (a headline is a title, not a sentence). Then give it a wider measure. Lower the size only as a last resort and never below the scale you chose. A real statement paragraph belongs in a <p> or <blockquote> at 24px or less."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "E:\\FitnessApp\\.taste-skill\\inspect\\desktop-fold.jpg",
+   "pages": [
+    "E:\\FitnessApp\\.taste-skill\\inspect\\desktop-page-01.jpg",
+    "E:\\FitnessApp\\.taste-skill\\inspect\\desktop-page-02.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "E:\\FitnessApp\\.taste-skill\\inspect\\tablet-fold.jpg",
+   "pages": [
+    "E:\\FitnessApp\\.taste-skill\\inspect\\tablet-page-01.jpg",
+    "E:\\FitnessApp\\.taste-skill\\inspect\\tablet-page-02.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "E:\\FitnessApp\\.taste-skill\\inspect\\mobile-fold.jpg",
+   "pages": [
+    "E:\\FitnessApp\\.taste-skill\\inspect\\mobile-page-01.jpg",
+    "E:\\FitnessApp\\.taste-skill\\inspect\\mobile-page-02.jpg"
+   ],
+   "film": []
+  }
+ ]
+}
