@@ -32,6 +32,8 @@ import {
   Zap,
   Camera,
   X,
+  Box,
+  Layers,
 } from 'lucide-react';
 import {
   UserProfile,
@@ -61,6 +63,7 @@ import {
   formatHeight,
 } from './utils/fitnessLogic';
 import { ExerciseBodyPositionSvg, SharifAvatarSvg } from './components/ExerciseBodyPositionSvg';
+import { Exercise3DViewer } from './components/Exercise3DViewer';
 import { LiveWorkoutModal } from './components/LiveWorkoutModal';
 import { GeminiCoachDrawer, ChatMessage } from './components/GeminiCoachDrawer';
 import { WeeklyCompletionChart } from './components/WeeklyCompletionChart';
@@ -190,6 +193,7 @@ export default function App() {
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [logDurationDayNumber, setLogDurationDayNumber] = useState<number | null>(null);
   const [shieldNotification, setShieldNotification] = useState<string | null>(null);
+  const [dashboardViewMode, setDashboardViewMode] = useState<'3d' | '2d'>('3d');
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     try {
       return localStorage.getItem(STORAGE_KEYS.DARK_MODE) === 'true';
@@ -1513,12 +1517,44 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="text-xs tabular-nums text-slate-600 dark:text-slate-400">
-                Completed Today:{' '}
-                <strong className="text-slate-900 dark:text-white">
-                  {postWorkoutStatus.completedCount} / {postWorkoutStatus.totalRequired}
-                </strong>{' '}
-                Exercises
+              <div className="flex flex-wrap items-center gap-3">
+                {/* 3D vs 2D Model Toggle */}
+                <div className="inline-flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setDashboardViewMode('3d')}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+                      dashboardViewMode === '3d'
+                        ? 'bg-rose-600 text-white shadow-sm'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                    title="Interactive 3D Rigged Mannequin"
+                  >
+                    <Box className="w-3.5 h-3.5" />
+                    <span>3D Model</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDashboardViewMode('2d')}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+                      dashboardViewMode === '2d'
+                        ? 'bg-rose-600 text-white shadow-sm'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                    title="2D Vector Blueprint"
+                  >
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>2D Blueprint</span>
+                  </button>
+                </div>
+
+                <div className="text-xs tabular-nums text-slate-600 dark:text-slate-400">
+                  Completed Today:{' '}
+                  <strong className="text-slate-900 dark:text-white">
+                    {postWorkoutStatus.completedCount} / {postWorkoutStatus.totalRequired}
+                  </strong>{' '}
+                  Exercises
+                </div>
               </div>
             </div>
           </div>
@@ -1595,26 +1631,39 @@ export default function App() {
                       {ex.subtitle}
                     </p>
 
-                    {/* Interactive Biomechanical SVG Preview */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        startSessionTimerIfNeeded();
-                        setActiveWorkoutIndex(fullIndex);
-                      }}
-                      aria-label={`Start live 3-1-1 timer and view biomechanical form for ${ex.name}`}
-                      className="w-full text-left mt-3 cursor-pointer rounded-lg overflow-hidden group relative block border border-slate-200/60 dark:border-slate-700/60"
-                    >
-                      <ExerciseBodyPositionSvg
-                        poseType={ex.poseType}
-                        depthFactor={0.4}
-                        className="w-full h-36"
-                      />
-                      <div className="absolute bottom-2.5 right-2.5 px-2 py-1 rounded bg-slate-900/90 text-white text-xs font-medium flex items-center gap-1">
-                        <Volume2 className="w-3 h-3 text-amber-400" />
-                        <span>Live 3-1-1 Timer</span>
+                    {/* Interactive Biomechanical Preview: 3D Rigged Mannequin or 2D Vector */}
+                    {dashboardViewMode === '3d' ? (
+                      <div className="mt-3 rounded-lg overflow-hidden border border-slate-200/60 dark:border-slate-700/60">
+                        <Exercise3DViewer
+                          poseType={ex.poseType}
+                          exerciseName={ex.name}
+                          depthFactor={0.4}
+                          targetMuscles={ex.targetMuscles}
+                          heightClass="h-44 sm:h-48"
+                          showControls={true}
+                        />
                       </div>
-                    </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          startSessionTimerIfNeeded();
+                          setActiveWorkoutIndex(fullIndex);
+                        }}
+                        aria-label={`Start live 3-1-1 timer and view biomechanical form for ${ex.name}`}
+                        className="w-full text-left mt-3 cursor-pointer rounded-lg overflow-hidden group relative block border border-slate-200/60 dark:border-slate-700/60"
+                      >
+                        <ExerciseBodyPositionSvg
+                          poseType={ex.poseType}
+                          depthFactor={0.4}
+                          className="w-full h-36"
+                        />
+                        <div className="absolute bottom-2.5 right-2.5 px-2 py-1 rounded bg-slate-900/90 text-white text-xs font-medium flex items-center gap-1">
+                          <Volume2 className="w-3 h-3 text-amber-400" />
+                          <span>Live 3-1-1 Timer</span>
+                        </div>
+                      </button>
+                    )}
 
                     <div className="mt-3 text-sm text-slate-700 dark:text-slate-300 tabular-nums">
                       Prescription: <strong className="text-slate-900 dark:text-white">{ex.prescribedReps}</strong>

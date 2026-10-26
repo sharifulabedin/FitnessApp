@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { ExerciseItem, calculateTempoState } from '../utils/fitnessLogic';
 import { ExerciseBodyPositionSvg } from './ExerciseBodyPositionSvg';
+import { Exercise3DViewer } from './Exercise3DViewer';
+import { Box, Layers } from 'lucide-react';
 
 interface Props {
   exercises: ExerciseItem[];
@@ -42,6 +44,7 @@ export const LiveWorkoutModal: React.FC<Props> = ({
   const [secondsLeft, setSecondsLeft] = useState<number>(exercise.workSeconds);
   const [elapsedWorkMs, setElapsedWorkMs] = useState<number>(0);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [viewMode, setViewMode] = useState<'3d' | '2d'>('3d');
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const lastPhaseRef = useRef<string>('');
@@ -227,17 +230,60 @@ export const LiveWorkoutModal: React.FC<Props> = ({
           {/* Left Column: Live Body Position & Tempo Guide */}
           <div className="md:col-span-7 flex flex-col justify-between bg-slate-950 border border-slate-800 rounded-xl p-4">
             <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-              <span className="font-medium">Live Biomechanical Position</span>
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-slate-300">Biomechanical Form</span>
+                {/* 3D vs 2D Toggle */}
+                <div className="inline-flex items-center rounded-lg bg-slate-900 border border-slate-700/80 p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('3d')}
+                    className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
+                      viewMode === '3d'
+                        ? 'bg-rose-600 text-white'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                    title="Interactive 3D Rigged Mannequin"
+                  >
+                    <Box className="w-3 h-3" />
+                    <span>3D Model</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('2d')}
+                    className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
+                      viewMode === '2d'
+                        ? 'bg-rose-600 text-white'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                    title="2D Vector Blueprint"
+                  >
+                    <Layers className="w-3 h-3" />
+                    <span>2D Blueprint</span>
+                  </button>
+                </div>
+              </div>
+
               <span className="tabular-nums text-amber-400 font-semibold">
                 Rep #{tempoState.repNumber} · {exercise.prescribedReps}
               </span>
             </div>
 
-            <ExerciseBodyPositionSvg
-              poseType={exercise.poseType}
-              depthFactor={isRunning && mode === 'work' ? tempoState.bodyDepthFactor : 0.45}
-              className="w-full h-48 sm:h-52 rounded-lg"
-            />
+            {viewMode === '3d' ? (
+              <Exercise3DViewer
+                poseType={exercise.poseType}
+                exerciseName={exercise.name}
+                depthFactor={isRunning && mode === 'work' ? tempoState.bodyDepthFactor : 0.45}
+                targetMuscles={exercise.targetMuscles}
+                heightClass="h-52 sm:h-60"
+                showControls={true}
+              />
+            ) : (
+              <ExerciseBodyPositionSvg
+                poseType={exercise.poseType}
+                depthFactor={isRunning && mode === 'work' ? tempoState.bodyDepthFactor : 0.45}
+                className="w-full h-52 sm:h-60 rounded-lg"
+              />
+            )}
 
             {/* Visual 3-1-1 Tempo Progress Bar */}
             <div className="mt-4">

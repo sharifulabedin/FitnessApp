@@ -19,6 +19,9 @@ import {
   validateBackupPayload,
   formatHeight,
   formatHeightWithBoth,
+  calculateStreakStats,
+  formatDurationHuman,
+  calculateEfficiencyStats,
 } from '../utils/fitnessLogic';
 import { SharifAvatarSvg } from './ExerciseBodyPositionSvg';
 
@@ -487,6 +490,7 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
     null
   );
   const [confirmReset, setConfirmReset] = useState(false);
+  const [justExported, setJustExported] = useState(false);
 
   // Handle Escape key
   useEffect(() => {
@@ -502,25 +506,68 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
 
   if (!isOpen) return null;
 
-  const backupObject = {
-    version: '1.0',
-    exportedAt: new Date().toISOString(),
-    profile,
-    calendarDays,
-    completedExercises,
-    prepChecklist,
-  };
+  const streakStats = calculateStreakStats(calendarDays);
+  const efficiency = calculateEfficiencyStats(calendarDays);
 
-  const handleExportDownload = () => {
-    const jsonString = JSON.stringify(backupObject, null, 2);
+  const durationLogs = calendarDays
+    .filter((d) => (typeof d.durationSeconds === 'number' && d.durationSeconds > 0) || d.completed)
+    .map((d) => ({
+      dayNumber: d.dayNumber,
+      dateLabel: d.dateLabel,
+      weekday: d.weekdayShort,
+      completed: d.completed,
+      isRecoveryDay: d.isRecoveryDay,
+      isShielded: !!d.isShielded,
+      durationSeconds: d.durationSeconds ?? (d.completed ? 1200 : 0),
+      formattedDuration: formatDurationHuman(d.durationSeconds ?? (d.completed ? 1200 : 0)),
+    }));
+
+  const handleExportWorkoutData = () => {
+    const exportPayload = {
+      appName: 'Morning 20',
+      version: '2.0',
+      exportedAt: new Date().toISOString(),
+      exportType: 'morning20_workout_data_backup',
+      summary: {
+        athlete: profile.name,
+        activeStreakDays: streakStats.activeStreak,
+        totalSessionsCompleted: streakStats.totalCompleted,
+        completionRatePercent: streakStats.completionRate,
+        completedExercisesCount: completedExercises.length,
+        durationLogsCount: durationLogs.length,
+        averageDurationSeconds: efficiency.averageDurationSeconds,
+        averageDurationFormatted: formatDurationHuman(efficiency.averageDurationSeconds),
+      },
+      completedExercises,
+      streak: {
+        activeStreak: streakStats.activeStreak,
+        totalCompleted: streakStats.totalCompleted,
+        completionRate: streakStats.completionRate,
+        todayCompleted: streakStats.todayCompleted,
+        shieldsUsed: streakStats.shieldsUsed,
+      },
+      durationLogs,
+      profile,
+      calendarDays,
+      prepChecklist,
+    };
+
+    const jsonString = JSON.stringify(exportPayload, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
+    const safeName = profile.name.toLowerCase().trim().replace(/[^a-z0-9_-]/g, '-') || 'athlete';
+    const dateStr = new Date().toISOString().slice(0, 10);
     a.href = url;
-    a.download = `morning20-backup-${profile.name.toLowerCase()}.json`;
+    a.download = `morning20-workout-data-${safeName}-${dateStr}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    setFeedback({ type: 'success', text: 'Exported JSON backup file successfully.' });
+    setJustExported(true);
+    window.setTimeout(() => setJustExported(false), 2500);
+    setFeedback({
+      type: 'success',
+      text: `Exported workout data (${completedExercises.length} completed exercises, ${streakStats.activeStreak}-day streak, ${durationLogs.length} duration logs) as JSON backup.`,
+    });
   };
 
   const handleImportSubmit = (e: React.FormEvent) => {
@@ -691,22 +738,37 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
           </button>
         </div>
 
-        {/* Export / Import JSON Backup */}
-        <div className="space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-sm font-semibold text-slate-900 dark:text-white">
-              Export / Import JSON Backup
-            </span>
-            <div className="flex items-center gap-2">
+        {/* Export Workout Data & Local Backup */}
+        <div className="space-y-3.5 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div>
+              <div className="text-sm font-semibold text-slate-900 dark:text-white">
+                Workout Data &amp; Local Backup
+              </div>
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Generate a JSON backup of your completed exercises, active streak, and duration logs.
+              </div>
+            </div>
+            <div className="flex items-center gap-2 pt-1 sm:pt-0">
               <button
                 type="button"
-                onClick={handleExportDownload}
-                className="min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0 tactile-button focus-ring-tactile"
+                onClick={handleExportWorkoutData}
+                aria-label="Export workout data as JSON backup"
+                className="min-h-[40px] px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0 tactile-button focus-ring-tactile cursor-pointer"
               >
-                <Download className="w-3.5 h-3.5" />
-                <span>Export Backup</span>
+                {justExported ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-white" />
+                    <span>Workout Data Exported</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export Workout Data</span>
+                  </>
+                )}
               </button>
-              <label className="min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 tactile-button focus-ring-tactile border border-slate-200 dark:border-slate-700">
+              <label className="min-h-[40px] px-3.5 py-2 rounded-xl bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 tactile-button focus-ring-tactile border border-slate-300 dark:border-slate-600">
                 <Upload className="w-3.5 h-3.5" />
                 <span>Upload JSON</span>
                 <input
@@ -719,22 +781,44 @@ export const SettingsBackupModal: React.FC<SettingsBackupProps> = ({
             </div>
           </div>
 
-          <form onSubmit={handleImportSubmit} className="space-y-2">
+          {/* Quick Metrics of Export Payload */}
+          <div className="grid grid-cols-3 gap-2.5 pt-0.5">
+            <div className="bg-white dark:bg-slate-900 border border-slate-250 dark:border-slate-700/80 rounded-xl p-2.5">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Completed Exercises</div>
+              <div className="font-mono tabular-nums text-sm font-bold text-slate-900 dark:text-white mt-0.5">
+                {completedExercises.length} logged
+              </div>
+            </div>
+            <div className="bg-white dark:bg-slate-900 border border-slate-250 dark:border-slate-700/80 rounded-xl p-2.5">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Active Streak</div>
+              <div className="font-mono tabular-nums text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">
+                {streakStats.activeStreak} {streakStats.activeStreak === 1 ? 'day' : 'days'}
+              </div>
+            </div>
+            <div className="bg-white dark:bg-slate-900 border border-slate-250 dark:border-slate-700/80 rounded-xl p-2.5">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Duration Logs</div>
+              <div className="font-mono tabular-nums text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
+                {durationLogs.length} sessions
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleImportSubmit} className="space-y-2 pt-2 border-t border-slate-200/80 dark:border-slate-700/80">
             <label htmlFor="import-json-textarea" className="block text-xs text-slate-500 dark:text-slate-400">
-              Or paste exported JSON backup payload below to restore:
+              Or paste exported JSON workout backup payload below to restore:
             </label>
             <textarea
               id="import-json-textarea"
               rows={3}
               value={importJsonText}
               onChange={(e) => setImportJsonText(e.target.value)}
-              placeholder='{"profile": {...}, "calendarDays": [...]}'
-              className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder='{"profile": {...}, "calendarDays": [...], "completedExercises": [...]}'
+              className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 font-mono text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
             />
             {importJsonText.trim() && (
               <button
                 type="submit"
-                className="min-h-[40px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold tactile-button focus-ring-tactile"
+                className="min-h-[40px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold tactile-button focus-ring-tactile cursor-pointer"
               >
                 Restore from Pasted JSON
               </button>

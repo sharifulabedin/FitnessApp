@@ -345,4 +345,34 @@ test('calculateEfficiencyStats tracks baseline, fastest, and efficiency improvem
   assert.equal(updatedStats.improvementPercent, 20.4);
 });
 
+test('workout data backup payload containing completed exercises, streak, and duration logs is valid', () => {
+  const days = generateInitial30DayCalendar(12);
+  const streak = calculateStreakStats(days);
+  const durationLogs = days
+    .filter((d) => (typeof d.durationSeconds === 'number' && d.durationSeconds > 0) || d.completed)
+    .map((d) => ({
+      dayNumber: d.dayNumber,
+      dateLabel: d.dateLabel,
+      durationSeconds: d.durationSeconds ?? 1200,
+      completed: d.completed,
+    }));
+
+  const payload = {
+    appName: 'Morning 20',
+    version: '2.0',
+    exportedAt: new Date().toISOString(),
+    completedExercises: ['warmup-arm-circles', 'tempo-pushups'],
+    streak,
+    durationLogs,
+    profile: DEFAULT_USER_PROFILE,
+    calendarDays: days,
+  };
+
+  const validation = validateBackupPayload(payload);
+  assert.equal(validation.valid, true);
+  assert.equal(payload.completedExercises.length, 2);
+  assert.equal(payload.streak.activeStreak, 4);
+  assert.equal(payload.durationLogs.length, 4);
+});
+
 
