@@ -9,12 +9,15 @@ import {
   Sparkles,
   Volume2,
   VolumeX,
+  Box,
+  Layers,
 } from 'lucide-react';
 import {
   DYNAMIC_MOBILITY_EXERCISES,
   calculateMobilityCompletion,
   MobilityExerciseItem,
 } from '../utils/fitnessLogic';
+import { Exercise3DViewer } from './Exercise3DViewer';
 
 interface Props {
   completedMobilityIds: string[];
@@ -163,6 +166,7 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
   const [activeTimerId, setActiveTimerId] = useState<string | null>(null);
   const [secondsLeft, setSecondsLeft] = useState<number>(45);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [mobilityViewMode, setMobilityViewMode] = useState<'3d' | '2d'>('3d');
 
   const audioCtxRef = useRef<AudioContext | null>(null);
 
@@ -261,7 +265,37 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          {/* 3D vs 2D Model Toggle */}
+          <div className="inline-flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-0.5">
+            <button
+              type="button"
+              onClick={() => setMobilityViewMode('3d')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+                mobilityViewMode === '3d'
+                  ? 'bg-rose-600 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="Interactive 3D Rigged Model"
+            >
+              <Box className="w-3.5 h-3.5" />
+              <span>3D Model</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobilityViewMode('2d')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+                mobilityViewMode === '2d'
+                  ? 'bg-rose-600 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="2D Vector Blueprint"
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>2D Blueprint</span>
+            </button>
+          </div>
+
           <button
             type="button"
             onClick={() => setSoundEnabled((prev) => !prev)}
@@ -351,12 +385,23 @@ export const PreWorkoutMobilitySection: React.FC<Props> = ({
                   {drill.subtitle}
                 </p>
 
-                {/* Biomechanical Illustrated SVG */}
+                {/* 3D Model or Biomechanical Illustrated SVG */}
                 <div className="mt-2.5 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800">
-                  <MobilityBiomechanicalSvg
-                    poseType={drill.poseType}
-                    isActiveTimer={isTimerActive}
-                  />
+                  {mobilityViewMode === '3d' ? (
+                    <Exercise3DViewer
+                      poseType={drill.poseType}
+                      exerciseName={drill.name}
+                      depthFactor={isTimerActive ? (secondsLeft % 4) / 4 : 0.5}
+                      targetMuscles={drill.targetJoints}
+                      heightClass="h-36 sm:h-40"
+                      showControls={true}
+                    />
+                  ) : (
+                    <MobilityBiomechanicalSvg
+                      poseType={drill.poseType}
+                      isActiveTimer={isTimerActive}
+                    />
+                  )}
                 </div>
 
                 {/* Prescribed reps and benefit */}

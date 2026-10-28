@@ -14,11 +14,23 @@ import {
   AlertCircle,
   Maximize2,
   Info,
+  Play,
+  Pause,
 } from 'lucide-react';
-import { ExerciseItem } from '../utils/fitnessLogic';
+import { ExerciseItem, MobilityExerciseItem } from '../utils/fitnessLogic';
+import {
+  saveCustomModelToDB,
+  loadCustomModelFromDB,
+  clearCustomModelFromDB,
+} from '../utils/modelStorage';
+import {
+  createExerciseSkeletalClip,
+  snapshotAndResetModelBindPose,
+  AnyPoseType,
+} from '../utils/skeletalAnimator';
 
 interface Props {
-  poseType: ExerciseItem['poseType'];
+  poseType: ExerciseItem['poseType'] | MobilityExerciseItem['poseType'];
   exerciseName?: string;
   depthFactor?: number; // 0 (top/start) to 1 (bottom of eccentric)
   targetMuscles?: string;
@@ -29,6 +41,162 @@ interface Props {
 
 // Memory-friendly reusable vectors for render loop
 const _vec3 = new THREE.Vector3();
+
+// Biomechanical glowing muscle activations and joint articulation halos for lowpoly skeletal model
+function applySkeletalMuscleHighlights(
+  model: THREE.Object3D,
+  poseType: AnyPoseType,
+  visible: boolean
+) {
+  // 1. Remove previous highlight markers
+  const toRemove: THREE.Object3D[] = [];
+  model.traverse((child) => {
+    if (child.userData?.isSkeletalHighlight) {
+      toRemove.push(child);
+    }
+  });
+  toRemove.forEach((child) => {
+    if (child.parent) child.parent.remove(child);
+    if (child instanceof THREE.Mesh) {
+      child.geometry?.dispose();
+      if (Array.isArray(child.material)) child.material.forEach((m) => m.dispose());
+      else child.material?.dispose();
+    }
+  });
+
+  if (!visible) return;
+
+  // 2. Identify target bones for current poseType
+  let boneTargets: string[] = [];
+  switch (poseType) {
+    case 'warmup':
+      boneTargets = [
+        'mixamorigSpine1',
+        'mixamorigSpine2',
+        'mixamorigLeftShoulder',
+        'mixamorigRightShoulder',
+        'mixamorigLeftUpLeg',
+        'mixamorigRightUpLeg',
+      ];
+      break;
+    case 'pushup':
+      boneTargets = [
+        'mixamorigLeftArm',
+        'mixamorigRightArm',
+        'mixamorigLeftForeArm',
+        'mixamorigRightForeArm',
+        'mixamorigSpine1',
+        'mixamorigSpine2',
+      ];
+      break;
+    case 'splitsquat':
+      boneTargets = [
+        'mixamorigLeftUpLeg',
+        'mixamorigRightUpLeg',
+        'mixamorigLeftLeg',
+        'mixamorigRightLeg',
+        'mixamorigHips',
+      ];
+      break;
+    case 'pikepushup':
+      boneTargets = [
+        'mixamorigLeftShoulder',
+        'mixamorigRightShoulder',
+        'mixamorigLeftArm',
+        'mixamorigRightArm',
+        'mixamorigHead',
+      ];
+      break;
+    case 'pullup':
+      boneTargets = [
+        'mixamorigSpine1',
+        'mixamorigSpine2',
+        'mixamorigLeftArm',
+        'mixamorigRightArm',
+        'mixamorigLeftForeArm',
+        'mixamorigRightForeArm',
+      ];
+      break;
+    case 'cobra':
+      boneTargets = [
+        'mixamorigSpine',
+        'mixamorigSpine1',
+        'mixamorigSpine2',
+        'mixamorigNeck',
+      ];
+      break;
+    case 'armcircles':
+      boneTargets = [
+        'mixamorigLeftShoulder',
+        'mixamorigRightShoulder',
+        'mixamorigLeftArm',
+        'mixamorigRightArm',
+      ];
+      break;
+    case 'legswings':
+      boneTargets = [
+        'mixamorigRightUpLeg',
+        'mixamorigRightLeg',
+        'mixamorigHips',
+      ];
+      break;
+    case 'torsotwists':
+      boneTargets = [
+        'mixamorigSpine1',
+        'mixamorigSpine2',
+        'mixamorigLeftArm',
+        'mixamorigRightArm',
+      ];
+      break;
+    default:
+      boneTargets = ['mixamorigSpine1'];
+  }
+
+  // 3. Attach glowing spherical halos & pulsation markers
+  const glowMat = new THREE.MeshStandardMaterial({
+    color: 0xf43f5e,
+    emissive: 0xf43f5e,
+    emissiveIntensity: 1.8,
+    roughness: 0.3,
+    metalness: 0.2,
+    transparent: true,
+    opacity: 0.85,
+  });
+
+  const jointMat = new THREE.MeshStandardMaterial({
+    color: 0x38bdf8,
+    emissive: 0x0284c7,
+    emissiveIntensity: 1.5,
+    roughness: 0.2,
+    metalness: 0.8,
+    transparent: true,
+    opacity: 0.9,
+  });
+
+  const haloMat = new THREE.MeshBasicMaterial({
+    color: 0xf43f5e,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.45,
+  });
+
+  boneTargets.forEach((boneName) => {
+    const bone = model.getObjectByName(boneName);
+    if (bone) {
+      const isJoint = boneName.includes('Shoulder') || boneName.includes('Leg') || boneName.includes('ForeArm');
+      const markerGeo = new THREE.SphereGeometry(isJoint ? 7 : 11, 16, 16);
+      const markerMesh = new THREE.Mesh(markerGeo, isJoint ? jointMat : glowMat);
+      markerMesh.userData = { isSkeletalHighlight: true };
+      bone.add(markerMesh);
+
+      // Subtle wireframe orbital halo
+      const ringGeo = new THREE.TorusGeometry(isJoint ? 10 : 15, 1.2, 8, 24);
+      const ringMesh = new THREE.Mesh(ringGeo, haloMat);
+      ringMesh.userData = { isSkeletalHighlight: true };
+      bone.add(ringMesh);
+    }
+  });
+}
 
 export const Exercise3DViewer: React.FC<Props> = ({
   poseType,
@@ -55,6 +223,8 @@ export const Exercise3DViewer: React.FC<Props> = ({
   // Custom uploaded 3D model support (.glb / .gltf / .fbx)
   const customModelRef = useRef<THREE.Group | null>(null);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
+  const currentClipRef = useRef<THREE.AnimationClip | null>(null);
+  const activeActionRef = useRef<THREE.AnimationAction | null>(null);
   const clockRef = useRef<THREE.Clock>(new THREE.Clock());
 
   const [activeCameraView, setActiveCameraView] = useState<'iso' | 'side' | 'front' | 'top'>('iso');
@@ -63,6 +233,14 @@ export const Exercise3DViewer: React.FC<Props> = ({
   const [isAutoRotating, setIsAutoRotating] = useState<boolean>(false);
   const [showMuscleGlow, setShowMuscleGlow] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
+  const [isDraggingOver, setIsDraggingOver] = useState<boolean>(false);
+  const [isPlayingAnim, setIsPlayingAnim] = useState<boolean>(true);
+  const [hasAnimations, setHasAnimations] = useState<boolean>(false);
+  const isPlayingAnimRef = useRef<boolean>(true);
+  const poseTypeRef = useRef<AnyPoseType>(poseType);
+  poseTypeRef.current = poseType;
+  const showMuscleGlowRef = useRef<boolean>(showMuscleGlow);
+  showMuscleGlowRef.current = showMuscleGlow;
 
   // Detect software WebGL safely
   const isSoftwareGl = useRef<boolean>(false);
@@ -196,7 +374,7 @@ export const Exercise3DViewer: React.FC<Props> = ({
     const animate = () => {
       const delta = clockRef.current.getDelta();
 
-      if (mixerRef.current) {
+      if (mixerRef.current && isPlayingAnimRef.current) {
         mixerRef.current.update(delta);
       }
 
@@ -244,13 +422,10 @@ export const Exercise3DViewer: React.FC<Props> = ({
     };
   }, []);
 
-  // 2. Build or Re-pose Procedural Rigged Anatomical Mannequin
+  // 2. Build or Re-pose Procedural Rigged Anatomical Mannequin & 3D Equipment Props
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
-
-    // If custom model is loaded, we let the custom model show
-    if (customModelRef.current) return;
 
     // Clean previous mannequin and props
     if (mannequinRef.current) {
@@ -366,18 +541,52 @@ export const Exercise3DViewer: React.FC<Props> = ({
       return mesh;
     };
 
-    // Construct specific rigged pose based on exercise poseType
+    // Construct specific rigged pose & 3D equipment props aligned with lowpoly_male.fbx
     switch (poseType) {
+      case 'warmup': {
+        // Warm-Up: Runner's Lunge Twist & Scapular Push-Ups
+        // Full-length floor mat + hand target pads aligned with lowpoly_male hands [±0.20, 0.03, 0.50]
+        const matGeo = new THREE.BoxGeometry(0.75, 0.012, 1.85);
+        const matMesh = new THREE.Mesh(matGeo, propMat);
+        matMesh.position.set(0, 0.006, -0.15);
+        props.add(matMesh);
+
+        const padGeo = new THREE.CylinderGeometry(0.095, 0.095, 0.015, 24);
+        const padLeft = new THREE.Mesh(padGeo, woodPropMat);
+        padLeft.position.set(-0.20, 0.01, 0.50);
+        const padRight = new THREE.Mesh(padGeo, woodPropMat);
+        padRight.position.set(0.20, 0.01, 0.50);
+        props.add(padLeft, padRight);
+
+        // Procedural fallback pose (Runner's Lunge Twist)
+        const hipY = 0.60 - d * 0.08;
+        const hipZ = -0.05;
+        makeJoint(0.10, 0.05, 0.40, 0.05);
+        makeJoint(-0.14, 0.05, -0.80, 0.045);
+        makeJoint(0.10, 0.44, 0.36, 0.055);
+        makeBone([0.10, 0.05, 0.40], [0.10, 0.44, 0.36], 0.045, false);
+        makeBone([0.10, 0.44, 0.36], [0.08, hipY, hipZ], 0.055, true);
+        makeBone([-0.14, 0.05, -0.80], [-0.12, hipY, hipZ], 0.05, true);
+        makeBone([0, hipY, hipZ], [0, hipY + 0.42, hipZ + 0.12], 0.07, true);
+        makeBone([-0.20, hipY + 0.40, hipZ + 0.12], [-0.20, 0.04, 0.45], 0.045, false);
+        makeBone([0.20, hipY + 0.40, hipZ + 0.12], [0.28, hipY + 0.78, hipZ + 0.15], 0.045, true);
+        const headGeo = new THREE.SphereGeometry(0.11, 20, 20);
+        const headMesh = new THREE.Mesh(headGeo, accentMat);
+        headMesh.position.set(0, hipY + 0.58, hipZ + 0.16);
+        mannequin.add(headMesh);
+        break;
+      }
+
       case 'pushup': {
         // Sharif Push-Up: Prone plank position, 45° tucked elbows
         // Height lowers with depthFactor (1 = bottom/chest near floor)
         const chestY = 0.55 - d * 0.32;
         const hipY = 0.62 - d * 0.22;
         const headY = chestY + 0.08;
-        const feetZ = -0.95;
-        const hipZ = -0.2;
-        const chestZ = 0.45;
-        const headZ = 0.75;
+        const feetZ = -0.70;
+        const hipZ = 0.15;
+        const chestZ = 0.48;
+        const headZ = 0.70;
 
         // Feet planted on floor
         makeJoint(-0.12, 0.05, feetZ, 0.045);
@@ -386,7 +595,6 @@ export const Exercise3DViewer: React.FC<Props> = ({
         // Hips
         makeJoint(-0.16, hipY, hipZ, 0.06);
         makeJoint(0.16, hipY, hipZ, 0.06);
-        // Pelvis cross bar
         makeBone([-0.16, hipY, hipZ], [0.16, hipY, hipZ], 0.05, false);
 
         // Legs (Calves & Thighs)
@@ -398,7 +606,7 @@ export const Exercise3DViewer: React.FC<Props> = ({
         // Torso / Spine / Core (Target muscle braced)
         makeBone([-0.16, hipY, hipZ], [-0.22, chestY, chestZ], 0.06, true);
         makeBone([0.16, hipY, hipZ], [0.22, chestY, chestZ], 0.06, true);
-        makeBone([0, hipY, hipZ], [0, chestY, chestZ], 0.07, true); // Core spine
+        makeBone([0, hipY, hipZ], [0, chestY, chestZ], 0.07, true);
 
         // Chest plate (Target pectorals)
         const chestGeo = new THREE.BoxGeometry(0.44, 0.1, 0.32);
@@ -409,27 +617,25 @@ export const Exercise3DViewer: React.FC<Props> = ({
         mannequin.add(chestMesh);
 
         // Shoulders
-        makeJoint(-0.24, chestY, chestZ, 0.065);
-        makeJoint(0.24, chestY, chestZ, 0.065);
+        makeJoint(-0.22, chestY, chestZ, 0.065);
+        makeJoint(0.22, chestY, chestZ, 0.065);
 
-        // Hands planted on ground
-        const handX = 0.32;
-        const handZ = 0.42;
+        // Hands planted on ground (aligned with lowpoly_male.fbx hands at [±0.22, 0.04, 0.51])
+        const handX = 0.22;
+        const handZ = 0.51;
         makeJoint(-handX, 0.04, handZ, 0.05);
         makeJoint(handX, 0.04, handZ, 0.05);
 
         // Elbows (45-degree flare backward, tracking depth)
         const elbowY = Math.max(0.12, chestY + 0.08 - d * 0.05);
-        const elbowX = 0.36 + d * 0.08;
-        const elbowZ = chestZ - 0.28;
+        const elbowX = 0.28 + d * 0.06;
+        const elbowZ = chestZ - 0.22;
         makeJoint(-elbowX, elbowY, elbowZ, 0.055);
         makeJoint(elbowX, elbowY, elbowZ, 0.055);
 
-        // Upper arms (Triceps target)
-        makeBone([-0.24, chestY, chestZ], [-elbowX, elbowY, elbowZ], 0.05, true);
-        makeBone([0.24, chestY, chestZ], [elbowX, elbowY, elbowZ], 0.05, true);
-
-        // Forearms
+        // Upper arms & Forearms
+        makeBone([-0.22, chestY, chestZ], [-elbowX, elbowY, elbowZ], 0.05, true);
+        makeBone([0.22, chestY, chestZ], [elbowX, elbowY, elbowZ], 0.05, true);
         makeBone([-elbowX, elbowY, elbowZ], [-handX, 0.04, handZ], 0.045, false);
         makeBone([elbowX, elbowY, elbowZ], [handX, 0.04, handZ], 0.045, false);
 
@@ -441,52 +647,59 @@ export const Exercise3DViewer: React.FC<Props> = ({
         mannequin.add(headMesh);
         makeBone([0, chestY, chestZ], [0, headY, headZ], 0.045, false);
 
-        // Push-up Hand Marker Pads
-        const padGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.015, 24);
-        const padLeft = new THREE.Mesh(padGeo, propMat);
+        // Push-up Hand Marker Pads aligned with lowpoly_male.fbx hands [±0.22, 0.008, 0.51]
+        const padGeo = new THREE.CylinderGeometry(0.105, 0.105, 0.015, 24);
+        const padLeft = new THREE.Mesh(padGeo, woodPropMat);
         padLeft.position.set(-handX, 0.008, handZ);
-        const padRight = new THREE.Mesh(padGeo, propMat);
+        const padRight = new THREE.Mesh(padGeo, woodPropMat);
         padRight.position.set(handX, 0.008, handZ);
         props.add(padLeft, padRight);
         break;
       }
 
       case 'splitsquat': {
-        // Bulgarian Split Squat: Rear leg on elevated bench, front knee bending deep
-        const benchH = 0.45;
-        const benchZ = -0.7;
+        // Bulgarian Split Squat: Rear leg on elevated bench/bed, front knee bending deep
+        // Aligned with lowpoly_male.fbx rear foot at [-0.13, 0.38, -0.60] and front foot at [0.08, 0.01, 0.38]
+        const benchH = 0.36;
+        const benchZ = -0.62;
 
         // Front leg foot planted forward
-        const frontFootZ = 0.45;
-        const frontFootX = -0.16;
+        const frontFootZ = 0.38;
+        const frontFootX = 0.08;
 
         // Hip drops with depthFactor
-        const hipY = 0.95 - d * 0.42;
-        const hipZ = -0.05;
+        const hipY = 0.91 - d * 0.26;
+        const hipZ = 0.08 - d * 0.15;
 
         // Front Knee tracks over toes
-        const frontKneeY = 0.52 - d * 0.18;
-        const frontKneeZ = frontFootZ - 0.08 + d * 0.06;
+        const frontKneeY = 0.46 - d * 0.10;
+        const frontKneeZ = frontFootZ - 0.02 + d * 0.05;
 
         // Rear Knee drops towards floor
-        const rearKneeY = 0.65 - d * 0.48;
-        const rearKneeZ = -0.35;
-        const rearFootX = 0.16;
+        const rearKneeY = 0.52 - d * 0.26;
+        const rearKneeZ = -0.32;
+        const rearFootX = -0.13;
 
-        // Elevating Bench Prop
-        const benchGeo = new THREE.BoxGeometry(0.7, benchH, 0.4);
+        // Elevating Bench / Bed Prop aligned beneath rear foot
+        const benchGeo = new THREE.BoxGeometry(0.75, benchH, 0.42);
         const benchMesh = new THREE.Mesh(benchGeo, woodPropMat);
         benchMesh.position.set(0, benchH / 2, benchZ);
         benchMesh.castShadow = true;
+        benchMesh.receiveShadow = true;
         props.add(benchMesh);
+
+        // Front foot stance pad
+        const stancePadGeo = new THREE.CylinderGeometry(0.11, 0.11, 0.012, 24);
+        const stancePad = new THREE.Mesh(stancePadGeo, propMat);
+        stancePad.position.set(frontFootX, 0.006, frontFootZ);
+        props.add(stancePad);
 
         // Front foot & Rear toe on bench
         makeJoint(frontFootX, 0.05, frontFootZ, 0.05);
-        makeJoint(rearFootX, benchH + 0.05, benchZ + 0.1, 0.045);
+        makeJoint(rearFootX, benchH + 0.04, benchZ + 0.04, 0.045);
 
-        // Front Knee (Joint)
+        // Front Knee (Joint) & Shin
         makeJoint(frontFootX, frontKneeY, frontKneeZ, 0.06);
-        // Front Shin
         makeBone([frontFootX, 0.05, frontFootZ], [frontFootX, frontKneeY, frontKneeZ], 0.048, false);
 
         // Front Thigh (Hypertrophy Quad & Glute target)
@@ -495,22 +708,22 @@ export const Exercise3DViewer: React.FC<Props> = ({
 
         // Rear Knee & Leg
         makeJoint(rearFootX, rearKneeY, rearKneeZ, 0.055);
-        makeBone([rearFootX, benchH + 0.05, benchZ + 0.1], [rearFootX, rearKneeY, rearKneeZ], 0.045, false);
+        makeBone([rearFootX, benchH + 0.04, benchZ + 0.04], [rearFootX, rearKneeY, rearKneeZ], 0.045, false);
         makeJoint(rearFootX, hipY, hipZ, 0.065);
         makeBone([rearFootX, rearKneeY, rearKneeZ], [rearFootX, hipY, hipZ], 0.055, false);
 
         // Pelvis & Upright Torso (Core engaged)
         makeBone([frontFootX, hipY, hipZ], [rearFootX, hipY, hipZ], 0.055, false);
 
-        const chestY = hipY + 0.48;
-        const chestZ = hipZ + 0.03;
+        const chestY = hipY + 0.42;
+        const chestZ = hipZ + 0.08;
         makeBone([0, hipY, hipZ], [0, chestY, chestZ], 0.075, true);
 
         // Shoulders
         makeJoint(-0.2, chestY, chestZ, 0.06);
         makeJoint(0.2, chestY, chestZ, 0.06);
 
-        // Arms hanging straight down with balance / dumbbells
+        // Arms
         makeBone([-0.2, chestY, chestZ], [-0.24, hipY + 0.1, chestZ], 0.045, false);
         makeBone([0.2, chestY, chestZ], [0.24, hipY + 0.1, chestZ], 0.045, false);
         makeJoint(-0.24, hipY + 0.1, chestZ, 0.045);
@@ -528,27 +741,28 @@ export const Exercise3DViewer: React.FC<Props> = ({
 
       case 'pikepushup': {
         // Bed Pike Push-Up: Feet elevated on bed/box, inverted V pike angle, crown descending
-        const boxH = 0.55;
-        const boxZ = -0.75;
+        // Aligned with lowpoly_male.fbx elevated toes at [±0.12, 0.49, -0.78] and hands at [±0.22, 0.04, 0.36]
+        const boxH = 0.46;
+        const boxZ = -0.78;
 
         // Feet elevated on box
-        makeJoint(-0.12, boxH + 0.05, boxZ + 0.1, 0.05);
-        makeJoint(0.12, boxH + 0.05, boxZ + 0.1, 0.05);
+        makeJoint(-0.12, boxH + 0.04, boxZ + 0.05, 0.05);
+        makeJoint(0.12, boxH + 0.04, boxZ + 0.05, 0.05);
 
         // Inverted V Hips high in the air
-        const hipY = 1.05 - d * 0.12;
-        const hipZ = -0.22;
+        const hipY = 0.72 - d * 0.02;
+        const hipZ = 0.05 + d * 0.12;
         makeJoint(-0.16, hipY, hipZ, 0.065);
         makeJoint(0.16, hipY, hipZ, 0.065);
         makeBone([-0.16, hipY, hipZ], [0.16, hipY, hipZ], 0.055, false);
 
         // Elevated legs
-        makeBone([-0.12, boxH + 0.05, boxZ + 0.1], [-0.16, hipY, hipZ], 0.052, false);
-        makeBone([0.12, boxH + 0.05, boxZ + 0.1], [0.16, hipY, hipZ], 0.052, false);
+        makeBone([-0.12, boxH + 0.04, boxZ + 0.05], [-0.16, hipY, hipZ], 0.052, false);
+        makeBone([0.12, boxH + 0.04, boxZ + 0.05], [0.16, hipY, hipZ], 0.052, false);
 
         // Inverted torso towards floor (Shoulder / Deltoid target)
-        const chestY = 0.48 - d * 0.28;
-        const chestZ = 0.22;
+        const chestY = 0.45 - d * 0.16;
+        const chestZ = 0.28 + d * 0.12;
         makeBone([0, hipY, hipZ], [0, chestY, chestZ], 0.07, true);
 
         // Shoulders (Anterior Deltoids target)
@@ -557,15 +771,15 @@ export const Exercise3DViewer: React.FC<Props> = ({
         makeBone([-0.22, chestY, chestZ], [0.22, chestY, chestZ], 0.06, true);
 
         // Hands planted on ground
-        const handX = 0.28;
-        const handZ = 0.35;
+        const handX = 0.22;
+        const handZ = 0.36;
         makeJoint(-handX, 0.04, handZ, 0.05);
         makeJoint(handX, 0.04, handZ, 0.05);
 
         // Elbows tracking out and back
-        const elbowY = chestY + 0.18;
-        const elbowX = 0.36;
-        const elbowZ = chestZ - 0.12;
+        const elbowY = chestY + 0.10;
+        const elbowX = 0.30;
+        const elbowZ = chestZ - 0.08;
         makeJoint(-elbowX, elbowY, elbowZ, 0.055);
         makeJoint(elbowX, elbowY, elbowZ, 0.055);
 
@@ -576,8 +790,8 @@ export const Exercise3DViewer: React.FC<Props> = ({
         makeBone([elbowX, elbowY, elbowZ], [handX, 0.04, handZ], 0.045, false);
 
         // Crown descending forward towards floor (Pike tripod)
-        const headY = Math.max(0.12, chestY - 0.15);
-        const headZ = chestZ + 0.15;
+        const headY = Math.max(0.12, chestY - 0.12);
+        const headZ = chestZ + 0.12;
         const headGeo = new THREE.SphereGeometry(0.11, 20, 20);
         const headMesh = new THREE.Mesh(headGeo, accentMat);
         headMesh.position.set(0, headY, headZ);
@@ -585,22 +799,31 @@ export const Exercise3DViewer: React.FC<Props> = ({
         mannequin.add(headMesh);
         makeBone([0, chestY, chestZ], [0, headY, headZ], 0.045, false);
 
-        // Elevation Platform Prop (Bed / Plyo Box)
+        // Elevation Platform Prop (Bed / Plyo Box) + Floor Hand Pads
         const platformGeo = new THREE.BoxGeometry(0.85, boxH, 0.55);
         const platformMesh = new THREE.Mesh(platformGeo, woodPropMat);
         platformMesh.position.set(0, boxH / 2, boxZ);
         platformMesh.castShadow = true;
+        platformMesh.receiveShadow = true;
         props.add(platformMesh);
+
+        const padGeo = new THREE.CylinderGeometry(0.095, 0.095, 0.015, 24);
+        const padLeft = new THREE.Mesh(padGeo, propMat);
+        padLeft.position.set(-handX, 0.008, handZ);
+        const padRight = new THREE.Mesh(padGeo, propMat);
+        padRight.position.set(handX, 0.008, handZ);
+        props.add(padLeft, padRight);
         break;
       }
 
       case 'pullup': {
         // Ledge Pull-Up / Inverted Row: Hanging, pulling chest up to bar
-        const barH = 1.6;
-        const barZ = 0;
+        // Aligned with lowpoly_male.fbx hands gripping overhead bar at y = 1.60m, z = 0.01m
+        const barH = 1.60;
+        const barZ = 0.01;
 
         // Grip overhead on pull-up bar
-        const gripX = 0.35;
+        const gripX = 0.26;
         makeJoint(-gripX, barH, barZ, 0.055);
         makeJoint(gripX, barH, barZ, 0.055);
 
@@ -621,15 +844,15 @@ export const Exercise3DViewer: React.FC<Props> = ({
         props.add(leftPillar, rightPillar);
 
         // Body rises with depthFactor (1 = chin over bar / full contraction)
-        const chestY = 0.85 + d * 0.48;
-        const hipY = chestY - 0.45;
-        const kneeY = hipY - 0.4;
-        const footY = kneeY - 0.35;
+        const chestY = 0.95 + d * 0.36;
+        const hipY = chestY - 0.36;
+        const kneeY = hipY - 0.36;
+        const footY = kneeY + 0.05;
 
         // Elbows drive down and back (Lats target)
-        const elbowY = barH - 0.15 - (1 - d) * 0.32;
-        const elbowX = 0.42;
-        const elbowZ = -0.12;
+        const elbowY = barH - 0.15 - (1 - d) * 0.25;
+        const elbowX = 0.38;
+        const elbowZ = -0.05;
         makeJoint(-elbowX, elbowY, elbowZ, 0.06);
         makeJoint(elbowX, elbowY, elbowZ, 0.06);
 
@@ -638,10 +861,10 @@ export const Exercise3DViewer: React.FC<Props> = ({
         makeBone([gripX, barH, barZ], [elbowX, elbowY, elbowZ], 0.045, false);
 
         // Shoulders
-        makeJoint(-0.24, chestY, 0, 0.065);
-        makeJoint(0.24, chestY, 0, 0.065);
-        makeBone([-elbowX, elbowY, elbowZ], [-0.24, chestY, 0], 0.055, true);
-        makeBone([elbowX, elbowY, elbowZ], [0.24, chestY, 0], 0.055, true);
+        makeJoint(-0.22, chestY, 0, 0.065);
+        makeJoint(0.22, chestY, 0, 0.065);
+        makeBone([-elbowX, elbowY, elbowZ], [-0.22, chestY, 0], 0.055, true);
+        makeBone([elbowX, elbowY, elbowZ], [0.22, chestY, 0], 0.055, true);
 
         // Wide V-Taper Lats (Target muscle)
         const latGeo = new THREE.ConeGeometry(0.32, 0.45, 16);
@@ -657,12 +880,12 @@ export const Exercise3DViewer: React.FC<Props> = ({
         makeJoint(-0.16, hipY, 0, 0.06);
         makeJoint(0.16, hipY, 0, 0.06);
 
-        // Legs crossed at ankles
-        makeBone([-0.16, hipY, 0], [-0.14, kneeY, -0.1], 0.05, false);
-        makeBone([0.16, hipY, 0], [0.14, kneeY, -0.1], 0.05, false);
-        makeBone([-0.14, kneeY, -0.1], [0, footY, -0.15], 0.045, false);
-        makeBone([0.14, kneeY, -0.1], [0, footY, -0.15], 0.045, false);
-        makeJoint(0, footY, -0.15, 0.05);
+        // Legs tucked behind
+        makeBone([-0.16, hipY, 0], [-0.14, kneeY, 0.02], 0.05, false);
+        makeBone([0.16, hipY, 0], [0.14, kneeY, 0.02], 0.05, false);
+        makeBone([-0.14, kneeY, 0.02], [0, footY, -0.35], 0.045, false);
+        makeBone([0.14, kneeY, 0.02], [0, footY, -0.35], 0.045, false);
+        makeJoint(0, footY, -0.35, 0.05);
 
         // Head looking up towards ledge
         const headGeo = new THREE.SphereGeometry(0.11, 20, 20);
@@ -676,50 +899,50 @@ export const Exercise3DViewer: React.FC<Props> = ({
 
       case 'cobra': {
         // Morning Cobra: Prone on mat, palms planted under shoulders, spinal extension arching chest
-        const archFactor = 0.35 + d * 0.65; // Arch rises with depthFactor
-        const chestY = 0.25 + archFactor * 0.42;
-        const chestZ = 0.25 - archFactor * 0.15;
-        const headY = chestY + 0.22;
-        const headZ = chestZ + 0.05;
+        const archFactor = 0.35 + d * 0.65;
+        const chestY = 0.22 + archFactor * 0.25;
+        const chestZ = 0.25;
+        const headY = chestY + 0.18;
+        const headZ = chestZ + 0.06;
 
-        // Yoga mat on floor
-        const matGeo = new THREE.BoxGeometry(0.7, 0.015, 1.8);
+        // Yoga mat on floor aligned with lowpoly_male.fbx (toes at z=-1.09 to hands at z=+0.35)
+        const matGeo = new THREE.BoxGeometry(0.75, 0.015, 1.85);
         const matMesh = new THREE.Mesh(matGeo, propMat);
-        matMesh.position.set(0, 0.008, 0);
+        matMesh.position.set(0, 0.008, -0.32);
         props.add(matMesh);
 
         // Legs & Feet resting flat on mat
-        makeJoint(-0.12, 0.05, -0.8, 0.045);
-        makeJoint(0.12, 0.05, -0.8, 0.045);
-        makeBone([-0.12, 0.05, -0.8], [-0.14, 0.06, -0.4], 0.045, false);
-        makeBone([0.12, 0.05, -0.8], [0.14, 0.06, -0.4], 0.045, false);
+        makeJoint(-0.12, 0.04, -0.95, 0.045);
+        makeJoint(0.12, 0.04, -0.95, 0.045);
+        makeBone([-0.12, 0.04, -0.95], [-0.14, 0.05, -0.5], 0.045, false);
+        makeBone([0.12, 0.04, -0.95], [0.14, 0.05, -0.5], 0.045, false);
 
-        // Pelvis glued to floor
-        makeJoint(-0.16, 0.08, -0.15, 0.06);
-        makeJoint(0.16, 0.08, -0.15, 0.06);
-        makeBone([-0.14, 0.06, -0.4], [-0.16, 0.08, -0.15], 0.05, false);
-        makeBone([0.14, 0.06, -0.4], [0.16, 0.08, -0.15], 0.05, false);
+        // Pelvis grounded to floor
+        makeJoint(-0.16, 0.08, -0.08, 0.06);
+        makeJoint(0.16, 0.08, -0.08, 0.06);
+        makeBone([-0.14, 0.05, -0.5], [-0.16, 0.08, -0.08], 0.05, false);
+        makeBone([0.14, 0.05, -0.5], [0.16, 0.08, -0.08], 0.05, false);
 
-        // Extended Arched Spine (Erector Spinae & Abdominal stretch target)
-        makeBone([0, 0.08, -0.15], [0, chestY * 0.5, chestZ * 0.5], 0.065, true);
+        // Extended Arched Spine
+        makeBone([0, 0.08, -0.08], [0, chestY * 0.5, chestZ * 0.5], 0.065, true);
         makeBone([0, chestY * 0.5, chestZ * 0.5], [0, chestY, chestZ], 0.07, true);
 
         // Chest & Shoulders
-        makeJoint(-0.22, chestY, chestZ, 0.065);
-        makeJoint(0.22, chestY, chestZ, 0.065);
-        makeBone([-0.22, chestY, chestZ], [0.22, chestY, chestZ], 0.06, false);
+        makeJoint(-0.20, chestY, chestZ, 0.065);
+        makeJoint(0.20, chestY, chestZ, 0.065);
+        makeBone([-0.20, chestY, chestZ], [0.20, chestY, chestZ], 0.06, false);
 
         // Hands planted on mat beneath shoulders
-        const handX = 0.28;
-        const handZ = 0.22;
+        const handX = 0.22;
+        const handZ = 0.25;
         makeJoint(-handX, 0.04, handZ, 0.05);
         makeJoint(handX, 0.04, handZ, 0.05);
 
         // Arms supporting spinal extension
-        makeBone([-0.22, chestY, chestZ], [-handX, 0.04, handZ], 0.05, false);
-        makeBone([0.22, chestY, chestZ], [handX, 0.04, handZ], 0.05, false);
+        makeBone([-0.20, chestY, chestZ], [-handX, 0.04, handZ], 0.05, false);
+        makeBone([0.20, chestY, chestZ], [handX, 0.04, handZ], 0.05, false);
 
-        // Head gently tilted back, lengthening cervical spine
+        // Head gently tilted back
         const headGeo = new THREE.SphereGeometry(0.11, 20, 20);
         const headMesh = new THREE.Mesh(headGeo, accentMat);
         headMesh.position.set(0, headY, headZ);
@@ -728,8 +951,249 @@ export const Exercise3DViewer: React.FC<Props> = ({
         makeBone([0, chestY, chestZ], [0, headY, headZ], 0.045, false);
         break;
       }
+
+      case 'armcircles': {
+        // Arm Circles & Shoulder Dislocates: Athletic standing T-pose with circular capsule guide rings
+        const baseY = 0.05;
+        const hipY = 0.90;
+        const chestY = 1.31;
+        const headY = 1.54;
+
+        // Feet planted shoulder-width
+        makeJoint(-0.16, baseY, 0, 0.045);
+        makeJoint(0.16, baseY, 0, 0.045);
+        makeBone([-0.16, baseY, 0], [-0.16, hipY * 0.5, 0], 0.045, false);
+        makeBone([0.16, baseY, 0], [0.16, hipY * 0.5, 0], 0.045, false);
+        makeJoint(-0.16, hipY * 0.5, 0, 0.05);
+        makeJoint(0.16, hipY * 0.5, 0, 0.05);
+        makeBone([-0.16, hipY * 0.5, 0], [-0.16, hipY, 0], 0.05, false);
+        makeBone([0.16, hipY * 0.5, 0], [0.16, hipY, 0], 0.05, false);
+
+        // Hips & Spine
+        makeJoint(-0.16, hipY, 0, 0.06);
+        makeJoint(0.16, hipY, 0, 0.06);
+        makeBone([-0.16, hipY, 0], [0.16, hipY, 0], 0.055, false);
+        makeBone([0, hipY, 0], [0, chestY, 0], 0.07, false);
+
+        // Rotator Cuff Shoulders (Target Joints)
+        makeJoint(-0.22, chestY, 0, 0.07);
+        makeJoint(0.22, chestY, 0, 0.07);
+
+        // Arms extended in dynamic circular abduction
+        const circleAngle = d * Math.PI * 2;
+        const radius = 0.14;
+        const circleY = Math.sin(circleAngle) * radius;
+        const circleZ = Math.cos(circleAngle) * radius;
+
+        // Left Arm & Forearm
+        makeBone([-0.22, chestY, 0], [-0.42, chestY + circleY * 0.6, circleZ * 0.6], 0.05, true);
+        makeJoint(-0.42, chestY + circleY * 0.6, circleZ * 0.6, 0.055);
+        makeBone([-0.42, chestY + circleY * 0.6, circleZ * 0.6], [-0.58, chestY + circleY, circleZ], 0.045, true);
+        makeJoint(-0.58, chestY + circleY, circleZ, 0.05);
+
+        // Right Arm & Forearm
+        makeBone([0.22, chestY, 0], [0.42, chestY + circleY * 0.6, -circleZ * 0.6], 0.05, true);
+        makeJoint(0.42, chestY + circleY * 0.6, -circleZ * 0.6, 0.055);
+        makeBone([0.42, chestY + circleY * 0.6, -circleZ * 0.6], [0.58, chestY + circleY, -circleZ], 0.045, true);
+        makeJoint(0.58, chestY + circleY, -circleZ, 0.05);
+
+        // 3D Circular Capsule Glide Rings aligned with lowpoly_male.fbx hands at x = ±0.58, y = 1.31
+        const ringGeo = new THREE.TorusGeometry(0.18, 0.01, 12, 32);
+        const ringMat = new THREE.MeshStandardMaterial({
+          color: 0x38bdf8,
+          emissive: 0x0284c7,
+          emissiveIntensity: 0.6,
+          roughness: 0.3,
+          metalness: 0.5,
+        });
+        const leftRing = new THREE.Mesh(ringGeo, ringMat);
+        leftRing.rotation.y = Math.PI / 2;
+        leftRing.position.set(-0.58, chestY, 0);
+        const rightRing = new THREE.Mesh(ringGeo, ringMat);
+        rightRing.rotation.y = Math.PI / 2;
+        rightRing.position.set(0.58, chestY, 0);
+        props.add(leftRing, rightRing);
+
+        // Head & Neck
+        const headGeo = new THREE.SphereGeometry(0.11, 20, 20);
+        const headMesh = new THREE.Mesh(headGeo, accentMat);
+        headMesh.position.set(0, headY, 0);
+        headMesh.castShadow = true;
+        mannequin.add(headMesh);
+        makeBone([0, chestY, 0], [0, headY, 0], 0.045, false);
+        break;
+      }
+
+      case 'legswings': {
+        // Leg Swings: Supported single-leg stance, dynamic sagittal hip swing
+        const baseY = 0.05;
+        const hipY = 0.89;
+        const chestY = 1.31;
+        const headY = 1.54;
+
+        // Support Pillar Prop aligned with lowpoly_male.fbx left support hand at [0.30, 1.28, 0.33]
+        const barH = 1.30;
+        const pillarGeo = new THREE.CylinderGeometry(0.025, 0.025, barH, 16);
+        const pillar = new THREE.Mesh(pillarGeo, woodPropMat);
+        pillar.position.set(0.32, barH / 2, 0.33);
+        pillar.castShadow = true;
+        props.add(pillar);
+
+        // Support Arm reaching forward to bar
+        makeBone([0.20, chestY, 0], [0.32, 1.25, 0.33], 0.045, false);
+        makeJoint(0.32, 1.25, 0.33, 0.05);
+
+        // Left Leg (Planted firmly at x = +0.09)
+        makeJoint(0.09, baseY, 0, 0.045);
+        makeBone([0.09, baseY, 0], [0.09, hipY * 0.5, 0], 0.045, false);
+        makeJoint(0.09, hipY * 0.5, 0, 0.05);
+        makeBone([0.09, hipY * 0.5, 0], [0.09, hipY, 0], 0.05, false);
+
+        // Torso & Hips
+        makeJoint(0.09, hipY, 0, 0.06);
+        makeJoint(-0.09, hipY, 0, 0.065);
+        makeBone([0.09, hipY, 0], [-0.09, hipY, 0], 0.055, false);
+        makeBone([0, hipY, 0], [0, chestY, 0], 0.07, false);
+
+        // Right Leg (Dynamic Sagittal Swing at x = -0.09)
+        const swingAngle = (d - 0.5) * 1.5;
+        const kneeZ = Math.sin(swingAngle) * 0.42;
+        const kneeY = hipY - Math.cos(swingAngle) * 0.42;
+        const footZ = Math.sin(swingAngle) * 0.84;
+        const footY = hipY - Math.cos(swingAngle) * 0.84;
+
+        makeJoint(-0.09, kneeY, kneeZ, 0.055);
+        makeBone([-0.09, hipY, 0], [-0.09, kneeY, kneeZ], 0.055, true);
+        makeJoint(-0.09, footY, footZ, 0.045);
+        makeBone([-0.09, kneeY, kneeZ], [-0.09, footY, footZ], 0.045, false);
+
+        // Dynamic Swing Arc Guide Ribbon aligned with right hip at x = -0.09
+        const arcGeo = new THREE.TorusGeometry(0.80, 0.008, 8, 32, Math.PI / 1.7);
+        const arcMat = new THREE.MeshStandardMaterial({
+          color: 0xf43f5e,
+          emissive: 0xf43f5e,
+          emissiveIntensity: 0.5,
+          roughness: 0.4,
+        });
+        const arcMesh = new THREE.Mesh(arcGeo, arcMat);
+        arcMesh.rotation.y = Math.PI / 2;
+        arcMesh.rotation.x = Math.PI / 1.4;
+        arcMesh.position.set(-0.09, hipY, 0);
+        props.add(arcMesh);
+
+        // Free Right Arm for balance
+        makeBone([-0.20, chestY, 0], [-0.34, 1.15, -0.2], 0.045, false);
+        makeJoint(-0.34, 1.15, -0.2, 0.045);
+
+        // Head & Neck
+        const headGeo = new THREE.SphereGeometry(0.11, 20, 20);
+        const headMesh = new THREE.Mesh(headGeo, accentMat);
+        headMesh.position.set(0, headY, 0);
+        headMesh.castShadow = true;
+        mannequin.add(headMesh);
+        makeBone([0, chestY, 0], [0, headY, 0], 0.045, false);
+        break;
+      }
+
+      case 'torsotwists': {
+        // Standing Torso Twists: Transverse thoracic rotation with counter-balance reach
+        const baseY = 0.05;
+        const hipY = 0.90;
+        const chestY = 1.31;
+        const headY = 1.54;
+
+        // Feet planted shoulder-width
+        makeJoint(-0.18, baseY, 0, 0.045);
+        makeJoint(0.18, baseY, 0, 0.045);
+        makeBone([-0.18, baseY, 0], [-0.18, hipY * 0.5, 0], 0.045, false);
+        makeBone([0.18, baseY, 0], [0.18, hipY * 0.5, 0], 0.045, false);
+        makeJoint(-0.18, hipY * 0.5, 0, 0.05);
+        makeJoint(0.18, hipY * 0.5, 0, 0.05);
+        makeBone([-0.18, hipY * 0.5, 0], [-0.16, hipY, 0], 0.05, false);
+        makeBone([0.18, hipY * 0.5, 0], [0.16, hipY, 0], 0.05, false);
+
+        // Pelvis facing forward
+        makeJoint(-0.16, hipY, 0, 0.06);
+        makeJoint(0.16, hipY, 0, 0.06);
+        makeBone([-0.16, hipY, 0], [0.16, hipY, 0], 0.055, false);
+
+        // Transverse thoracic rotation angle based on depthFactor
+        const twistAngle = (d - 0.5) * 1.3;
+        const cosT = Math.cos(twistAngle);
+        const sinT = Math.sin(twistAngle);
+
+        // Spine rotation (Target thoracic decompression)
+        makeBone([0, hipY, 0], [0, chestY, 0], 0.07, true);
+
+        // Shoulders rotated along transverse plane
+        const leftShX = -0.22 * cosT;
+        const leftShZ = -0.22 * sinT;
+        const rightShX = 0.22 * cosT;
+        const rightShZ = 0.22 * sinT;
+
+        makeJoint(leftShX, chestY, leftShZ, 0.065);
+        makeJoint(rightShX, chestY, rightShZ, 0.065);
+        makeBone([leftShX, chestY, leftShZ], [rightShX, chestY, rightShZ], 0.06, true);
+
+        // Arms in dynamic transverse reach
+        const leftArmX = leftShX - 0.28 * cosT + 0.15 * sinT;
+        const leftArmZ = leftShZ - 0.28 * sinT - 0.15 * cosT;
+        makeBone([leftShX, chestY, leftShZ], [leftArmX, 1.22, leftArmZ], 0.045, false);
+        makeJoint(leftArmX, 1.22, leftArmZ, 0.045);
+
+        const rightArmX = rightShX + 0.28 * cosT - 0.15 * sinT;
+        const rightArmZ = rightShZ + 0.28 * sinT + 0.15 * cosT;
+        makeBone([rightShX, chestY, rightShZ], [rightArmX, 1.22, rightArmZ], 0.045, false);
+        makeJoint(rightArmX, 1.22, rightArmZ, 0.045);
+
+        // Transverse Plane Rotation Ring (Prop)
+        const waistRingGeo = new THREE.TorusGeometry(0.38, 0.008, 8, 32);
+        const ringMat = new THREE.MeshStandardMaterial({
+          color: 0x38bdf8,
+          emissive: 0x0284c7,
+          emissiveIntensity: 0.5,
+          roughness: 0.3,
+        });
+        const waistRing = new THREE.Mesh(waistRingGeo, ringMat);
+        waistRing.rotation.x = Math.PI / 2;
+        waistRing.position.set(0, 1.12, 0);
+        props.add(waistRing);
+
+        // Head tracking rotation
+        const headX = 0.04 * sinT;
+        const headZ = 0.04 * cosT;
+        const headGeo = new THREE.SphereGeometry(0.11, 20, 20);
+        const headMesh = new THREE.Mesh(headGeo, accentMat);
+        headMesh.position.set(headX, headY, headZ);
+        headMesh.castShadow = true;
+        mannequin.add(headMesh);
+        makeBone([0, chestY, 0], [headX, headY, headZ], 0.045, false);
+        break;
+      }
+
+      default: {
+        // Standing neutral athletic posture
+        makeJoint(-0.15, 0.05, 0, 0.045);
+        makeJoint(0.15, 0.05, 0, 0.045);
+        makeBone([-0.15, 0.05, 0], [-0.15, 0.9, 0], 0.05, false);
+        makeBone([0.15, 0.05, 0], [0.15, 0.9, 0], 0.05, false);
+        makeBone([0, 0.9, 0], [0, 1.35, 0], 0.07, false);
+        makeJoint(-0.24, 1.35, 0, 0.06);
+        makeJoint(0.24, 1.35, 0, 0.06);
+        makeBone([-0.24, 1.35, 0], [-0.24, 0.95, 0], 0.045, false);
+        makeBone([0.24, 1.35, 0], [0.24, 0.95, 0], 0.045, false);
+        const headGeo = new THREE.SphereGeometry(0.11, 20, 20);
+        const headMesh = new THREE.Mesh(headGeo, accentMat);
+        headMesh.position.set(0, 1.58, 0);
+        headMesh.castShadow = true;
+        mannequin.add(headMesh);
+        makeBone([0, 1.35, 0], [0, 1.58, 0], 0.045, false);
+        break;
+      }
     }
 
+    mannequin.visible = !customModelRef.current;
+    props.visible = true;
     mannequinRef.current = mannequin;
     propsGroupRef.current = props;
     scene.add(mannequin);
@@ -764,131 +1228,300 @@ export const Exercise3DViewer: React.FC<Props> = ({
     controls.update();
   };
 
-  // 4. Handle Custom 3D Model File Upload (.glb / .gltf / .fbx)
-  const handleModelFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  // 4. Mount Custom 3D Model Buffer (.glb / .gltf / .fbx)
+  const mountModelBuffer = useCallback((buffer: ArrayBuffer, fileName: string, persist = true) => {
+    const scene = sceneRef.current;
+    if (!scene) return;
 
-    setUploadError(null);
-    const fileName = file.name.toLowerCase();
-    const isGlb = fileName.endsWith('.glb') || fileName.endsWith('.gltf');
-    const isFbx = fileName.endsWith('.fbx');
+    const lower = fileName.toLowerCase();
+    const isGlb = lower.endsWith('.glb') || lower.endsWith('.gltf');
+    const isFbx = lower.endsWith('.fbx');
 
     if (!isGlb && !isFbx) {
       setUploadError('Please select a 3D model file (.glb, .gltf, or .fbx)');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const buffer = e.target?.result as ArrayBuffer;
-      if (!buffer) return;
+    // Hide procedural mannequin while keeping 3D equipment props visible
+    if (mannequinRef.current) mannequinRef.current.visible = false;
+    if (propsGroupRef.current) propsGroupRef.current.visible = true;
 
-      const scene = sceneRef.current;
-      if (!scene) return;
+    // Remove existing custom model
+    if (customModelRef.current) {
+      scene.remove(customModelRef.current);
+      customModelRef.current = null;
+    }
+    if (mixerRef.current) {
+      mixerRef.current.stopAllAction();
+      mixerRef.current = null;
+    }
 
-      // Hide procedural mannequin and props
-      if (mannequinRef.current) mannequinRef.current.visible = false;
-      if (propsGroupRef.current) propsGroupRef.current.visible = false;
-
-      // Remove existing custom model
-      if (customModelRef.current) {
-        scene.remove(customModelRef.current);
-        customModelRef.current = null;
-      }
-      if (mixerRef.current) {
-        mixerRef.current.stopAllAction();
-        mixerRef.current = null;
-      }
-
-      try {
-        if (isGlb) {
-          const loader = new GLTFLoader();
-          loader.parse(
-            buffer,
-            '',
-            (gltf) => {
-              const model = gltf.scene;
-              // Fit and center model in viewport
-              const box = new THREE.Box3().setFromObject(model);
-              const size = box.getSize(new THREE.Vector3());
-              const center = box.getCenter(new THREE.Vector3());
-
-              const maxDim = Math.max(size.x, size.y, size.z);
-              const scale = 1.6 / (maxDim || 1);
-              model.scale.setScalar(scale);
-
-              model.position.x = -center.x * scale;
-              model.position.y = -box.min.y * scale; // Ground flush
-              model.position.z = -center.z * scale;
-
-              model.traverse((child) => {
-                if (child instanceof THREE.Mesh) {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
-                }
-              });
-
-              if (gltf.animations && gltf.animations.length > 0) {
-                const mixer = new THREE.AnimationMixer(model);
-                gltf.animations.forEach((clip) => {
-                  mixer.clipAction(clip).play();
-                });
-                mixerRef.current = mixer;
-              }
-
-              scene.add(model);
-              customModelRef.current = model;
-              setCustomModelName(file.name);
-            },
-            (err) => {
-              const msg = (err as unknown as Error)?.message || 'Invalid 3D model format';
-              setUploadError('Failed to parse GLTF/GLB model: ' + msg);
-            }
-          );
-        } else if (isFbx) {
-          const loader = new FBXLoader();
-          try {
-            const object = loader.parse(buffer, '');
-            const box = new THREE.Box3().setFromObject(object);
+    try {
+      if (isGlb) {
+        const loader = new GLTFLoader();
+        loader.parse(
+          buffer,
+          '',
+          (gltf) => {
+            const model = gltf.scene;
+            const box = new THREE.Box3().setFromObject(model);
             const size = box.getSize(new THREE.Vector3());
             const center = box.getCenter(new THREE.Vector3());
 
             const maxDim = Math.max(size.x, size.y, size.z);
             const scale = 1.6 / (maxDim || 1);
-            object.scale.setScalar(scale);
+            model.scale.setScalar(scale);
 
-            object.position.x = -center.x * scale;
-            object.position.y = -box.min.y * scale;
-            object.position.z = -center.z * scale;
+            model.position.x = -center.x * scale;
+            model.position.y = -box.min.y * scale;
+            model.position.z = -center.z * scale;
 
-            object.traverse((child) => {
+            model.traverse((child) => {
               if (child instanceof THREE.Mesh) {
                 child.castShadow = true;
                 child.receiveShadow = true;
               }
             });
 
-            if (object.animations && object.animations.length > 0) {
-              const mixer = new THREE.AnimationMixer(object);
-              object.animations.forEach((clip) => {
+            // Check for Mixamo rigged bones in GLB/GLTF
+            let hasMixamoBones = false;
+            model.traverse((child) => {
+              if (child.name && child.name.toLowerCase().startsWith('mixamorig')) {
+                hasMixamoBones = true;
+              }
+            });
+
+            if (hasMixamoBones) {
+              snapshotAndResetModelBindPose(model);
+              const mixer = new THREE.AnimationMixer(model);
+              mixerRef.current = mixer;
+              const clip = createExerciseSkeletalClip(poseTypeRef.current);
+              currentClipRef.current = clip;
+              const action = mixer.clipAction(clip);
+              action.setLoop(THREE.LoopRepeat, Infinity);
+              action.play();
+              mixer.update(0);
+              activeActionRef.current = action;
+              setHasAnimations(true);
+              setIsPlayingAnim(true);
+              isPlayingAnimRef.current = true;
+              applySkeletalMuscleHighlights(model, poseTypeRef.current, showMuscleGlowRef.current);
+            } else if (
+              gltf.animations &&
+              gltf.animations.length > 0 &&
+              gltf.animations[0].duration > 0.1
+            ) {
+              const mixer = new THREE.AnimationMixer(model);
+              gltf.animations.forEach((clip) => {
                 mixer.clipAction(clip).play();
               });
               mixerRef.current = mixer;
+              setHasAnimations(true);
+              setIsPlayingAnim(true);
+              isPlayingAnimRef.current = true;
+            } else {
+              setHasAnimations(false);
             }
 
-            scene.add(object);
-            customModelRef.current = object;
-            setCustomModelName(file.name);
-          } catch (fbxErr) {
-            setUploadError('Failed to parse FBX model: ' + (fbxErr as Error).message);
+            scene.add(model);
+            customModelRef.current = model;
+            setCustomModelName(fileName);
+            if (persist) {
+              saveCustomModelToDB(fileName, buffer).catch(() => {});
+            }
+          },
+          (err) => {
+            const msg = (err as unknown as Error)?.message || 'Invalid 3D model format';
+            setUploadError('Failed to parse GLTF/GLB model: ' + msg);
           }
+        );
+      } else if (isFbx) {
+        const loader = new FBXLoader();
+        try {
+          const object = loader.parse(buffer, '');
+          const box = new THREE.Box3().setFromObject(object);
+          const size = box.getSize(new THREE.Vector3());
+          const center = box.getCenter(new THREE.Vector3());
+
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale = 1.6 / (maxDim || 1);
+          object.scale.setScalar(scale);
+
+          object.position.x = -center.x * scale;
+          object.position.y = -box.min.y * scale;
+          object.position.z = -center.z * scale;
+
+          object.traverse((child) => {
+            if (child instanceof THREE.Mesh || child instanceof THREE.SkinnedMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+              if (child.material) {
+                if (Array.isArray(child.material)) {
+                  child.material.forEach((m) => {
+                    if ('shininess' in m) (m as THREE.MeshPhongMaterial).shininess = 35;
+                  });
+                } else if ('shininess' in child.material) {
+                  (child.material as THREE.MeshPhongMaterial).shininess = 35;
+                }
+              }
+            }
+          });
+
+          // Check if FBX model has standard Mixamo rigged bones
+          let hasMixamoBones = false;
+          object.traverse((child) => {
+            if (child.name && child.name.toLowerCase().startsWith('mixamorig')) {
+              hasMixamoBones = true;
+            }
+          });
+
+          if (hasMixamoBones) {
+            snapshotAndResetModelBindPose(object);
+            const mixer = new THREE.AnimationMixer(object);
+            mixerRef.current = mixer;
+            const clip = createExerciseSkeletalClip(poseTypeRef.current);
+            currentClipRef.current = clip;
+            const action = mixer.clipAction(clip);
+            action.setLoop(THREE.LoopRepeat, Infinity);
+            action.play();
+            mixer.update(0);
+            activeActionRef.current = action;
+
+            setHasAnimations(true);
+            setIsPlayingAnim(true);
+            isPlayingAnimRef.current = true;
+
+            applySkeletalMuscleHighlights(object, poseTypeRef.current, showMuscleGlowRef.current);
+          } else if (
+            object.animations &&
+            object.animations.length > 0 &&
+            object.animations[0].duration > 0.1
+          ) {
+            const mixer = new THREE.AnimationMixer(object);
+            object.animations.forEach((clip) => {
+              mixer.clipAction(clip).play();
+            });
+            mixerRef.current = mixer;
+            setHasAnimations(true);
+            setIsPlayingAnim(true);
+            isPlayingAnimRef.current = true;
+          } else {
+            setHasAnimations(false);
+          }
+
+          scene.add(object);
+          customModelRef.current = object;
+          setCustomModelName(fileName);
+          if (persist) {
+            saveCustomModelToDB(fileName, buffer).catch(() => {});
+          }
+        } catch (fbxErr) {
+          setUploadError('Failed to parse FBX model: ' + (fbxErr as Error).message);
         }
-      } catch (err) {
-        setUploadError('Model loading failed: ' + (err as Error).message);
+      }
+    } catch (err) {
+      setUploadError('Model loading failed: ' + (err as Error).message);
+    }
+  }, []);
+
+  // Synchronize pose animation and muscle highlights whenever poseType or showMuscleGlow changes
+  useEffect(() => {
+    if (!customModelRef.current || !mixerRef.current) return;
+    let hasMixamoBones = false;
+    customModelRef.current.traverse((child) => {
+      if (child.name && child.name.toLowerCase().startsWith('mixamorig')) {
+        hasMixamoBones = true;
+      }
+    });
+
+    if (hasMixamoBones) {
+      const mixer = mixerRef.current;
+      mixer.stopAllAction();
+      snapshotAndResetModelBindPose(customModelRef.current);
+      const clip = createExerciseSkeletalClip(poseType);
+      currentClipRef.current = clip;
+      const action = mixer.clipAction(clip);
+      action.setLoop(THREE.LoopRepeat, Infinity);
+      action.reset();
+      action.play();
+      mixer.update(0);
+      activeActionRef.current = action;
+      setHasAnimations(true);
+      setIsPlayingAnim(true);
+      isPlayingAnimRef.current = true;
+      applySkeletalMuscleHighlights(customModelRef.current, poseType, showMuscleGlow);
+    }
+  }, [poseType, showMuscleGlow]);
+
+  // Synchronize with 3-1-1 cadence depth factor when paused or scrubbed
+  useEffect(() => {
+    if (!isPlayingAnim && activeActionRef.current && currentClipRef.current) {
+      const duration = currentClipRef.current.duration;
+      activeActionRef.current.time = Math.max(0, Math.min(1, depthFactor)) * duration;
+      mixerRef.current?.update(0);
+    }
+  }, [depthFactor, isPlayingAnim]);
+
+  // Check if custom model was previously saved to IndexedDB, or auto-load lowpoly_male.fbx!
+  useEffect(() => {
+    let isCancelled = false;
+    loadCustomModelFromDB()
+      .then((record) => {
+        if (isCancelled) return;
+        // If stored model was old base_model.glb, replace with user-requested lowpoly_male.fbx
+        if (record && record.buffer && record.fileName !== 'base_model.glb') {
+          mountModelBuffer(record.buffer, record.fileName, false);
+        } else {
+          // Auto-load lowpoly_male.fbx downloaded from user Google Drive
+          fetch('/models/lowpoly_male.fbx')
+            .then((res) => {
+              if (res.ok) return res.arrayBuffer();
+              return fetch('/models/base_model.glb').then((r) => (r.ok ? r.arrayBuffer() : null));
+            })
+            .then((buf) => {
+              if (isCancelled || !buf) return;
+              mountModelBuffer(buf, 'lowpoly_male.fbx', false);
+            })
+            .catch(() => {});
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [mountModelBuffer]);
+
+  // 5. Handle File Upload (Picker & Drag/Drop)
+  const handleModelFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const buffer = e.target?.result as ArrayBuffer;
+      if (buffer) {
+        mountModelBuffer(buffer, file.name, true);
       }
     };
+    reader.readAsArrayBuffer(file);
+  };
 
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const buffer = ev.target?.result as ArrayBuffer;
+      if (buffer) {
+        mountModelBuffer(buffer, file.name, true);
+      }
+    };
     reader.readAsArrayBuffer(file);
   };
 
@@ -906,15 +1539,46 @@ export const Exercise3DViewer: React.FC<Props> = ({
     }
     if (mannequinRef.current) mannequinRef.current.visible = true;
     if (propsGroupRef.current) propsGroupRef.current.visible = true;
+    setHasAnimations(false);
+    setIsPlayingAnim(false);
+    isPlayingAnimRef.current = false;
     setCustomModelName(null);
+    clearCustomModelFromDB().catch(() => {});
+  };
+
+  const togglePlayAnimation = () => {
+    const next = !isPlayingAnim;
+    setIsPlayingAnim(next);
+    isPlayingAnimRef.current = next;
   };
 
   return (
     <div
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDraggingOver(true);
+      }}
+      onDragLeave={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+          setIsDraggingOver(false);
+        }
+      }}
+      onDrop={handleDrop}
       className={`relative bg-slate-950 border border-slate-800 ${className}`}
       role="region"
       aria-label={`Interactive 3D model for ${exerciseName}`}
     >
+      {/* Visual Drag & Drop Overlay */}
+      {isDraggingOver && (
+        <div className="absolute inset-0 z-30 bg-slate-950/92 border-2 border-dashed border-cyan-400 rounded-xl flex flex-col items-center justify-center p-4 text-center pointer-events-none">
+          <Upload className="w-10 h-10 text-cyan-400 animate-bounce mb-2" />
+          <div className="text-sm font-bold text-white">Drop your .glb or .fbx model here</div>
+          <div className="text-xs text-slate-400 mt-1">
+            Browser will parse and apply your rigged 3D model instantly
+          </div>
+        </div>
+      )}
+
       {/* 3D Canvas Container */}
       <div
         ref={containerRef}
@@ -991,6 +1655,19 @@ export const Exercise3DViewer: React.FC<Props> = ({
             <Eye className="w-3 h-3" />
             <span className="hidden sm:inline">Muscles</span>
           </button>
+
+          {/* Animation Play/Pause toggle if model has animations */}
+          {hasAnimations && (
+            <button
+              type="button"
+              onClick={togglePlayAnimation}
+              className="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-cyan-300 hover:text-white flex items-center gap-1 transition-colors"
+              title={isPlayingAnim ? 'Pause Rigged Motion' : 'Play Rigged Motion'}
+            >
+              {isPlayingAnim ? <Pause className="w-3 h-3 text-cyan-400" /> : <Play className="w-3 h-3 text-cyan-400" />}
+              <span className="hidden sm:inline">{isPlayingAnim ? 'Pause' : 'Play'}</span>
+            </button>
+          )}
 
           {/* Upload Custom Model Button (.glb / .fbx) */}
           <div className="flex items-center gap-1">
