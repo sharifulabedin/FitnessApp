@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="50%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#090D16"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="0%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#E11D48"/>
+      <stop offset="50%" stop-color="#F43F5E"/>
+      <stop offset="100%" stop-color="#FB923C"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F43F5E" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#FB923C" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="blurGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="24" result="blur"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="112" stroke="#334155" stroke-width="6" fill="none"/>
+
+  <!-- Ambient Glow -->
+  <circle cx="256" cy="270" r="140" fill="url(#glow)" filter="url(#blurGlow)"/>
+
+  <!-- Flame Shape -->
+  <path d="M256 96 C265 145 285 175 316 208 C347 241 364 278 364 326 C364 386 316 434 256 434 C196 434 148 386 148 326 C148 266 186 218 206 180 C210 216 230 240 252 240 C234 196 242 144 256 96 Z" fill="url(#flame)"/>
+
+  <!-- Inner Flame Accent -->
+  <path d="M256 260 C264 290 274 310 292 330 C298 337 302 346 302 356 C302 381 281 402 256 402 C231 402 210 381 210 356 C210 330 228 308 240 290 C242 304 250 314 258 314 C250 295 252 278 256 260 Z" fill="#FEF08A"/>
+
+  <!-- Athletic 20 Badge -->
+  <text x="256" y="475" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="34" fill="#F8FAFC" letter-spacing="4">MORNING 20</text>
+</svg>
