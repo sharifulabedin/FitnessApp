@@ -1129,3 +1129,13 @@ export function generateWorkoutShareText(params: {
     `• 3-1-1 Hypertrophy Tempo · No Gear Required\n` +
     `#Morning20 #Hypertrophy #Streak`;
 }
+
+export function formatSyncTimeLabel(date: Date, now: Date = new Date()): string {
+  const diffSec = Math.max(0, Math.floor((now.getTime() - date.getTime()) / 1000));
+  if (diffSec < 5) return 'Just now';
+  if (diffSec < 60) return `${diffSec}s ago`;
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+

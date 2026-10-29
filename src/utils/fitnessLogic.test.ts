@@ -32,6 +32,7 @@ import {
   formatHeightCompact,
   formatHeightWithBoth,
   ATHLETIC_AVATAR_PRESETS,
+  formatSyncTimeLabel,
 } from './fitnessLogic.ts';
 
 test('height conversion between cm and feet/inches is accurate', () => {
@@ -374,5 +375,22 @@ test('workout data backup payload containing completed exercises, streak, and du
   assert.equal(payload.streak.activeStreak, 4);
   assert.equal(payload.durationLogs.length, 4);
 });
+
+test('formatSyncTimeLabel outputs human-readable sync status timestamps', () => {
+  const baseTime = new Date('2026-10-29T12:00:00Z');
+  
+  // Just now (< 5s)
+  const time1 = new Date('2026-10-29T12:00:02Z');
+  assert.equal(formatSyncTimeLabel(baseTime, time1), 'Just now');
+
+  // Seconds ago (< 60s)
+  const time2 = new Date('2026-10-29T12:00:45Z');
+  assert.equal(formatSyncTimeLabel(baseTime, time2), '45s ago');
+
+  // Minutes ago (< 60m)
+  const time3 = new Date('2026-10-29T12:12:00Z');
+  assert.equal(formatSyncTimeLabel(baseTime, time3), '12m ago');
+});
+
 
 
