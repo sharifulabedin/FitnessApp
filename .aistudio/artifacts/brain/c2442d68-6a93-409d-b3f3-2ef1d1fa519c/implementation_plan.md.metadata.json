@@ -1,6 +1,6 @@
 {
-  "summary":  "Implementation plan to fix 3D skeletal exercise positions, bind-pose quaternion math, Warm-Up dual-phase animation, and aligned 3D studio equipment props for the 20-Minute Full-Body Hypertrophy Circuit.",
-  "updatedAt":  "2026-10-28T11:49:33.641365397Z",
+  "summary":  "Architecture and implementation plan for the collapsible left navigation bar (icon-rail desktop toggle and slide-out mobile drawer) alongside the stack-by-stack expandable workout phases for optimal mobile phone and tablet responsiveness.",
+  "updatedAt":  "2026-10-29T18:52:04.319272580Z",
   "requestFeedback":  true,
   "userFacing":  true
 }

@@ -1,93 +1,100 @@
-# 3D Exercise Biomechanics & Pose Alignment Fix
+# Collapsible Navigation Bar & Stacked Workout Phases
 
-Fixes the broken skeletal positions and inverted limbs on the `lowpoly_male.fbx` 3D character across all exercises—especially the **20-Minute Full-Body Hypertrophy Circuit**—by anchoring all keyframe rotations to each bone's native bind-pose orientation, grounding feet and hands to the studio floor and aligned 3D props, and adding the missing dual-phase Warm-Up animation.
+Architects a fully responsive, collapsible left-hand navigation menu—featuring an icon-only slim rail toggle for desktop/tablet screens and an off-canvas slide-out drawer for mobile phones—working in synergy with the stack-by-stack expandable workout routine phases.
 
 ## User Review & Critical Decisions
 
 > [!IMPORTANT]
-> The following design and biomechanical decisions incorporate your confirmed preferences before code execution:
+> This plan addresses your request to reclaim horizontal space on mobile phones and desktops while keeping all navigation, workout tools, and routine phases easily accessible:
 
-- **Confirmed Decision 1 — Aligned 3D Studio Equipment Props**: Display 3D equipment props (elevated bed/box for Bulgarian Split Squats and Bed Pike Push-Ups, overhead pull-up bar with support pillars for Ledge Pull-Ups, and floor hand pads/mat for Push-Ups and Cobra) simultaneously with the `lowpoly_male.fbx` character, calibrated so the hands and feet make accurate physical contact.
-- **Confirmed Decision 2 — Dual-Phase Warm-Up Animation (`poseType: 'warmup'`)**: Implement the first exercise card (*Warm-Up: Lunge Twists & Scapular Push-Ups*) as an alternating loop that transitions between a deep runner's lunge with thoracic rotation toward the lead knee and a prone plank scapular push-up protraction/retraction.
-- **Confirmed Decision 3 — Bind-Pose Relative Direction Kinematics**: Compute all skeletal keyframe rotations relative to each bone's actual FBX bind-pose quaternion and local axis orientation rather than overwriting bones with zero-identity quaternions.
+- **Confirmed Decision 1 — Dual-Mode Collapsible Sidebar**:
+  - **Desktop / Tablet (`md:` breakpoint and above)**: Provide an expand/collapse toggle button (`PanelLeftClose` / `PanelLeft`) in the sidebar header. When collapsed, the sidebar transitions smoothly from full width (`w-60` / 240px) to a sleek icon-only slim rail (`w-16` / 64px) with tooltips, expanding available content width by 176px for 3D exercise models, tempo timers, and charts.
+  - **Mobile Phones (`< md` breakpoint)**: Add a hamburger menu button (`Menu`) to the top mobile header that slides open a lightweight, full-height mobile navigation drawer with a darkened backdrop overlay. Selecting any section smoothly scrolls to the target and automatically closes the drawer.
+- **Confirmed Decision 2 — Persistent Sidebar State**:
+  - Store the desktop collapsed preference in `localStorage` (`morning20_sidebar_collapsed`) so the athlete's preferred layout persists across reloads and workout sessions.
+- **Confirmed Decision 3 — Stack-by-Stack Expandable Routine Phases**:
+  - Keep all 4 workout phases (Phase 1: Pre-Workout Prep, Phase 2A: Dynamic Mobility, Phase 2B: 20-Min Hypertrophy Circuit, Phase 3: Post-Workout Recovery) in an accordion stack that defaults to collapsed on initial load.
+  - Clicking a phase header toggles its expansion state; clicking sidebar/mobile nav links automatically expands the targeted phase and scrolls to it.
 
 ---
 
 ## 1. Overview & Core Concept
 
-- **What It Does**: Delivers anatomically accurate, grounded 3D exercise demonstrations using the `lowpoly_male.fbx` model for all 6 exercises in the 20-Minute Full-Body Hypertrophy Circuit and all 3 Pre-Workout Dynamic Mobility drills.
-- **Why Positions Were Breaking**:
-  1. **Overwritten Non-Zero Bind Poses**: In `lowpoly_male.fbx`, the thigh bones (`mixamorigLeftUpLeg` / `RightUpLeg`) have a `±170.8°` Z-axis bind rotation and the upper arms have an A-pose bind rotation (`31.5°` X-axis). Overwriting their quaternions with zero-based Eulers flipped the legs `170°` upside-down into the air and twisted the shoulders.
-  2. **Inverted Pitch & Knee Axes**: In the FBX coordinate frame (`+Z` forward, `+Y` up), tilting into a prone plank requires `+X` hip rotation (previously `-X` tilted the character onto their back), and because the leg bones are inverted `180°` in Z, forward hip flexion is `-X` while natural knee flexion is `+X` (previously reversed, causing backward knee hyperextension).
-  3. **Missing `'warmup'` Pose Handler**: Exercise #1 in the 20-Minute Hypertrophy Circuit uses `poseType: 'warmup'`, which fell through to a static standing idle clip.
-  4. **Hidden Props When FBX Loaded**: Equipment props (bed edge, pull-up bar, floor pads) were hidden whenever the FBX model mounted, leaving elevated exercises floating in mid-air.
+- **Problem**: On small screens, split windows, and mobile devices, a fixed 240px sidebar consumes too much horizontal space, crowding 3D canvas viewports and exercise metrics. Meanwhile, phone users need a clean way to access the full menu without cluttering the screen.
+- **Solution**:
+  1. **Adaptive Sidebar**: Switches between full expanded rail (`w-60`), compact icon rail (`w-16`), and off-canvas mobile drawer (`fixed inset-0 z-50`), maximizing screen presence on both phone and desktop.
+  2. **Expandable Phases Stack**: Organizes the workout progression into 4 clean, collapsible steps with instant status summaries and quick "Expand All" / "Collapse All" controls.
 
 ---
 
 ## 2. User Experience & Visual Design
 
-- **Key User Flows**:
-  - **20-Minute Full-Body Hypertrophy Circuit Cards & Live Workout Modal**:
-    1. **Step 1 — Warm-Up (Lunge Twists & Scapular Push-Ups)**: Character performs a deep runner's lunge with thoracic spine rotation toward the front knee, then transitions into a prone plank performing scapular protraction/retraction.
-    2. **Step 2 — Push-Ups (Drop-Set with 3-1-1 Tempo)**: Character is prone facing the floor (`+Z` head, `-Z` toes), palms planted on floor pads at shoulder width, lowering the chest over 3 seconds with `45°` tucked elbows, holding 1 second above the floor, and pressing to lockout in 1 second.
-    3. **Step 3 — Bulgarian Split Squats (Bed Edge)**: Rear foot rests atop the 3D elevated bed/bench prop behind the athlete; front foot is planted flat on the studio floor forward; hips descend vertically over 3 seconds with natural knee flexion (`+X`), pause 1 second at bottom depth, and drive up in 1 second.
-    4. **Step 4 — Ledge Pull-Ups (Towel Grip + 4s Negatives)**: Hands grip the overhead 3D bar prop (`y = 1.55m`); torso hangs vertically with ankles crossed, pulling elbows down and driving the chin to bar level before a controlled eccentric lowering.
-    5. **Step 5 — Bed Pike Push-Ups**: Feet rest elevated on the 3D bed/box prop behind the athlete while hands are planted on the floor forward; hips form an inverted V-pike and the crown of the head descends forward between the hands in a tripod path.
-    6. **Step 6 — Post-Workout Cobra Stretch**: Character lies prone on the studio mat with pelvis grounded, palms planted beneath shoulders, rhythmically extending the thoracic and lumbar spine upward.
-- **Visual Identity & Studio Atmosphere**:
-  - High-contrast dark slate biomechanical studio (`#090d16`) with 3-point lighting, grounded radial contact shadow, and subtle cyan/crimson muscle & joint activation halos attached directly to the active bones.
+- **Desktop Experience (`≥ 768px`)**:
+  - **Expanded Mode (`w-60`)**: Shows brand mark, "Morning 20" title, streak status, full text labels for navigation items, Gemini Coach button, and bottom utilities (Theme, Calibrate, Settings, Log Out).
+  - **Collapsed Icon Rail Mode (`w-16`)**: Collapses down to centered icons with accessible `title` tooltips, a compact "M20" badge, theme toggle icon, and a single-click expand button. Main content area seamlessly expands to fill the viewport.
+- **Mobile Experience (`< 768px`)**:
+  - **Top Sticky Bar**: Compact 48px header showing brand mark, streak day, Gemini Coach trigger, theme toggle, and a hamburger menu button (`Menu`).
+  - **Slide-out Navigation Drawer**: Clicking the hamburger icon triggers an animated slide-in sheet (`translateX(0)`) containing all navigation destinations, workout calibration, settings, and streak metrics.
+  - **One-Tap Dismissal**: Tapping a link or tapping the dimmed backdrop closes the drawer with zero lag.
+- **Workout Routine Phases Stack**:
+  - **Initially Collapsed**: Every phase displays a structured, high-contrast header card with phase number pill, descriptive title, status indicators (`2/2 Ready`, `3/3 Drills Primed`, `Timer: 00:00`, `Locked/Unlocked`), and a rotating chevron.
+  - **Expand on Header Click**: Clicking any header expands that phase's interactive exercises and tools while preserving other open phases.
+  - **Global Header Control**: A top bar features "Expand All Phases" / "Collapse All Phases" and quick phase readiness badges (`P1`, `P2A`, `P2B`, `P3`).
 
 ---
 
 ## 3. Key Product Decisions & Trade-Offs
 
-- **Decision 1: Direction-Vector & Bind-Pose Relative Bone Solver**
-  - *Chosen Approach*: Snapshot each bone's initial bind-pose quaternion (`userData.bindQuat`) and position (`userData.bindPos`) once upon FBX/GLB parse, and compute keyframe quaternions using directional alignment (`setFromUnitVectors` along each bone's local `+Y` axis) combined with bind-pose delta rotations.
-  - *Why*: Eliminates gimbal lock and axis-inversion bugs across arbitrary Mixamo bone rolls (such as the `±170.8°` leg roll and `±90°` clavicle roll), guaranteeing that limbs always bend in the intended anatomical plane.
-  - *Alternatives Considered*: Hand-tuning raw world Euler angles, which is brittle when parent bones (like hips or spine) rotate by `90°`.
+- **Decision 1: Icon-Rail on Desktop vs. Complete Hidden Drawer**
+  - *Chosen Approach*: On desktop (`md:`), collapse to a 64px slim icon rail rather than hiding completely off-screen.
+  - *Why*: Allows athletes to jump between Overview, Streak Calendar, Prep Checklist, and Workout Circuit with a single click at any time without needing to open a menu first.
+  - *Mobile Handling*: On phones (`< md`), hide the rail completely and use a slide-out drawer because 64px is too wide for 360px–400px phone screens.
 
-- **Decision 2: Co-Rendered 3D Equipment Props with FBX Character**
-  - *Chosen Approach*: Keep the procedural `ExerciseProps` group visible when `lowpoly_male.fbx` is active (hiding only the fallback cylinder mannequin), and calibrate prop coordinates to match the scaled FBX limb contact points.
-  - *Why*: Gives immediate visual context for why the rear foot is elevated in Bulgarian Split Squats and Bed Pike Push-Ups or what the hands are gripping in Ledge Pull-Ups.
+- **Decision 2: Synchronized Navigation & Phase Auto-Expansion**
+  - *Chosen Approach*: When an athlete taps "Prep Checklist" or "Workout Circuit" in the sidebar or mobile drawer, the app automatically expands the corresponding phase (`phase1` or `phase2a/2b`) before smoothly scrolling.
+  - *Why*: Prevents user confusion where clicking a nav link would otherwise scroll to a collapsed, empty-looking card.
 
 ---
 
-## 4. Technical Architecture & Data Strategy
+## 4. Technical Architecture & Component Hierarchy
 
-### Architecture & Biomechanical Pipeline Diagram
+### Responsive Layout & Navigation Diagram
 
 ```
-┌───────────────────────────────────────────────────────────────────────────┐
-│                        Exercise3DViewer Component                         │
-│  (Manages Scene, Camera Views, 3-1-1 Tempo Sync & Equipment Props Group)  │
-└───────────────────┬───────────────────────────────────┬───────────────────┘
-                    │                                   │
-                    ▼                                   ▼
-┌───────────────────────────────────────┐ ┌─────────────────────────────────┐
-│     FBX Bind-Pose Snapshot Store      │ │   Aligned 3D Equipment Props    │
-│  • Captures bone.userData.bindQuat    │ │  • Bed/Box (Split Squat & Pike) │
-│  • Captures bone.userData.bindPos     │ │  • Overhead Bar (Ledge Pull-Up) │
-│  • Preserves native rest hierarchy    │ │  • Floor Pads & Mat (Push/Cobra)│
-└───────────────────┬───────────────────┘ └─────────────────────────────────┘
-                    │
-                    ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│               Biomechanical Skeletal Animator Engine                      │
-│  • Limb Direction Solver (aims bone +Y axis in character space)           │
-│  • 6 Hypertrophy Circuit Clips: warmup, pushup, splitsquat,               │
-│    pullup, pikepushup, cobra (strict 5.0s 3-1-1 cadence)                  │
-│  • 3 Pre-Workout Mobility Clips: armcircles, legswings, torsotwists       │
-└───────────────────┬───────────────────────────────────────────────────────┘
-                    │
-                    ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                Three.js AnimationMixer & Bone Glow Markers                │
-│  • Auto-loops or scrubs to live workout depthFactor (0.0 → 1.0)           │
-│  • Updates glowing muscle/joint halos parented to active Mixamo bones     │
-└───────────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ Top Mobile Header (< md): [Menu] [M20 Logo] [Coach] [Theme] [Log Out]        │
+└───────────────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────┬───────────────────────────────────────────────┐
+│ Left Sidebar (≥ md):          │ Main Content Container:                       │
+│ • Toggle: [PanelLeftClose]    │                                               │
+│ • Expanded: w-60 (240px)      │ 1. Overview & Athlete Profile Strip           │
+│ • Collapsed: w-16 (64px)      │ 2. 30-Day Streak Calendar & Badges            │
+│ • Nav: Overview, Streak,      │ 3. Workout Routine Phases Stack:              │
+│   Prep, Circuit               │    ├─ [PHASE 1] Pre-Workout Prep & Reminders  │
+│ • Gemini AI Coach Button      │    ├─ [PHASE 2A] Dynamic Mobility Drills      │
+│ • Utilities: Theme, Settings  │    ├─ [PHASE 2B] 20-Min Hypertrophy Circuit   │
+│                               │    └─ [PHASE 3] Cobra Stretch & Protein Fuel  │
+└───────────────────────────────┴───────────────────────────────────────────────┘
+
+Mobile Slide-out Drawer (< md, when open):
+┌───────────────────────────────┐
+│ [M20 Logo]               [X]  │
+│ ───────────────────────────── │
+│ • Overview                    │
+│ • Streak Calendar             │
+│ • Phase 1: Prep Checklist     │
+│ • Phase 2: Workout Circuit    │
+│ • Phase 3: Post-Workout Fuel  │
+│ ───────────────────────────── │
+│ • AI Coach / Baselines / Theme│
+└───────────────────────────────┘ (dimmed backdrop overlay closes on tap)
 ```
 
-### Interactive Component & State Mapping
+### State & Handler Specifications
 
-- **Pose Switching (`poseType` change)**: Stops the previous mixer action, resets the skeleton to its captured `bindQuat` and `bindPos` snapshot so no residual bone offsets carry over from a previous exercise, generates the new exercise `AnimationClip`, and updates the 3D equipment props and bone glow markers.
-- **3-1-1 Live Workout Synchronization**: During active workout sets (`LiveWorkoutModal`), the 5.0-second clip timeline (`0–3s` eccentric, `3–4s` pause, `4–5s` concentric) stays locked to the user's rep cadence; when paused, the timeline scrubs directly to `depthFactor`.
+- `isSidebarCollapsed`: `boolean` (persisted in `localStorage.getItem('morning20_sidebar_collapsed')`).
+- `isMobileMenuOpen`: `boolean` (controls slide-out mobile drawer visibility).
+- `expandedPhases`: `Record<string, boolean>` (`{ phase1: false, phase2a: false, phase2b: false, phase3: false }`).
+- `togglePhase(id)`: Toggles individual phase expansion.
+- `toggleAllPhases()`: Expands or collapses all 4 phases simultaneously.
+- `handleJumpToSection(id, domId)`: Closes mobile menu drawer (if open), expands targeted phase, and smoothly scrolls to `domId`.

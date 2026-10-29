@@ -34,6 +34,13 @@ import {
   X,
   Box,
   Layers,
+  ChevronDown,
+  ChevronsUpDown,
+  Activity,
+  Sparkles,
+  Menu,
+  PanelLeftClose,
+  PanelLeft,
 } from 'lucide-react';
 import {
   UserProfile,
@@ -275,6 +282,59 @@ export default function App() {
     }
   }, [darkMode]);
 
+  // Stack-by-stack phases state: all phases initially in collapsed state as requested
+  const [expandedPhases, setExpandedPhases] = useState<Record<string, boolean>>({
+    phase1: false,
+    phase2a: false,
+    phase2b: false,
+    phase3: false,
+  });
+
+  const togglePhase = (phaseId: string) => {
+    setExpandedPhases((prev) => ({
+      ...prev,
+      [phaseId]: !prev[phaseId],
+    }));
+  };
+
+  const areAllExpanded = useMemo(() => {
+    return Object.values(expandedPhases).every(Boolean);
+  }, [expandedPhases]);
+
+  const toggleAllPhases = () => {
+    const nextState = !areAllExpanded;
+    setExpandedPhases({
+      phase1: nextState,
+      phase2a: nextState,
+      phase2b: nextState,
+      phase3: nextState,
+    });
+  };
+
+  // Collapsible sidebar state (persisted across sessions)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('morning20_sidebar_collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('morning20_sidebar_collapsed', String(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
+
+  // Mobile off-canvas navigation sheet state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
   useEffect(() => {
     if (isLoggedIn && calendarStripRef.current) {
       const container = calendarStripRef.current;
@@ -318,7 +378,7 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isLoggedIn]);
 
-  const handleJumpToSection = (sectionId: BottomNavSectionId, domId: string) => {
+  const handleJumpToSection = (sectionId: string, domId: string) => {
     isProgrammaticScrollRef.current = true;
     if (programmaticScrollTimerRef.current) {
       window.clearTimeout(programmaticScrollTimerRef.current);
@@ -327,14 +387,26 @@ export default function App() {
       isProgrammaticScrollRef.current = false;
     }, 650);
 
-    setActiveSection(sectionId);
+    setActiveSection(sectionId as BottomNavSectionId);
     if (isCoachOpen) {
       setIsCoachOpen(false);
     }
-    const targetEl = document.getElementById(domId);
-    if (targetEl) {
-      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
     }
+    if (sectionId === 'prep') {
+      setExpandedPhases((prev) => ({ ...prev, phase1: true }));
+    } else if (sectionId === 'circuit') {
+      setExpandedPhases((prev) => ({ ...prev, phase2a: true, phase2b: true }));
+    } else if (sectionId === 'postworkout') {
+      setExpandedPhases((prev) => ({ ...prev, phase3: true }));
+    }
+    setTimeout(() => {
+      const targetEl = document.getElementById(domId);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
   };
 
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => {
@@ -671,25 +743,51 @@ export default function App() {
   return (
     <div id="top" className="min-h-screen bg-slate-100 dark:bg-[#06090F] flex flex-col md:flex-row text-slate-900 dark:text-slate-100 p-2 sm:p-3 md:p-3.5 gap-3.5">
       {/* 1. Quiet Left Rail Navigation (desktop md: and above) */}
-      <aside aria-label="Application navigation" className="hidden md:flex w-60 shrink-0 flex-col justify-between p-4 bg-slate-100 dark:bg-[#06090F]">
+      <aside
+        aria-label="Application navigation"
+        className={`hidden md:flex shrink-0 flex-col justify-between bg-slate-100 dark:bg-[#06090F] transition-all duration-200 ease-in-out ${
+          isSidebarCollapsed ? 'w-16 p-2.5' : 'w-60 p-4'
+        }`}
+      >
         <div>
-          {/* Logo / Title */}
-          <div className="flex items-center gap-2.5 pb-4 border-b border-slate-200 dark:border-slate-800">
-            <div className="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center font-bold text-xs tracking-tight">
-              M20
+          {/* Logo / Title + Collapse Toggle */}
+          <div
+            className={`flex items-center pb-3 border-b border-slate-200 dark:border-slate-800 ${
+              isSidebarCollapsed ? 'justify-center flex-col gap-2' : 'justify-between'
+            }`}
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div
+                className="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center font-bold text-xs tracking-tight shrink-0"
+                title="Morning 20"
+              >
+                M20
+              </div>
+              {!isSidebarCollapsed && (
+                <div className="min-w-0">
+                  <a href="#top" className="text-sm font-bold tracking-tight text-slate-900 dark:text-white truncate block">
+                    Morning 20
+                  </a>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 truncate">
+                    Day 12 of 30 · Hypertrophy
+                  </p>
+                </div>
+              )}
             </div>
-            <div>
-              <a href="#top" className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
-                Morning 20
-              </a>
-              <p className="text-xs text-slate-600 dark:text-slate-300">
-                Day 12 of 30 · Hypertrophy
-              </p>
-            </div>
+            <button
+              type="button"
+              data-testid="sidebar-collapse-toggle"
+              onClick={toggleSidebar}
+              title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
+            >
+              {isSidebarCollapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+            </button>
           </div>
 
           {/* Nav Links */}
-          <nav aria-label="Sidebar sections" className="mt-5 space-y-1">
+          <nav aria-label="Sidebar sections" className="mt-4 space-y-1">
             {[
               { id: 'overview' as const, domId: 'overview-section', label: 'Overview', icon: LayoutDashboard },
               { id: 'streak' as const, domId: 'streak-calendar', label: 'Streak Calendar', icon: Calendar },
@@ -704,76 +802,102 @@ export default function App() {
                   type="button"
                   data-testid={`sidebar-nav-${tab.id}`}
                   onClick={() => handleJumpToSection(tab.id, tab.domId)}
-                  className={`w-full h-9 px-3 rounded-lg text-xs flex items-center gap-2.5 transition-colors text-left ${
+                  title={isSidebarCollapsed ? tab.label : undefined}
+                  aria-label={tab.label}
+                  className={`h-9 rounded-lg text-xs flex items-center transition-colors text-left cursor-pointer ${
+                    isSidebarCollapsed ? 'w-full justify-center px-0' : 'w-full px-3 gap-2.5'
+                  } ${
                     isActive
-                      ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold border border-slate-200 dark:border-slate-700'
+                      ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold border border-slate-200 dark:border-slate-700 shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/50'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
-                  <span>{tab.label}</span>
+                  {!isSidebarCollapsed && <span className="truncate">{tab.label}</span>}
                 </button>
               );
             })}
           </nav>
 
           {/* AI Coach Trigger Button in Left Rail */}
-          <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="mt-5 pt-3.5 border-t border-slate-200 dark:border-slate-800">
             <button
               type="button"
               data-testid="sidebar-coach-btn"
               onClick={() => setIsCoachOpen((prev) => !prev)}
-              className="w-full h-9 px-3 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold flex items-center justify-between transition-colors"
+              title={isSidebarCollapsed ? 'Open Gemini Coach' : undefined}
+              aria-label="Open Gemini Coach"
+              className={`h-9 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold flex items-center transition-colors cursor-pointer ${
+                isSidebarCollapsed ? 'w-full justify-center px-0' : 'w-full px-3 justify-between'
+              }`}
             >
-              <span className="flex items-center gap-2">
-                <Bot className="w-4 h-4" />
-                <span>Gemini Coach</span>
+              <span className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-2'}`}>
+                <Bot className="w-4 h-4 shrink-0" />
+                {!isSidebarCollapsed && <span>Gemini Coach</span>}
               </span>
-              <span className="text-xs bg-white/20 px-1.5 py-0.5 rounded">AI</span>
+              {!isSidebarCollapsed && (
+                <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">AI</span>
+              )}
             </button>
           </div>
         </div>
 
         {/* Bottom Utility Strip in Left Rail */}
-        <div className="space-y-1 pt-4 border-t border-slate-200 dark:border-slate-800">
+        <div className="space-y-1 pt-3.5 border-t border-slate-200 dark:border-slate-800">
           <button
             type="button"
             data-testid="theme-toggle-button"
             aria-pressed={darkMode}
             onClick={() => setDarkMode((prev) => !prev)}
-            className="w-full h-8 px-2.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/50 flex items-center justify-between transition-colors"
+            title={isSidebarCollapsed ? (darkMode ? 'Light Theme' : 'Dark Theme') : undefined}
+            aria-label={darkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            className={`h-8 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/50 flex items-center transition-colors cursor-pointer ${
+              isSidebarCollapsed ? 'w-full justify-center px-0' : 'w-full px-2.5 justify-between'
+            }`}
           >
-            <span className="flex items-center gap-2">
-              {darkMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-600" />}
-              <span>{darkMode ? 'Light Theme' : 'Dark Theme'}</span>
+            <span className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-2'}`}>
+              {darkMode ? <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" /> : <Moon className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 shrink-0" />}
+              {!isSidebarCollapsed && <span>{darkMode ? 'Light Theme' : 'Dark Theme'}</span>}
             </span>
           </button>
 
           <button
             type="button"
             onClick={() => setShowOnboardingModal(true)}
-            className="w-full h-8 px-2.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/50 flex items-center gap-2 transition-colors text-left"
+            title={isSidebarCollapsed ? 'Calibrate Baselines' : undefined}
+            aria-label="Calibrate Baselines"
+            className={`h-8 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/50 flex items-center transition-colors text-left cursor-pointer ${
+              isSidebarCollapsed ? 'w-full justify-center px-0' : 'w-full px-2.5 gap-2'
+            }`}
           >
-            <Sliders className="w-3.5 h-3.5" />
-            <span>Calibrate Baselines</span>
+            <Sliders className="w-3.5 h-3.5 shrink-0" />
+            {!isSidebarCollapsed && <span className="truncate">Calibrate Baselines</span>}
           </button>
 
           <button
             type="button"
             onClick={() => setShowSettingsModal(true)}
-            className="w-full h-8 px-2.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/50 flex items-center gap-2 transition-colors text-left"
+            title={isSidebarCollapsed ? 'Backup & Settings' : undefined}
+            aria-label="Backup & Settings"
+            className={`h-8 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/50 flex items-center transition-colors text-left cursor-pointer ${
+              isSidebarCollapsed ? 'w-full justify-center px-0' : 'w-full px-2.5 gap-2'
+            }`}
           >
-            <Settings className="w-3.5 h-3.5" />
-            <span>Backup &amp; Settings</span>
+            <Settings className="w-3.5 h-3.5 shrink-0" />
+            {!isSidebarCollapsed && <span className="truncate">Backup &amp; Settings</span>}
           </button>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="w-full h-8 px-2.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/50 flex items-center gap-2 transition-colors text-left cursor-pointer"
+            title={isSidebarCollapsed ? 'Log Out' : undefined}
+            aria-label="Log Out"
+            className={`h-8 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/50 flex items-center transition-colors text-left cursor-pointer ${
+              isSidebarCollapsed ? 'w-full justify-center px-0' : 'w-full px-2.5 gap-2'
+            }`}
           >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Log Out</span>
+            <LogOut className="w-3.5 h-3.5 shrink-0" />
+            {!isSidebarCollapsed && <span className="truncate">Log Out</span>}
           </button>
         </div>
       </aside>
@@ -781,6 +905,15 @@ export default function App() {
       {/* Mobile Header Bar (< md) */}
       <header className="md:hidden flex items-center justify-between gap-3 px-3 py-2.5 bg-slate-100 dark:bg-[#06090F] border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            data-testid="mobile-menu-toggle"
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open navigation menu"
+            className="w-8 h-8 rounded-md bg-slate-200/80 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
           <div className="w-7 h-7 rounded-md bg-rose-500 text-white flex items-center justify-center font-bold text-xs">
             M20
           </div>
@@ -817,6 +950,162 @@ export default function App() {
           </button>
         </div>
       </header>
+
+      {/* Mobile Slide-Out Drawer Navigation (< md) */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 md:hidden"
+              aria-hidden="true"
+            />
+
+            {/* Drawer */}
+            <motion.aside
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+              aria-label="Mobile navigation drawer"
+              className="fixed inset-y-0 left-0 w-[280px] max-w-[85vw] bg-white dark:bg-[#0B0F19] border-r border-slate-200 dark:border-slate-800 shadow-2xl z-50 md:hidden flex flex-col justify-between p-4 overflow-y-auto"
+            >
+              <div>
+                {/* Drawer Header */}
+                <div className="flex items-center justify-between pb-3.5 border-b border-slate-200 dark:border-slate-800">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center font-bold text-xs tracking-tight">
+                      M20
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white block">
+                        Morning 20
+                      </span>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        Day 12 of 30 · Hypertrophy
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    aria-label="Close navigation menu"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Quick jump to Phases & Sections */}
+                <div className="mt-4">
+                  <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-500 px-2 pb-2">
+                    Routine Navigation
+                  </p>
+                  <nav aria-label="Mobile sections" className="space-y-1">
+                    {[
+                      { id: 'overview' as const, domId: 'overview-section', label: 'Overview', icon: LayoutDashboard },
+                      { id: 'streak' as const, domId: 'streak-calendar', label: 'Streak Calendar', icon: Calendar },
+                      { id: 'prep' as const, domId: 'prep-section', label: 'Phase 1: Prep Checklist', icon: ClipboardCheck },
+                      { id: 'circuit' as const, domId: 'workout-circuit', label: 'Phase 2: 20-Min Circuit', icon: Dumbbell },
+                      { id: 'postworkout' as const, domId: 'post-workout-section', label: 'Phase 3: Fuel & Mobility', icon: Zap },
+                    ].map((tab) => {
+                      const Icon = tab.icon;
+                      const isActive = activeSection === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => handleJumpToSection(tab.id, tab.domId)}
+                          className={`w-full min-h-[44px] px-3 rounded-lg text-xs flex items-center gap-2.5 transition-colors text-left cursor-pointer ${
+                            isActive
+                              ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-semibold border border-rose-200/80 dark:border-rose-900/50'
+                              : 'text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                          }`}
+                        >
+                          <Icon className="w-4 h-4 shrink-0" />
+                          <span>{tab.label}</span>
+                        </button>
+                      );
+                    })}
+                  </nav>
+                </div>
+
+                {/* Gemini Coach Trigger Button in Mobile Drawer */}
+                <div className="mt-5 pt-3.5 border-t border-slate-200 dark:border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setIsCoachOpen(true);
+                    }}
+                    className="w-full min-h-[44px] px-3 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold flex items-center justify-between transition-colors shadow-xs cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Bot className="w-4 h-4" />
+                      <span>Gemini Coach</span>
+                    </span>
+                    <span className="text-xs bg-white/20 px-1.5 py-0.5 rounded font-mono">AI</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Bottom Utility Strip in Drawer */}
+              <div className="space-y-1 pt-4 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setDarkMode((prev) => !prev)}
+                  className="w-full min-h-[44px] px-2.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 flex items-center justify-between transition-colors cursor-pointer"
+                >
+                  <span className="flex items-center gap-2.5">
+                    {darkMode ? <Sun className="w-4 h-4 text-amber-400 shrink-0" /> : <Moon className="w-4 h-4 text-slate-600 dark:text-slate-400 shrink-0" />}
+                    <span>{darkMode ? 'Light Theme' : 'Dark Theme'}</span>
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setShowOnboardingModal(true);
+                  }}
+                  className="w-full min-h-[44px] px-2.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 flex items-center gap-2.5 transition-colors text-left cursor-pointer"
+                >
+                  <Sliders className="w-4 h-4 shrink-0" />
+                  <span>Calibrate Baselines</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setShowSettingsModal(true);
+                  }}
+                  className="w-full min-h-[44px] px-2.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 flex items-center gap-2.5 transition-colors text-left cursor-pointer"
+                >
+                  <Settings className="w-4 h-4 shrink-0" />
+                  <span>Backup &amp; Settings</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full min-h-[44px] px-2.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 flex items-center gap-2.5 transition-colors text-left cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4 shrink-0" />
+                  <span>Log Out</span>
+                </button>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* 2. Inset Sheet Container */}
       <main className="flex-1 min-w-0 framed-sheet p-4 sm:p-6 lg:p-7 space-y-6 overflow-hidden">
@@ -878,9 +1167,10 @@ export default function App() {
                 type="button"
                 onClick={() => {
                   startSessionTimerIfNeeded();
+                  setExpandedPhases((prev) => ({ ...prev, phase2b: true }));
                   setActiveWorkoutIndex(0);
                 }}
-                className="h-10 px-4 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-500 rounded-lg transition-colors whitespace-nowrap"
+                className="h-10 px-4 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-500 rounded-lg transition-colors whitespace-nowrap cursor-pointer"
               >
                 Start 20-Min Session
               </button>
@@ -1285,8 +1575,146 @@ export default function App() {
           </div>
         </section>
 
-        {/* Pre-Workout Prep + Smart Notification Scheduler */}
-        <div id="prep-section" className="scroll-mt-6 grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        {/* =========================================================================
+            Interactive Workout Routine Phases Stack (Initially Collapsed State)
+           ========================================================================= */}
+        <div id="workout-phases-stack" className="scroll-mt-6 space-y-3.5">
+          {/* Phases Stack Header & Global Toggle Bar */}
+          <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0E131F] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-bold text-rose-600 dark:text-rose-400 tracking-wider uppercase">
+                <Flame className="w-3.5 h-3.5" />
+                <span>Routine Progression Stack</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-0.5">
+                Daily Workout Phases
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Stacked step-by-step for optimal hypertrophy. Click any phase header below to expand or collapse.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              <div className="hidden lg:flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mr-1">
+                <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border ${
+                  (prepChecklist.waterDates && prepChecklist.towelLedge)
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                }`}>
+                  P1: {(prepChecklist.waterDates ? 1 : 0) + (prepChecklist.towelLedge ? 1 : 0)}/2
+                </span>
+                <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border ${
+                  completedMobility.length === 3
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                }`}>
+                  P2A: {completedMobility.length}/3
+                </span>
+                <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border ${
+                  completedExercises.length === mainCircuitExercises.length
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                }`}>
+                  P2B: {completedExercises.length}/{mainCircuitExercises.length}
+                </span>
+                <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border ${
+                  postWorkoutStatus.unlocked
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                }`}>
+                  P3: {postWorkoutStatus.unlocked ? 'Unlocked' : 'Locked'}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                data-testid="phase-toggle-all-btn"
+                onClick={toggleAllPhases}
+                className="h-9 px-3.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <ChevronsUpDown className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                <span>{areAllExpanded ? 'Collapse All Phases' : 'Expand All Phases'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* =========================================================================
+              PHASE 1 STACK CARD: Pre-Workout Preparation & Reminders
+             ========================================================================= */}
+          <div
+            id="phase-1-card"
+            data-testid="phase-card-phase1"
+            data-expanded={expandedPhases.phase1 ? 'true' : 'false'}
+            className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+              expandedPhases.phase1
+                ? 'border-blue-400/80 dark:border-blue-800 bg-white dark:bg-[#0E131F] shadow-sm'
+                : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0E131F] hover:border-slate-300 dark:hover:border-slate-700'
+            }`}
+          >
+            {/* Clickable Header Button */}
+            <button
+              type="button"
+              data-testid="phase-header-phase1"
+              aria-expanded={expandedPhases.phase1}
+              aria-controls="phase-content-phase1"
+              onClick={() => togglePhase('phase1')}
+              className="w-full p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/30 select-none cursor-pointer"
+            >
+              <div className="flex items-start sm:items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/80 border border-blue-200/80 dark:border-blue-800 flex items-center justify-center shrink-0 text-blue-600 dark:text-blue-400">
+                  <ClipboardCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800">
+                      Phase 1
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
+                      Pre-Circuit Preparation &amp; Setup
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
+                    Pre-Workout Preparation &amp; Smart Reminders
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Hydration, medjool dates, towel-grip beam setup &amp; circadian alarm trigger
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-semibold border flex items-center gap-1.5 ${
+                    (prepChecklist.waterDates && prepChecklist.towelLedge)
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                  }`}>
+                    {(prepChecklist.waterDates && prepChecklist.towelLedge) && (
+                      <Check className="w-3 h-3 stroke-[3]" />
+                    )}
+                    <span>{(prepChecklist.waterDates ? 1 : 0) + (prepChecklist.towelLedge ? 1 : 0)} / 2 Ready</span>
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 pl-2">
+                  <span className="text-xs hidden md:inline">{expandedPhases.phase1 ? 'Collapse' : 'Expand'}</span>
+                  <ChevronDown
+                    className={`w-5 h-5 text-slate-400 dark:text-slate-500 transition-transform duration-200 ${
+                      expandedPhases.phase1 ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
+                    }`}
+                  />
+                </div>
+              </div>
+            </button>
+
+            {/* Expandable Phase 1 Content */}
+            {expandedPhases.phase1 && (
+              <div
+                id="phase-content-phase1"
+                data-testid="phase-content-phase1"
+                className="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40"
+              >
+                <div id="prep-section" className="scroll-mt-6 grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
           {/* Pre-Workout Prep Checklist */}
           <section className="rounded-xl border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-[#0E131F] lg:col-span-7 flex flex-col justify-between">
             <div>
@@ -1440,17 +1868,185 @@ export default function App() {
               </button>
             </div>
           </section>
-        </div>
+                </div>
+              </div>
+            )}
+          </div>
 
-        {/* 20-Minute Full-Body Workout Circuit */}
-        <section id="workout-circuit" className="scroll-mt-6 space-y-5">
-          {/* Pre-Workout Dynamic Mobility Section */}
-          <PreWorkoutMobilitySection
-            completedMobilityIds={completedMobility}
-            onToggleMobility={handleToggleMobility}
-            onSetAllMobility={handleSetAllMobility}
-            darkMode={darkMode}
-          />
+          {/* =========================================================================
+              PHASE 2A STACK CARD: Pre-Workout Dynamic Mobility Drills
+             ========================================================================= */}
+          <div
+            id="phase-2a-card"
+            data-testid="phase-card-phase2a"
+            data-expanded={expandedPhases.phase2a ? 'true' : 'false'}
+            className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+              expandedPhases.phase2a
+                ? 'border-rose-400/80 dark:border-rose-800 bg-white dark:bg-[#0E131F] shadow-sm'
+                : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0E131F] hover:border-slate-300 dark:hover:border-slate-700'
+            }`}
+          >
+            {/* Clickable Header Button */}
+            <button
+              type="button"
+              data-testid="phase-header-phase2a"
+              aria-expanded={expandedPhases.phase2a}
+              aria-controls="phase-content-phase2a"
+              onClick={() => togglePhase('phase2a')}
+              className="w-full p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/30 select-none cursor-pointer"
+            >
+              <div className="flex items-start sm:items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/80 border border-rose-200/80 dark:border-rose-800 flex items-center justify-center shrink-0 text-rose-600 dark:text-rose-400">
+                  <Activity className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800">
+                      Phase 2A
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
+                      2-3 Mins · Joint Priming Drills
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
+                    Pre-Workout Dynamic Mobility Drills
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Shoulder arm circles, 90/90 hip openers &amp; thoracic rotations with 3D joint guidance
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-semibold border flex items-center gap-1.5 ${
+                    completedMobility.length === 3
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                  }`}>
+                    {completedMobility.length === 3 && (
+                      <Check className="w-3 h-3 stroke-[3]" />
+                    )}
+                    <span>{completedMobility.length} / 3 Drills Primed</span>
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 pl-2">
+                  <span className="text-xs hidden md:inline">{expandedPhases.phase2a ? 'Collapse' : 'Expand'}</span>
+                  <ChevronDown
+                    className={`w-5 h-5 text-slate-400 dark:text-slate-500 transition-transform duration-200 ${
+                      expandedPhases.phase2a ? 'rotate-180 text-rose-600 dark:text-rose-400' : ''
+                    }`}
+                  />
+                </div>
+              </div>
+            </button>
+
+            {/* Expandable Phase 2A Content */}
+            {expandedPhases.phase2a && (
+              <div
+                id="phase-content-phase2a"
+                data-testid="phase-content-phase2a"
+                className="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40"
+              >
+                <PreWorkoutMobilitySection
+                  completedMobilityIds={completedMobility}
+                  onToggleMobility={handleToggleMobility}
+                  onSetAllMobility={handleSetAllMobility}
+                  darkMode={darkMode}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* =========================================================================
+              PHASE 2B STACK CARD: 20-Minute Full-Body Hypertrophy Circuit
+             ========================================================================= */}
+          <div
+            id="phase-2b-card"
+            data-testid="phase-card-phase2b"
+            data-expanded={expandedPhases.phase2b ? 'true' : 'false'}
+            className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+              expandedPhases.phase2b
+                ? 'border-amber-400/80 dark:border-amber-800 bg-white dark:bg-[#0E131F] shadow-sm'
+                : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0E131F] hover:border-slate-300 dark:hover:border-slate-700'
+            }`}
+          >
+            {/* Clickable Header Button */}
+            <button
+              type="button"
+              data-testid="phase-header-phase2b"
+              aria-expanded={expandedPhases.phase2b}
+              aria-controls="phase-content-phase2b"
+              onClick={() => togglePhase('phase2b')}
+              className="w-full p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/30 select-none cursor-pointer"
+            >
+              <div className="flex items-start sm:items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/80 border border-amber-200/80 dark:border-amber-800 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400">
+                  <Flame className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800">
+                      Phase 2B
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
+                      3 Rounds · 45s Work / 15s Rest · 3-1-1 Cadence Sync
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
+                    20-Minute Full-Body Hypertrophy Circuit
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Live 3-1-1 tempo timing, procedural skeletal animation &amp; target muscle engagement
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+                <div className="flex flex-wrap items-center gap-2">
+                  {sessionElapsedSeconds > 0 && (
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-semibold border flex items-center gap-1.5 tabular-nums ${
+                      isSessionTimerRunning
+                        ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800 animate-pulse'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                    }`}>
+                      <Clock className="w-3 h-3" />
+                      <span>{formatElapsedMmSs(sessionElapsedSeconds)}</span>
+                    </span>
+                  )}
+
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-semibold border flex items-center gap-1.5 ${
+                    completedExercises.length === mainCircuitExercises.length
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                  }`}>
+                    {completedExercises.length === mainCircuitExercises.length && (
+                      <Check className="w-3 h-3 stroke-[3]" />
+                    )}
+                    <span>{completedExercises.length} / {mainCircuitExercises.length} Done</span>
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 pl-2">
+                  <span className="text-xs hidden md:inline">{expandedPhases.phase2b ? 'Collapse' : 'Expand'}</span>
+                  <ChevronDown
+                    className={`w-5 h-5 text-slate-400 dark:text-slate-500 transition-transform duration-200 ${
+                      expandedPhases.phase2b ? 'rotate-180 text-amber-600 dark:text-amber-400' : ''
+                    }`}
+                  />
+                </div>
+              </div>
+            </button>
+
+            {/* Expandable Phase 2B Content */}
+            {expandedPhases.phase2b && (
+              <div
+                id="phase-content-phase2b"
+                data-testid="phase-content-phase2b"
+                className="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40"
+              >
+                <section id="workout-circuit" className="scroll-mt-6 space-y-5">
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pt-2">
             <div>
@@ -1703,10 +2299,110 @@ export default function App() {
               );
             })}
           </div>
-        </section>
+                </section>
+              </div>
+            )}
+          </div>
 
-        {/* Post-Workout Recovery Section */}
-        <section
+          {/* =========================================================================
+              PHASE 3 STACK CARD: Post-Workout Recovery & High-Protein Fuel
+             ========================================================================= */}
+          <div
+            id="phase-3-card"
+            data-testid="phase-card-phase3"
+            data-expanded={expandedPhases.phase3 ? 'true' : 'false'}
+            className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+              expandedPhases.phase3
+                ? postWorkoutStatus.unlocked
+                  ? 'border-emerald-400/80 dark:border-emerald-800 bg-white dark:bg-[#0E131F] shadow-sm'
+                  : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E131F] shadow-sm'
+                : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0E131F] hover:border-slate-300 dark:hover:border-slate-700'
+            }`}
+          >
+            {/* Clickable Header Button */}
+            <button
+              type="button"
+              data-testid="phase-header-phase3"
+              aria-expanded={expandedPhases.phase3}
+              aria-controls="phase-content-phase3"
+              onClick={() => togglePhase('phase3')}
+              className="w-full p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/30 select-none cursor-pointer"
+            >
+              <div className="flex items-start sm:items-center gap-3.5">
+                <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${
+                  postWorkoutStatus.unlocked
+                    ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-200/80 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-slate-100 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-400'
+                }`}>
+                  {postWorkoutStatus.unlocked ? (
+                    <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  ) : (
+                    <Lock className="w-5 h-5 text-slate-400" />
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider border ${
+                      postWorkoutStatus.unlocked
+                        ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                    }`}>
+                      Phase 3
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
+                      Spinal Decompression &amp; Anabolic MPS Refuel
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
+                    Post-Workout Cobra Stretch &amp; High-Protein Fuel
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    45s spinal decompression timer + anabolic window fuel bonus ({proteinTargets.postWorkoutGrams}g+ protein)
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-semibold border flex items-center gap-1.5 ${
+                    postWorkoutStatus.unlocked
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                  }`}>
+                    {postWorkoutStatus.unlocked ? (
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        <span>Ready · Unlocked</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="w-3 h-3 text-slate-400" />
+                        <span>Locked ({postWorkoutStatus.completedCount} / {postWorkoutStatus.totalRequired})</span>
+                      </>
+                    )}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 pl-2">
+                  <span className="text-xs hidden md:inline">{expandedPhases.phase3 ? 'Collapse' : 'Expand'}</span>
+                  <ChevronDown
+                    className={`w-5 h-5 text-slate-400 dark:text-slate-500 transition-transform duration-200 ${
+                      expandedPhases.phase3 ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : ''
+                    }`}
+                  />
+                </div>
+              </div>
+            </button>
+
+            {/* Expandable Phase 3 Content */}
+            {expandedPhases.phase3 && (
+              <div
+                id="phase-content-phase3"
+                data-testid="phase-content-phase3"
+                className="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40"
+              >
+                {/* Post-Workout Recovery Section */}
+                <section
           id="post-workout-section"
           data-testid="post-workout-section"
           className={`scroll-mt-6 rounded-xl border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-[#0E131F] ${
@@ -1842,6 +2538,10 @@ export default function App() {
             </button>
           </div>
         </section>
+              </div>
+            )}
+          </div>
+        </div>
       </main>
 
       {/* Modals & Drawers */}
