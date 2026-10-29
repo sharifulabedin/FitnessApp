@@ -554,11 +554,12 @@ export default function App() {
     [completedExercises, mainCircuitExercises]
   );
 
-  const handleGoogleLogin = (name: string, email: string) => {
+  const handleGoogleLogin = (name: string, email: string, avatarUrl?: string) => {
     const nextProfile: UserProfile = {
       ...profile,
       name,
       email,
+      avatarUrl: avatarUrl || profile.avatarUrl,
     };
     setProfile(nextProfile);
     setIsLoggedIn(true);
